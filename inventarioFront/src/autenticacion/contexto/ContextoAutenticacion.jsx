@@ -1,13 +1,14 @@
-import { createContext,useContext,useState,useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { createContext,useState,useEffect } from "react";
+//import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-import {loginUsuario,registrarUsuario} from "../servicios/ServicioAutenticacion";
+//import {loginUsuario,registrarUsuario} from "../servicios/ServicioAutenticacion";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const navegate = useNavigate();
+
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -18,11 +19,15 @@ export const AuthProvider = ({ children }) => {
     }, []);
     const login = async (credenciales) => {
         try {
-            const {data} = await loginUsuario(credenciales);
-            localStorage.setItem("token", data.token);
-            setUser(data.user);
+            const response = await axios.post('/auth/login',credenciales)
             
-            navegate("/tablero");
+            
+            //const {data} = await loginUsuario(credenciales);
+            
+            setUser(response.data.user);
+            localStorage.setItem('token', response.data.token);
+            
+           
         } catch (error) {
             console.error("Error al iniciar sesión:", error);
         }
@@ -30,14 +35,17 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         localStorage.removeItem("token");
         setUser(null);
-        navegate("/login");
+        //navegate("/login");
     }
     return(
-        <AuthContext.Provider value={{ user, login, logout,registrarUsuario }}>
+        <AuthContext.Provider value={{ user, login, logout }}>
             {children}
         </AuthContext.Provider>
     )
 }
 
-export const useAuth = () =>     useContext(AuthContext);
+
+export default AuthContext;
+
+
     
