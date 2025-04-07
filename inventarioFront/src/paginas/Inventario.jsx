@@ -1,5 +1,5 @@
 import { useEffect,useState } from "react";
-import {TablaDatos} from "../componentes/TablaDatos";
+import {TablaDatos} from "../../componentes/TablaDatos";
 import { obtenerEquipos } from "../servicios/api";
 
 
@@ -34,7 +34,7 @@ const Inventario = () => {
         { nombre: "Sistema Operativo", campo: "sistema_operativo" },
         { nombre: "Office", campo: "office" },
         {nombre:"Tiene garantía", campo:"garantia"},
-        {nombre:"Fecha de garantía", campo:"fecha_garantia"},
+        
         { nombre: "Tiempo restante de garantía", campo: "tiempo_garantia" }, 
         { nombre: "Número de Serie", campo: "numero_serie" },
         

@@ -1,5 +1,5 @@
 import {useAuth} from "../contexto/AuthContext";
-import {FormularioLogin} from "../componentes/FormularioLogin";
+import {FormularioLogin} from "../../componentes/FormularioLogin";
 
 const PaginaLogin = () => {
     const {login} = useAuth();

@@ -1,0 +1,17 @@
+export const tiempoGarantiaArray = [
+    {value: "", label: "Seleccione tiempo de garantía"},
+    {value: "3 meses", label: "3 meses"},
+    {value: "6 meses", label: "6 meses"},
+    {value: "9 meses", label: "9 meses"},
+    {value: "12 meses", label: "12 meses"},
+    {value: "18 meses", label: "18 meses"},
+    {value: "2 años", label: "2 años"},
+    {value: "3 años", label: "3 años"},
+    {value: "4 años", label: "4 años"},
+    {value: "5 años", label: "5 años"},
+    {value: "6 años", label: "6 años"},
+    {value: "7 años", label: "7 años"},
+    {value: "8 años", label: "8 años"},
+    {value: "9 años", label: "9 años"},
+    {value: "10 años", label: "10 años"},
+];

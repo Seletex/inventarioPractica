@@ -14,23 +14,23 @@ export const TablaDatos = ({columns, data}) => {
     });  
     
     return(
-        <table {...obtenerPropiedadesTabla()}>
-            <thead {...obtenerPropiedadesTablaCuerpo()}>
-                {grupoEncabezado.map((grupo, index) => (
-                    <tr key={index}>
-                        {grupo.map((columna) => (
-                            <th {...columna.getHeaderProps()}>{columna.render('Header')}</th>
+        <table {...obtenerPropiedadesTabla()} className='tabla-datos'>
+            <thead >
+                {grupoEncabezado.map(grupoEncabezado => (
+                    <tr {...grupoEncabezado.getHeaderGroupProps()}>
+                        {grupoEncabezado.headers.map(columna => (
+                            <th {...columna.getHeaderProps()}>{columna.render('Encabezamiento')}</th>
                         ))}
                     </tr>
                 ))}
             </thead>
-            <tbody {...filas}>
+            <tbody {...obtenerPropiedadesTablaCuerpo}>
                 {filas.map((fila) => {
                     prepararFila(fila);
                     return (
-                        <tr {...fila.getRowProps()}>
-                            {fila.cells.map((celda) => (
-                                <td {...celda.getCellProps()}>{celda.render('Cell')}</td>
+                        <tr {...fila.obtenerPropiedadesFila()}>
+                            {fila.celdas.map((celda) => (
+                                <td {...celda.obtenerPropiedadesCelda()}>{celda.prestar('Celda')}</td>
                             ))}
                         </tr>
                     );
