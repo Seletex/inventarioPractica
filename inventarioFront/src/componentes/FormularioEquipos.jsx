@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { crearEquipo } from "../servicios/api";
 import { formularioInicial } from "./Datos/Formularioinicial";
-import { ubicaciones } from "../componentes/DatosUbicacion";
+
 
 function FormularioEquipos ({onSuccess}) {
     const [formularioDatos, asignarFormularioDatos] = useState(formularioInicial);
@@ -13,7 +13,14 @@ function FormularioEquipos ({onSuccess}) {
           [nombre]: tipo === 'checkbox' ? checked : valor,
 
         }));
-      };    
+      };
+      const manejarCambioSeleccionados = (event) => {
+        const { name, value } = event.target;
+        setFormularioDatos(prevState => ({
+          ...prevState,
+          [name]: value,
+        }));
+      };
     const setFormularioDatos = (nuevosDatos) => {
         asignarFormularioDatos(nuevosDatos);
       };    
@@ -28,45 +35,20 @@ function FormularioEquipos ({onSuccess}) {
     };
     return(
         <form onSubmit={enviarActo} className="formulario-equipos">
-            <div>
-            <label htmlFor="placa">Placa:</label>
-            <input 
-                type="number" 
-                id="placa"
-                name="placa"
-                value={formularioDatos.placa}
-                onChange={manejarCambioDeEntrada}
-                required
-                placeholder="Placa 11111"
-                
-            />
-            </div>
-            <input 
-                type="text" 
-                value={formularioDatos.nombre}
-                onChange={(e) => asignarFormularioDatos({ ...formularioDatos, nombre: e.target.value })}
-                placeholder="Nombre"
-            />
-           <div>
-        <label htmlFor="ubicacion">Ubicación:</label>
-            <select
-            id="ubicacion"
-            name="ubicacion"
-            value={formularioDatos.ubicacion}
-            onChange={(e) => asignarFormularioDatos({...formularioDatos, ubicacion: e.target.value})}
-            required
-        >
-            <option value="">Seleccione ubicación</option>
-            {ubicaciones.map((ubicacion) => (
-                <option key={ubicacion.value} value={ubicacion.value}>
-                {ubicacion.label}
-                </option>
-            ))}
-            </select>
-        </div>
-            {/* Agregar más campos según sea necesario */}
+            <h1>Formulario de Equipos</h1>
+            {crearEquipo.map((campo) => (
+                 <div key={campo.id || campo.name}>
+                     {campo.label && <label htmlFor={campo.id || campo.name}>{campo.label}</label>}
+                     {campo.type === "select" ? (
+                        <select
+                            id={campo.id} name={campo.name} value={formularioDatos[campo.name]} onChange={manejarCambioSeleccionados}
+                            required={campo.required}> {campo.options && campo.options.map((option) => (
+                            <option key={option.value} value={option.value}> {option.label}</option>))}
+                        </select>  ) : (
+                            <input type={campo.type} id={campo.id} name={campo.name} value={formularioDatos[campo.name]}
+                                onChange={manejarCambioDeEntrada} required={campo.required} placeholder={campo.placeholder}
+                            />)
+                     }</div>))}           
             <button type="submit">Guardar Equipo</button>
-        </form>
-    )
-}
+        </form>)}
 export default FormularioEquipos;

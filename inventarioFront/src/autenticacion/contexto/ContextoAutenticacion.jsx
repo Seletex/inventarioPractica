@@ -1,51 +1,44 @@
-import { createContext,useState,useEffect } from "react";
-//import { useNavigate } from "react-router-dom";
+import { createContext,useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 //import {loginUsuario,registrarUsuario} from "../servicios/ServicioAutenticacion";
 
-const AuthContext = createContext();
+const ContextoAutenticacion = createContext();
 
-export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+export const ProveedorAutenticacion = ({ children }) => {
+    const [usuario, asignarUsuario] = useState(null);
+    const navigate = useNavigate();
 
 
-    useEffect(() => {
+    /*useEffect(() => {
         const token = localStorage.getItem("token");
         if(token) {
-            setUser(token);
+            asignarUsuario(token);
         }
         
-    }, []);
+    }, []);*/
     const login = async (credenciales) => {
         try {
-            const response = await axios.post('/auth/login',credenciales)
+            const respuesta = await axios.post('/auth/login',credenciales)
+            localStorage.setItem('token', respuesta.data.token);
+            asignarUsuario(respuesta.data.usuario);
             
-            
-            //const {data} = await loginUsuario(credenciales);
-            
-            setUser(response.data.user);
-            localStorage.setItem('token', response.data.token);
-            
-           
         } catch (error) {
-            console.error("Error al iniciar sesión:", error);
+            throw new Error(error.respuesta?.data?.mensaje || "Error al iniciar sesión:" + error.message);
         }
     }
     const logout = () => {
         localStorage.removeItem("token");
-        setUser(null);
-        //navegate("/login");
+        asignarUsuario(null);
+        navigate("/login");
     }
     return(
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ usuario, login, logout }}>
             {children}
         </AuthContext.Provider>
     )
-}
-
-
-export default AuthContext;
+};
 
 
     

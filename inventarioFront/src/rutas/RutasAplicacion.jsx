@@ -11,15 +11,12 @@ import {RutaPublica} from './RutaPublica'
 const RutasAplicacion = () => {
     return(
         <Routes>
-            <Route path='/' element={<PaginaPrincipal/>}/>
+            <Route path='/' element={<PaginaPrincipal><PaginaLogin/></PaginaPrincipal>}/>
             <Route path='/inventario' element={<RutaPrivada><PaginaInventario/></RutaPrivada>}/>
             <Route path='/login' element={<RutaPublica><PaginaLogin/></RutaPublica>}/>
             <Route path='/registro' element={<RutaPublica><PaginaRegistro/></RutaPublica>}/>
-            <Route path='/tablero' 
-            element={
-            <RutaPrivada><Tablero/></RutaPrivada>
-            }/>
-            <Route path='*' element={<h1>404 - Página no encontrada</h1>}/>
+            <Route path='/tablero' element={<RutaPrivada><Tablero/></RutaPrivada> }/>
+            <Route path='*' element={<RutaPublica><PaginaLogin/></RutaPublica>}/>
         </Routes>
     )
 }

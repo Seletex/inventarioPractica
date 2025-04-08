@@ -1,10 +1,14 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { configDefaults } from 'vitest/config.js'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
   server:{
+    optimizeDeps: {
+      include: ['@testing-library/jest-dom'],
+    },
     port: 5173,
     proxy: {
       '/api': {
@@ -13,22 +17,18 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, '')
       }
   }
-}
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/setupTests.js',
+    include: ['**/*.{test,spec}.{js,jsx}'], // Patrón modificado
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/cypress/**',
+      ...configDefaults.exclude, './e2e/*'
+    ]
+    //exclude: [...configDefaults.exclude, '**/src/componentes/Pruebas/*.test.jsx'],
+  }
 })
-//   resolve: {
-//     alias: {
-//       '@': path.resolve(__dirname, 'src'),
-//     },
-//   },
-//   css: {
-//     preprocessorOptions: {
-//       scss: {
-//         additionalData: `@import "@/styles/variables.scss";`,
-//       },
-//     },
-//   },
-//   define: {
-//     'process.env': {
-//       NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-//     },
-//   },

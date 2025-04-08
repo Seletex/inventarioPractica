@@ -1,32 +1,30 @@
-import {BrowserRouter,Routes,Route} from 'react-router-dom'
-import Home from './pages/Home'
-import Inventario from './pages/Inventario'
-import Login from './pages/Login'
-import Register from './pages/Register'
-
-
-import { AuthContext } from './context/AuthContext'
-import { AuthProvider } from './context/AuthContext'
-
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ProveedorAutenticacion } from './autenticacion/contexto/ContextoAutenticacion';
+import { useAuth } from './autenticacion/anzuelos/usarAutenticacion';
 import './App.css'
+import AppRouter from './rutas/AppRouter'
+import {FormularioAutenticacion} from './autenticacion/componentes/FormularioAutenticacion'
+import {FormularioEquipo} from './autenticacion/componentes/FormularioEquipo'
+
+const RutaPrivada = ({children}) => {
+  const { usuario } = useAuth();
+  return usuario ? children : <Navigate to="/login" replace />;
+}
 
 function App() {
   return (
-    <AuthProvider>
+    <ProveedorAutenticacion>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/inventario" element={<Inventario />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
+          <Route path="/" element={<FormularioAutenticacion />} />
+          <Route path="/login" element={<FormularioAutenticacion />} />
+          <Route path="/registro" element={<FormularioAutenticacion />} />
+          <Route path="/inventario" element={<FormularioEquipo/>} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
-      <div className="App">
-        <h1>Inventario</h1>
-        <p>Bienvenido al sistema de inventario</p>
-      </div>
-    </AuthProvider>
+    </ProveedorAutenticacion>
+   
   )
  
 }
