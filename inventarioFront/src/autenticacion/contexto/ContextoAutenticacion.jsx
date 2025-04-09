@@ -39,6 +39,6 @@ export const ProveedorAutenticacion = ({ children }) => {
         </AuthContext.Provider>
     )
 };
-
+export default ContextoAutenticacion;
 
     

@@ -3,14 +3,13 @@ import { useState } from "react";
 import { loginUsuario } from "../../servicios/Autenticacion.service";
 import {Entrada} from "../../componentes/InterfazUsuario/Entrada";
 import {Boton} from "../../componentes/InterfazUsuario/Boton";
-import {FormularioLogin} from "../../componentes/FormularioLogin";
-
-const PaginaLogin = () => {
+import { Link } from "react-router-dom";
+export default function PaginaLogin(){
     const {formulario, asignarFormulario} = useState({correo: "",contraseña: ""});
     const {error, asignarError} = useState("");
 
-    const manejarEnvio = async (e) => {
-        e.preventDefault();
+    const manejarEnvio = async (evento) => {
+        evento.preventDefault();
         try {
             const {token} = await loginUsuario(formulario.correo, formulario.contraseña);
             localStorage.setItem("token", token);
@@ -35,12 +34,11 @@ const PaginaLogin = () => {
                 <Boton tipo="submit" claseNombre="w-full mt-4 bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
                     Iniciar sesión
                 </Boton>
+                <p className="mt-4 text-center">
+                    ¿No tienes cuenta? <Link to="/register" className="text-blue-500">Regístrate</Link>
+                </p>
             </div>
 
         </form>
-    ); 
-    
-
-    
-};
-export default PaginaLogin;
+    )
+}

@@ -1,18 +1,20 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { configDefaults } from 'vitest/config.js'
+import { configDefaults } from 'vitest/dist/config'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
   server:{
+   
     optimizeDeps: {
+      
       include: ['@testing-library/jest-dom'],
     },
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:5173',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }
