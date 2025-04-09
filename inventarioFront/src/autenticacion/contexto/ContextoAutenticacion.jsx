@@ -1,44 +1,64 @@
-import { createContext,useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-
-//import {loginUsuario,registrarUsuario} from "../servicios/ServicioAutenticacion";
+import { createContext, useState, useEffect } from 'react';
+import { loginUsuario, logoutUsuario, verificarSesion } from '../servicios/Autenticacion.service';
 
 const ContextoAutenticacion = createContext();
 
-export const ProveedorAutenticacion = ({ children }) => {
-    const [usuario, asignarUsuario] = useState(null);
-    const navigate = useNavigate();
+export function ProveedorAutenticacion({ children }) {
+  const [usuario, setUsuario] = useState(null);
+  const [cargando, setCargando] = useState(true);
 
-
-    /*useEffect(() => {
-        const token = localStorage.getItem("token");
-        if(token) {
-            asignarUsuario(token);
+  // Verificar sesión al cargar
+  useEffect(() => {
+    const verificarAutenticacion = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+          const usuario = await verificarSesion(token);
+          setUsuario(usuario);
         }
-        
-    }, []);*/
-    const login = async (credenciales) => {
-        try {
-            const respuesta = await axios.post('/auth/login',credenciales)
-            localStorage.setItem('token', respuesta.data.token);
-            asignarUsuario(respuesta.data.usuario);
-            
-        } catch (error) {
-            throw new Error(error.respuesta?.data?.mensaje || "Error al iniciar sesión:" + error.message);
-        }
-    }
-    const logout = () => {
-        localStorage.removeItem("token");
-        asignarUsuario(null);
-        navigate("/login");
-    }
-    return(
-        <AuthContext.Provider value={{ usuario, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    )
-};
-export default ContextoAutenticacion;
+      } catch (error) {
+        console.error("Error verificando sesión:", error);
+        localStorage.removeItem('token');
+      } finally {
+        setCargando(false);
+      }
+    };
 
-    
+    verificarAutenticacion();
+  }, []);
+
+  const login = async (correo, contraseña) => {
+    try {
+      const { token, usuario } = await loginUsuario(correo, contraseña);
+      localStorage.setItem('token', token);
+      setUsuario(usuario);
+      return { exito: true };
+    } catch (error) {
+      return { exito: false, error: error.message };
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await logoutUsuario();
+    } finally {
+      localStorage.removeItem('token');
+      setUsuario(null);
+    }
+  };
+
+  const value = {
+    usuario,
+    cargando,
+    login,
+    logout,
+    estaAutenticado: !!usuario
+  };
+
+  return (
+    <ContextoAutenticacion.Provider value={value}>
+      {!cargando && children}
+    </ContextoAutenticacion.Provider>
+  );
+}
+

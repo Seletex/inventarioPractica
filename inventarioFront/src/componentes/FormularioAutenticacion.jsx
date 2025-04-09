@@ -1,7 +1,7 @@
 
 import { createContext,useState } from "react";
+import './InterfazUsuario/FormularioAutenticacion.css'; // Asegúrate de que la ruta sea correcta
 
-import './FormularioAutenticacion.css';
 
 const FormularioAutenticacion = createContext();
 export const ProveedorFormularioAutenticacion = ({ eventos }) => {

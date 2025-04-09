@@ -1,13 +1,30 @@
+import 'primereact/resources/themes/lara-light-indigo/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
+import Navegacion from "./componentes/Navegacion";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import PaginaLogin from './paginas/autenticacion/PaginaLogin';
+import PaginaRegistro from './paginas/autenticacion/PaginaRegistro';
+//import Tablero from './paginas/Tablero';
+
+//import { ProveedorFormularioAutenticacion } from './componentes/FormularioAutenticacion';
 function App() {
  // const { usuario } = useAuth();
   return (
-    <Router>
-    <Routes>
-      <Route path="/" element={<h1>Página de inicio</h1>} />
-      <Route path="/login" element={<PaginaLogin />} />
-    </Routes>
-  </Router>
+    <div className="App">
+    
+    
+        <div className="container mx-auto">
+          {/* Aquí puedes agregar más rutas según sea necesario */}
+          <Router>
+            <Routes>
+              <Route path="/" element={<PaginaLogin />} />
+              <Route path="/login" element={<PaginaLogin />} />
+              <Route path="/register" element={<PaginaRegistro />} />
+            </Routes>
+          </Router>
+        </div>
+        <Navegacion />
+     </div>
 )}
 export default App;
