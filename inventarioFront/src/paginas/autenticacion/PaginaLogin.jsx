@@ -26,10 +26,10 @@ export default function LoginForm() {
         <div
             style={{
                 minHeight: '100vh', // Altura mínima para ocupar toda la pantalla
-                display: 'flex',     // Habilita Flexbox
+                /*display: 'flex',     // Habilita Flexbox
                 justifyContent: 'center', // Centra horizontalmente
                 alignItems: 'center', // Centra verticalmente
-                backgroundColor: '#f3f4f6', // Un fondo gris claro similar a bg-gray-50
+                backgroundColor: '#f3f4f6',*/ // Un fondo gris claro similar a bg-gray-50
                 fontFamily: "'Times New Roman', Times, serif"
             }}
         >

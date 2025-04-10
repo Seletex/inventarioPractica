@@ -1,6 +1,11 @@
+export const ROLES = {
+    ADMIN: 'Administrador',
+    ADMINISTRATIVO: 'UsuarioAdministrativo',
+    CONSULTOR: 'Consultor'
+};
 export const rolUsuarioArray = [
     {value: "", label: "Seleccione rol de usuario"},
-    {value: "Administrador", label: "Administrador"},
-    {value: "UsuarioAdministrativo", label: "UsuarioAdministrativo"},
-    {value: "Consultor", label: "Consultor"},
+    {value: ROLES.ADMIN, label: "Administrador"},
+    {value: ROLES.ADMINISTRATIVO, label: "Usuario Administrativo"},
+    {value: ROLES.CONSULTOR, label: "Consultor"},
 ];

@@ -4,7 +4,7 @@
 
 :root {
   max-width: 100%; /* O el ancho que necesites */
-  margin: 10px auto; /* Centra horizontalmente el contenedor de la aplicación */
+  margin: 2px auto; /* Centra horizontalmente el contenedor de la aplicación */
   padding: 10px; /* O el padding que necesites */
   text-align: center; /* Centra el texto dentro de la aplicación */
   display: flex; /* Convierte #root en un contenedor Flexbox */
@@ -23,10 +23,11 @@ a:hover {
 }
 
 body {
-  margin: 10px;
+  margin: 2px;
   /*display: flex;
   place-items: center;*/
   min-width: 320px;
+  max-width: 100%;
   min-height: 100vh;
 }
 
@@ -44,19 +45,38 @@ input{
   font-family: inherit;
   background-color: rgb(255, 255, 255);
 }
-span{
-  margin-top: 5px;
-}
-
-button {
+select{
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
-  margin: 10px;
+  margin: 5px;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: rgb(255, 255, 255);
+}
+.p-button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  margin: 2px;
+  background: #fff;
+  
+}
+
+button {
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  
+  margin: 2px;
+  font-size: 1em;
+  font-weight: 500;
+ 
+  color: #000000;
+ 
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -68,15 +88,18 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+button:disabled {
+  pointer-events: none;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+button:disabled:hover {
+  border-color: transparent;
+}
+button:disabled:focus,
+button:disabled:focus-visible {
+  outline: none;
+}
+button:disabled:active {
+  background-color: transparent;
 }

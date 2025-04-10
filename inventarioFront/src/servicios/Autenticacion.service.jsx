@@ -25,3 +25,10 @@ export const loginUsuario = async (correo, contraseña) => {
     });
     return response.data.usuario;
   };
+  export const logoutUsuario = async () => {
+    try {
+      await api.post('/auth/logout');
+    } catch (error) {
+      throw new Error(error.response?.data?.message || 'Error al cerrar sesión');
+    }
+  };

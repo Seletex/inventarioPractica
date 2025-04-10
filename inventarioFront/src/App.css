@@ -1,7 +1,7 @@
 @import 'primereact/resources/themes/lara-light-indigo/theme.css';
 @import 'primereact/resources/primereact.min.css';
 @import "primeimport/primeicons.css";
-.span{
+span{
   font-size: 16px;
   color: #646cff;
   border: 10px solid #646cff;
@@ -16,14 +16,14 @@
   font-weight: bold;
   text-transform: uppercase;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  background-color: #fff;
+ /* background-color: #fff;*/
   box-sizing: border-box;
   font-family: 'Times New Roman', Times, serif;
   width: 100%;
 }
 #root {
   max-width: 100%;
-  margin-top: 10px auto;
+  margin-top: 2px auto;
   padding: 2rem;
   text-align: center;
 }
@@ -43,26 +43,31 @@ body {
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
 .card {
   padding: 2em;
 }
 
 .read-the-docs {
   color: #888;
+}
+/* En tu archivo CSS global */
+.badge-pendiente {
+  background-color: #fef3c7;
+  color: #92400e;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+}
+
+.badge-activo {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+table {
+  border-spacing: 0 0.5rem;
+}
+
+th {
+  white-space: nowrap;
 }

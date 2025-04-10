@@ -1,6 +1,5 @@
 import { createContext, useState, useEffect } from 'react';
-import { loginUsuario, logoutUsuario, verificarSesion } from '../servicios/Autenticacion.service';
-
+import { loginUsuario, verificarSesion, logoutUsuario } from '../../servicios/Autenticacion.service';
 const ContextoAutenticacion = createContext();
 
 export function ProveedorAutenticacion({ children }) {
