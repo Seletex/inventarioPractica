@@ -2,6 +2,9 @@
 @import 'primereact/resources/primereact.min.css';
 @import 'primeicons/primeicons.css';
 
+
+
+
 :root {
   max-width: 100%; /* O el ancho que necesites */
   margin: 2px auto; /* Centra horizontalmente el contenedor de la aplicación */

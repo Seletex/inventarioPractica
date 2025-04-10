@@ -1,6 +1,15 @@
-import api from './api';
 
-export const equiposService = {
+import { currentMode } from './apiSwitch';
+  import { mockEquiposService } from './mockEquipos.api';
+  import { realEquiposService } from './realEquipos.api';
+  
+  import { API_MODE } from './apiConstants'; // Ensure API_MODE is defined in this file or imported from the correct module
+
+  export const equiposService = currentMode === API_MODE.MOCK 
+    ? mockEquiposService 
+    : realEquiposService;
+
+/*export const equiposService = {
   async obtenerTodo() {
     try {
       const response = await api.get('/equipos');
@@ -53,5 +62,20 @@ export const equiposService = {
     } catch (error) {
       throw new Error('Error al buscar equipos', error);
     }
+  },
+  async filtrarAvanzado(filtros) {
+    try {
+      // Convertir fechas a formato ISO
+      const params = {
+        ...filtros,
+        fecha_inicio: filtros.fecha_inicio?.toISOString(),
+        fecha_fin: filtros.fecha_fin?.toISOString()
+      };
+      
+      const response = await api.get('/equipos/filtrar', { params });
+      return response.data;
+    } catch (error) {
+      throw new Error('Error al filtrar equipos'+error);
+    }
   }
-};
+};*/

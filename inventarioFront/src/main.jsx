@@ -8,7 +8,13 @@ import 'primeicons/primeicons.css';
 
 // Asegúrate de que el elemento "root" existe
 const root = ReactDOM.createRoot(document.getElementById('root'));
+/*if (import.meta.env.DEV) {
+  import('./mocks/browser').then(({ worker }) => {
+    worker.start();
+  });
+}*/
 root.render(
+  
   <React.StrictMode>
     <App />
   </React.StrictMode>
