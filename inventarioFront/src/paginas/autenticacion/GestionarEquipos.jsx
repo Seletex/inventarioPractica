@@ -56,7 +56,7 @@ export default function GestionarEquipos() {
   return (<div className="p-4"><Toast ref={toast} /><div className="flex justify-content-between align-items-center mb-4">
         <h1 className="text-2xl font-bold">Gestión de Equipos</h1><div className="flex gap-2"> <span className="p-input-icon-left">
             <i className="pi pi-search w-full" /><InputText value={busqueda} onChange={(e) => 
-            setBusqueda(e.target.value)}placeholder="Buscar equipos..."/>
+            setBusqueda(e.target.value)}placeholder="Busqueda de ..."/>
           </span><Button label="Nuevo Equipo" icon="pi pi-plus" onClick={() => { setEquipoEditando(null);
            asignarMostrarModelo(true);}}/>
         </div></div><div className="tabla-con-bordes"><TablaEquipos columns={columnas} data={equiposFiltrados}

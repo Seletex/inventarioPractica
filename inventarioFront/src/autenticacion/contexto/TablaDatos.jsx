@@ -36,57 +36,7 @@ export const TablaEquipos = ({ columns, data }) => {
   //  usePagination
   );
   const datosAMostrar = page || rows;
-/* <div className="flex flex-wrap justify-between items-center mt-3 p-2 gap-2">
-        <div className="flex items-center gap-1">
-          <Button
-            icon="pi pi-angle-double-left"
-            className="p-button-rounded p-button-text p-button-sm"
-            onClick={() => gotoPage(0)}
-            disabled={!canPreviousPage}
-            tooltip="Primera página"
-          />
-          <Button
-            icon="pi pi-angle-left"
-            className="p-button-rounded p-button-text p-button-sm"
-            onClick={() => previousPage()}
-            disabled={!canPreviousPage}
-            tooltip="Página anterior"
-          />
-          <span className="text-sm mx-2">
-            Página <strong>{pageIndex + 1}</strong> de <strong>{pageOptions.length}</strong>
-          </span>
-          <Button
-            icon="pi pi-angle-right"
-            className="p-button-rounded p-button-text p-button-sm"
-            onClick={() => nextPage()}
-            disabled={!canNextPage}
-            tooltip="Página siguiente"
-          />
-          <Button
-            icon="pi pi-angle-double-right"
-            className="p-button-rounded p-button-text p-button-sm"
-            onClick={() => gotoPage(pageCount - 1)}
-            disabled={!canNextPage}
-            tooltip="Última página"
-          />
-        </div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-sm">Mostrar:</span>
-          <Dropdown
-            value={pageSize}
-            options={[5, 10, 20, 30, 50].map(option => ({
-              label: `${option} filas`,
-              value: option
-            }))}
-            onChange={(e) => setPageSize(Number(e.value))}
-            style={{ width: '120px' }}
-          />
-        </div>
-      </div>
-    </div>
-  );
-};*/
   return (
     <div className="w-full">
     <table {...getTableProps()} className="w-full border-separate" style={{ borderSpacing: 0 }}>
