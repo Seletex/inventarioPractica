@@ -7,7 +7,7 @@ import { InputText } from "primereact/inputtext";
 import {confirmarCambioEstadoFn, cambiarEstadoEquipoFn,  cargarEquiposFn,  manejoEliminarFn,
   mostrarExitoFn,  mostrarErrorFn,} from '../../autenticacion/anzuelos/usoGestionFunciones.js'
 
-export default function GestionarEquipos() {
+export default function ManteniminetosProgramados() {
   const [equipos, setEquipos] = useState([]);
   const [equiposFiltrados, setEquiposFiltrados] = useState([]);
   const [carga, asignarCarga] = useState(true);
@@ -55,7 +55,7 @@ export default function GestionarEquipos() {
   };
   return (<div className="p-4"><Toast ref={toast} /><div className="flex justify-content-between align-items-center mb-4">
         <h1 className="text-2xl font-bold">Gestión de Equipos</h1><div className="flex gap-2"> <span className="p-input-icon-left">
-            <i className="pi pi-search w-full" /><InputText value={busqueda} onChange={(e) => 
+            <i className="pi pi-search" /><InputText value={busqueda} onChange={(e) => 
             setBusqueda(e.target.value)}placeholder="Buscar equipos..."/>
           </span><Button label="Nuevo Equipo" icon="pi pi-plus" onClick={() => { setEquipoEditando(null);
            asignarMostrarModelo(true);}}/>

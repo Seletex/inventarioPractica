@@ -83,6 +83,9 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
+InputText{
+  width: 100%;
+}
 button:hover {
   border-color: #646cff;
 }
@@ -134,4 +137,61 @@ button:disabled:active {
 .estado-badge.inactivo {
   background-color: #ffcdd2;
   color: #c63737;
+}
+.p-datatable .p-datatable-tbody > tr > td {
+  white-space: nowrap;
+}
+
+/* Estilo específico para el contenedor de botones */
+.acciones-container {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  gap: 0.3rem;
+}
+
+/* Tamaño consistente para los botones */
+.acciones-container .p-button {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* Bordes para todas las celdas */
+.tabla-con-bordes .p-datatable .p-datatable-thead > tr > th,
+.tabla-con-bordes .p-datatable .p-datatable-tbody > tr > td {
+  border-right: 1px solid #dee2e6 !important; /* Color del borde */
+}
+
+/* Elimina el borde del último elemento */
+.tabla-con-bordes .p-datatable .p-datatable-thead > tr > th:last-child,
+.tabla-con-bordes .p-datatable .p-datatable-tbody > tr > td:last-child {
+  border-right: none !important;
+}
+
+/* Bordes en el header */
+.tabla-con-bordes .p-datatable .p-datatable-thead > tr > th {
+  border-bottom: 1px solid #dee2e6 !important;
+}
+:root {
+  --color-borde: #e5e7eb;
+  --grosor-borde: 1px;
+}
+
+.tabla-estilizada {
+  --border-style: var(--grosor-borde) solid var(--color-borde);
+  
+  & th, & td {
+    border-right: var(--border-style);
+    padding: 0.75rem;
+  }
+  
+  & th:last-child, & td:last-child {
+    border-right: none;
+  }
+  
+  & thead {
+    border-bottom: var(--border-style);
+  }
 }

@@ -7,6 +7,7 @@ import PaginaLogin from './paginas/autenticacion/PaginaLogin';
 import PaginaRegistro from './paginas/autenticacion/PaginaRegistro';
 import PaginaMenu from './paginas/autenticacion/PaginaMenu';
 import GestionarEquipos from './paginas/autenticacion/GestionarEquipos';
+import ManteniminetosProgramados from './paginas/autenticacion/MantenimientosProgramados';
 //import Tablero from './paginas/Tablero';
 
 //import { ProveedorFormularioAutenticacion } from './componentes/FormularioAutenticacion';
@@ -20,6 +21,7 @@ function App() {
           
           <Routes>
             <Route path="/gestion-equipo" element={<GestionarEquipos />} />
+            <Route path="/programados" element={<ManteniminetosProgramados/>}/>
             <Route path="/" element={<PaginaLogin />} />
             <Route path="/menu" element={<PaginaMenu />} />
             <Route path="/login" element={<PaginaLogin />} />
