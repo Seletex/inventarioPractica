@@ -106,3 +106,32 @@ button:disabled:focus-visible {
 button:disabled:active {
   background-color: transparent;
 }
+/* Para asegurar que los botones se mantengan en línea */
+.p-button {
+  min-width: 2rem !important;
+  height: 2rem !important;
+  margin: 0 0.1rem !important;
+}
+
+/* Para la columna de acciones */
+.action-cell {
+  white-space: nowrap;
+  display: flex;
+  justify-content: center;
+}
+.estado-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 2rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.estado-badge.activo {
+  background-color: #c8e6c9;
+  color: #256029;
+}
+
+.estado-badge.inactivo {
+  background-color: #ffcdd2;
+  color: #c63737;
+}
