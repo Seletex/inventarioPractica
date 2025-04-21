@@ -1,7 +1,7 @@
-import { useTable, useSortBy, usePagination } from 'react-table';
-import { Button } from 'primereact/button';
-import { Calendar } from 'primereact/calendar';
-import { Tag } from 'primereact/tag';
+import { useTable, useSortBy, usePagination } from "react-table";
+import { Button } from "primereact/button";
+import { Calendar } from "primereact/calendar";
+import { Tag } from "primereact/tag";
 
 export const TablaMantenimientos = ({ columns, data }) => {
   const {
@@ -25,7 +25,7 @@ export const TablaMantenimientos = ({ columns, data }) => {
       columns,
       data: data || [],
       initialState: { pageIndex: 0, pageSize: 10 },
-      autoResetPage: false
+      autoResetPage: false,
     },
     useSortBy,
     usePagination
@@ -36,33 +36,44 @@ export const TablaMantenimientos = ({ columns, data }) => {
       {/* Tabla */}
       <table {...getTableProps()} className="w-full">
         <thead>
-          {headerGroups.map(headerGroup => (
+          {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps(column.getSortByToggleProps())} 
-                    className="text-left p-3 border-b border-gray-200 bg-gray-50">
-                  {column.render('Header')}
+              {headerGroup.headers.map((column) => (
+                <th
+                  {...column.getHeaderProps(column.getSortByToggleProps())}
+                  className="text-left p-3 border-b border-gray-200 bg-gray-50"
+                >
+                  {column.render("Header")}
                 </th>
               ))}
             </tr>
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {datosAMostrar.map(row => {
+          {datosAMostrar.map((row) => {
             prepareRow(row);
             return (
               <tr {...row.getRowProps()} className="hover:bg-gray-50">
-                {row.cells.map(cell => {
+                {row.cells.map((cell) => {
                   // Renderizado especial para columnas de fecha
-                  if (cell.column.id === 'fechaProgramada' || cell.column.id === 'fechaRealizacion') {
+                  if (
+                    cell.column.id === "fechaProgramada" ||
+                    cell.column.id === "fechaRealizacion"
+                  ) {
                     return (
-                      <td {...cell.getCellProps()} className="p-3 border-b border-gray-200">
+                      <td
+                        {...cell.getCellProps()}
+                        className="p-3 border-b border-gray-200"
+                      >
                         {cell.value ? (
-                          <Tag 
-                            value={new Date(cell.value).toLocaleDateString()} 
+                          <Tag
+                            value={new Date(cell.value).toLocaleDateString()}
                             severity={
-                              cell.column.id === 'fechaRealizacion' ? 'success' : 
-                              new Date(cell.value) < new Date() ? 'danger' : 'info'
+                              cell.column.id === "fechaRealizacion"
+                                ? "success"
+                                : new Date(cell.value) < new Date()
+                                ? "danger"
+                                : "info"
                             }
                           />
                         ) : (
@@ -71,11 +82,14 @@ export const TablaMantenimientos = ({ columns, data }) => {
                       </td>
                     );
                   }
-                  
+
                   // Renderizado estándar para otras columnas
                   return (
-                    <td {...cell.getCellProps()} className="p-3 border-b border-gray-200">
-                      {cell.render('Cell')}
+                    <td
+                      {...cell.getCellProps()}
+                      className="p-3 border-b border-gray-200"
+                    >
+                      {cell.render("Cell")}
                     </td>
                   );
                 })}
@@ -103,7 +117,8 @@ export const TablaMantenimientos = ({ columns, data }) => {
             tooltip="Página anterior"
           />
           <span className="text-sm">
-            Página <strong>{pageIndex + 1}</strong> de <strong>{pageOptions.length}</strong>
+            Página <strong>{pageIndex + 1}</strong> de{" "}
+            <strong>{pageOptions.length}</strong>
           </span>
           <Button
             icon="pi pi-angle-right"
@@ -125,10 +140,10 @@ export const TablaMantenimientos = ({ columns, data }) => {
           <span className="text-sm">Filas por página:</span>
           <select
             value={pageSize}
-            onChange={e => setPageSize(Number(e.target.value))}
+            onChange={(e) => setPageSize(Number(e.target.value))}
             className="p-inputtext p-component p-inputtext-sm"
           >
-            {[5, 10, 20, 30, 50].map(size => (
+            {[5, 10, 20, 30, 50].map((size) => (
               <option key={size} value={size}>
                 {size}
               </option>

@@ -1,27 +1,30 @@
-import 'primereact/resources/themes/lara-light-indigo/theme.css';
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
+import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
 import Navegacion from "./componentes/Navegacion";
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import PaginaLogin from './paginas/autenticacion/PaginaLogin';
-import PaginaRegistro from './paginas/autenticacion/PaginaRegistro';
-import PaginaMenu from './paginas/autenticacion/PaginaMenu';
-import GestionarEquipos from './paginas/autenticacion/GestionarEquipos';
-import ManteniminetosProgramados from './paginas/autenticacion/MantenimientosProgramados';
-//import Tablero from './paginas/Tablero';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import PaginaLogin from "./paginas/autenticacion/PaginaLogin";
+import PaginaRegistro from "./paginas/autenticacion/PaginaRegistro";
+import PaginaMenu from "./paginas/autenticacion/PaginaMenu";
+import GestionarEquipos from "./paginas/autenticacion/GestionarEquipos";
+import ManteniminetosProgramados from "./paginas/autenticacion/MantenimientosProgramados";
+import GestionarUsuarios from "./paginas/autenticacion/GestiónUsuarios";
 
-//import { ProveedorFormularioAutenticacion } from './componentes/FormularioAutenticacion';
+
 function App() {
- // const { usuario } = useAuth();
+  // const { usuario } = useAuth();
   return (
     <div className="App">
       <div className="container mx-auto">
-      <Navegacion />
+        <Navegacion />
         <Router>
-          
           <Routes>
             <Route path="/gestion-equipo" element={<GestionarEquipos />} />
-            <Route path="/programados" element={<ManteniminetosProgramados/>}/>
+            <Route
+              path="/programados"
+              element={<ManteniminetosProgramados />}
+            />
+            <Route path="/gestion-usuarios" element={<GestionarUsuarios />} />
             <Route path="/" element={<PaginaLogin />} />
             <Route path="/menu" element={<PaginaMenu />} />
             <Route path="/login" element={<PaginaLogin />} />
@@ -30,5 +33,6 @@ function App() {
         </Router>
       </div>
     </div>
-  );}
+  );
+}
 export default App;

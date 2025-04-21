@@ -12,7 +12,8 @@ const Navegacion = () => {
               <nav>
                 <ul>
 
-                <Menubar model={navlist}/>
+                <Menubar style={{width: '10%',  color: 'white', minWidth:'320px',maxWidth:'600px',fontFamily: "'Times New Roman', Times, serif", fontSize: '16px' }}
+                className="w-full" model={navlist}/>
 
                 </ul>
               </nav>

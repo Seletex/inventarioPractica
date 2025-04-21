@@ -1,37 +1,39 @@
-import { useState } from 'react';
-import { Calendar } from 'primereact/calendar';
-import { Dropdown } from 'primereact/dropdown';
-import { InputText } from 'primereact/inputtext';
-import { Button } from 'primereact/button';
+import { useState } from "react";
+import { Calendar } from "primereact/calendar";
+import { Dropdown } from "primereact/dropdown";
+import { InputText } from "primereact/inputtext";
+import { Button } from "primereact/button";
 
 export const FormMantenimiento = ({ mantenimiento, onSubmit, equipos }) => {
-    const[setMostrarModal]=useState(false);
-    const[setMantenimientoEditando]=useState(null);
-  const [formData, setFormData] = useState(mantenimiento || {
-    equipoId: '',
-    tipo: 'Preventivo',
-    fechaProgramada: new Date(),
-    descripcion: '',
-    prioridad: 'Media'
-  });
+  const [setMostrarModal] = useState(false);
+  const [setMantenimientoEditando] = useState(null);
+  const [formData, setFormData] = useState(
+    mantenimiento || {
+      equipoId: "",
+      tipo: "Preventivo",
+      fechaProgramada: new Date(),
+      descripcion: "",
+      prioridad: "Media",
+    }
+  );
 
   const tiposMantenimiento = [
-    { label: 'Preventivo', value: 'Preventivo' },
-    { label: 'Correctivo', value: 'Correctivo' },
-    { label: 'Predictivo', value: 'Predictivo' }
+    { label: "Preventivo", value: "Preventivo" },
+    { label: "Correctivo", value: "Correctivo" },
+    { label: "Predictivo", value: "Predictivo" },
   ];
 
   const prioridades = [
-    { label: 'Alta', value: 'Alta' },
-    { label: 'Media', value: 'Media' },
-    { label: 'Baja', value: 'Baja' }
+    { label: "Alta", value: "Alta" },
+    { label: "Media", value: "Media" },
+    { label: "Baja", value: "Baja" },
   ];
 
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit({
       ...formData,
-      fechaProgramada: formData.fechaProgramada.toISOString()
+      fechaProgramada: formData.fechaProgramada.toISOString(),
     });
   };
 
@@ -41,11 +43,11 @@ export const FormMantenimiento = ({ mantenimiento, onSubmit, equipos }) => {
         <label>Equipo</label>
         <Dropdown
           value={formData.equipoId}
-          options={equipos.map(e => ({
+          options={equipos.map((e) => ({
             label: `${e.placa} - ${e.marca} (${e.modelo})`,
-            value: e.id
+            value: e.id,
           }))}
-          onChange={(e) => setFormData({...formData, equipoId: e.value})}
+          onChange={(e) => setFormData({ ...formData, equipoId: e.value })}
           placeholder="Seleccione un equipo"
           required
         />
@@ -56,7 +58,7 @@ export const FormMantenimiento = ({ mantenimiento, onSubmit, equipos }) => {
         <Dropdown
           value={formData.tipo}
           options={tiposMantenimiento}
-          onChange={(e) => setFormData({...formData, tipo: e.value})}
+          onChange={(e) => setFormData({ ...formData, tipo: e.value })}
         />
       </div>
 
@@ -64,7 +66,9 @@ export const FormMantenimiento = ({ mantenimiento, onSubmit, equipos }) => {
         <label>Fecha programada</label>
         <Calendar
           value={formData.fechaProgramada}
-          onChange={(e) => setFormData({...formData, fechaProgramada: e.value})}
+          onChange={(e) =>
+            setFormData({ ...formData, fechaProgramada: e.value })
+          }
           showIcon
           dateFormat="dd/mm/yy"
           required
@@ -76,7 +80,7 @@ export const FormMantenimiento = ({ mantenimiento, onSubmit, equipos }) => {
         <Dropdown
           value={formData.prioridad}
           options={prioridades}
-          onChange={(e) => setFormData({...formData, prioridad: e.value})}
+          onChange={(e) => setFormData({ ...formData, prioridad: e.value })}
         />
       </div>
 
@@ -84,7 +88,9 @@ export const FormMantenimiento = ({ mantenimiento, onSubmit, equipos }) => {
         <label>Descripción</label>
         <InputText
           value={formData.descripcion}
-          onChange={(e) => setFormData({...formData, descripcion: e.target.value})}
+          onChange={(e) =>
+            setFormData({ ...formData, descripcion: e.target.value })
+          }
         />
       </div>
 
@@ -98,11 +104,7 @@ export const FormMantenimiento = ({ mantenimiento, onSubmit, equipos }) => {
             setMantenimientoEditando(null);
           }}
         />
-        <Button
-          label="Guardar"
-          icon="pi pi-check"
-          type="submit"
-        />
+        <Button label="Guardar" icon="pi pi-check" type="submit" />
       </div>
     </form>
   );
