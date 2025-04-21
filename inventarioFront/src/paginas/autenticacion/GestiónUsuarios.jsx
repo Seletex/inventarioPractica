@@ -5,19 +5,9 @@ import { TablaEquipos } from "../../autenticacion/contexto/TablaDatos.jsx";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { InputText } from "primereact/inputtext";
-// 2. Adaptar o crear funciones específicas para usuarios si las funciones originales no son genéricas
-// Es probable que necesites funciones como:
-// - cargarUsuariosFn
-// - confirmarCambioEstadoUsuarioFn
-// - cambiarEstadoUsuarioFn
-// - manejoEliminarUsuarioFn
-// Las funciones de mostrarExito/Error suelen ser genéricas.
-import {
-  cargarFn as cargarUsuariosFn,
-  manejoEliminarFn as manejoEliminarUsuarioFn,
-  mostrarExitoFn,
-  mostrarErrorFn,
-} from "../../autenticacion/anzuelos/usoGestionFuncionesEquipo.js";
+import { mostrarErrorFn , mostrarExitoFn,cargarEntidadesFn, manejoEliminarEntidadFn,}
+ from "../../autenticacion/anzuelos/usoGestionFuncionesUsuario.js";
+
 
 export default function GestionarUsuarios() {
   const [usuarios, setUsuarios] = useState([]);
@@ -28,16 +18,7 @@ export default function GestionarUsuarios() {
   const [busqueda, setBusqueda] = useState("");
   const toast = useRef(null);
 
-  const cargarUsuarios = async () => {
-    await cargarUsuariosFn(
-      // Usamos la función adaptada/creada para usuarios
-      asignarCarga,
-      usuariosService, // Usamos el servicio de usuarios
-      setUsuarios,
-      setUsuariosFiltrados,
-      mostrarError
-    );
-  };
+  
 
   const columnas = [
     { Header: "Nombre Completo", accessor: "nombreCompleto" },
@@ -97,14 +78,25 @@ export default function GestionarUsuarios() {
     }
   }, [busqueda, usuarios]);
   const manejoEliminarUsuario = async (id) => {
-    await manejoEliminarUsuarioFn(
+    await manejoEliminarEntidadFn(
       id,
       usuariosService,
       mostrarExito,
       cargarUsuarios,
-      mostrarError
+      mostrarError,
+      "usuario", // Nombre de la entidad
+      toast // Pasar la referencia del toast
     );
   };
+  const cargarUsuarios = async()=> (
+    await cargarEntidadesFn(
+      asignarCarga,
+      usuariosService,
+      setUsuarios,
+      setUsuariosFiltrados,
+      mostrarError,
+      "usuarios" // Nombre de la entidad
+    ));
 
   const mostrarExito = (mensaje) => {
     mostrarExitoFn(mensaje, toast);
