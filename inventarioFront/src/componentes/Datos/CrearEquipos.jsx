@@ -18,6 +18,27 @@ const obtenerFechaActual = () => {
     return `${year}-${month}-${day}`;
 };
 
+export const siNoOpcionesGarantia = [
+    {value: "", label: "¿Tiene Garantía?"}, // Opción por defecto
+    {value: "true", label: "Sí"}, // Usamos strings "true" y "false" como valores para la select
+    {value: "false", label: "No"},
+];
+export const siNoOpcionesTeclado = [
+    {value: "", label: "¿Tiene Teclado?"}, // Opción por defecto
+    {value: "true", label: "Sí"}, // Usamos strings "true" y "false" como valores para la select
+    {value: "false", label: "No"},
+];
+export const siNoOpcionesMouse = [
+    {value: "", label: "¿Tiene Mouse?"}, // Opción por defecto
+    {value: "true", label: "Sí"}, // Usamos strings "true" y "false" como valores para la select
+    {value: "false", label: "No"},
+];
+export const siNoOpcionesEntrega=[
+    {value: "", label: "¿Ha sido Entregado?"}, // Opción por defecto
+    {value: "true", label: "Sí"}, // Usamos strings "true" y "false" como valores para la select
+    {value: "false", label: "No"},
+];
+
 // Mapeo de Tipos de Equipo a sus arrays de Marcas
 const marcasPorTipoEquipo = {
   'Laptop': MarcaComputador,
@@ -63,12 +84,12 @@ const camposFormularioEquipo = [
     },
     {type: "date", name: "fecha_adquisicion", label: "Fecha de Adquisición:", required: true, placeholder: "Fecha de Adquisición", defaultValue: obtenerFechaActual(), icon: 'FiCalendar'},
    
-    {type: "boolean", name: "garantia", label: "¿Tiene Garantía?", required: false},
+    {type: "select", name: "garantia",options:siNoOpcionesGarantia, required: false},
     {type: "select", name: "tiempo_garantia", placeHolder: "Tiempo de Garantía:", required: false,
         options: TiempoGarantia.map(tiempoGarantia => ({value: tiempoGarantia.value, label: tiempoGarantia.label,})), icon: 'FiCalendar'},
 
-    {type: "boolean", name: "teclado", label: "¿Tiene Teclado?", required: false},
-    {type: "boolean", name: "mouse", label: "¿Tiene Mouse?", required: false},
+    {type: "select", name: "teclado", options: siNoOpcionesTeclado,  required: false},
+    {type: "select", name: "mouse", options: siNoOpcionesMouse, required: false},
 
     {type: "select", name: "monitor", required: false,
         options: MarcaMonitor.map(marcaMonitor => ({value: marcaMonitor.value, label: marcaMonitor.label,})), icon: 'FiMonitor', searchable: true // Puede ser searchable
@@ -77,7 +98,7 @@ const camposFormularioEquipo = [
 
     {type: "text", name: "responsable",  placeHolder: "Nombre del responsable", required: false, icon: 'FiUser'},
 
-    {type: "boolean", name: "entregado", label: "¿Ha sido entregado?", required: false},
+    {type: "select", name: "entregado", options:siNoOpcionesEntrega, required: false},
 ];
 
 export { camposFormularioEquipo, marcasPorTipoEquipo, obtenerFechaActual };
