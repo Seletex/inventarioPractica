@@ -1,5 +1,5 @@
-export const marcaMonitor = [
-    {value: "", label: "Seleccione marca"},
+export const MarcaMonitor = [
+    {value: "", label: "Seleccione Marca"},
     {value: "Acer", label: "Acer"},
     {value: "Apple", label: "Apple"},
     {value: "Asus", label: "Asus"},

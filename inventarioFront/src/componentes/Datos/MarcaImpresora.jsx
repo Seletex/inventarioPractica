@@ -1,4 +1,5 @@
 export const MarcaImpresora = [
+    {value: "", label: "Seleccione Marca"},
     {value: "HP", label: "HP"},
     {value: "Canon", label: "Canon"},
     { value: "Brother", label: "Brother"},

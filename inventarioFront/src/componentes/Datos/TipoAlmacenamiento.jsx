@@ -1,4 +1,4 @@
-export const tipoAlmacenamientoArray = [
+export const TipoAlmacenamiento = [
     {value: "", label: "Seleccione tipo de almacenamiento"},
     {value: "HDD", label: "HDD"},
     {value: "SSD", label: "SSD"},

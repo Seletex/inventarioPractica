@@ -1,5 +1,5 @@
 // formularioInicial.js
-export const formularioInicial = {
+export const FormularioInicial = {
     placa: " ",
     nombre: " ",
     marca: " ",

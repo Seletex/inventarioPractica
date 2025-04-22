@@ -9,11 +9,15 @@ export default function Boton({
 }) {
   return (
     <button
+    style={{width: "100%", textAlign: "center", fontSize: "1.2rem",
+      padding: "5px", 
+      box: "0 4px 8px rgba(0, 0, 0, 0.2)"}}
+   
       type={tipo}
       disabled={loading}
       className={`
         w-full bg-blue-600 hover:bg-blue-700 text-white
-        font-medium py-3 px-4 rounded-lg transition duration-200
+        font-medium rounded-lg transition duration-200
         shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500
         focus:ring-offset-2
         ${loading ? 'opacity-70 cursor-not-allowed' : ''}

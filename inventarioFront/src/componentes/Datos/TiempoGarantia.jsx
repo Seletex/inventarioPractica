@@ -1,4 +1,4 @@
-export const tiempoGarantiaArray = [
+export const TiempoGarantia = [
     {value: "", label: "Seleccione tiempo de garantía"},
     {value: "3 meses", label: "3 meses"},
     {value: "6 meses", label: "6 meses"},

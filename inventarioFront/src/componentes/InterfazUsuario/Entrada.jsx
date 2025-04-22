@@ -18,6 +18,9 @@ export default function Entrada({
         </div>
       )}
       <input
+      style={{width: "100%", textAlign: "center", fontSize: "1.2rem",
+        padding: "5px", 
+        box: "0 4px 8px rgba(0, 0, 0, 0.2)"}}
         placeholder={placeHolder}
         type={tipo}
         name={nombre}
@@ -25,7 +28,7 @@ export default function Entrada({
         required={required}
         onChange={manejarCambio}
         className={`
-          w-full px-4 py-3 rounded-lg border border-gray-300
+          w-full rounded-lg
           focus:ring-2 focus:ring-blue-500 focus:border-transparent
           transition
           ${icono ? 'pl-10' : 'pl-4'}

@@ -8,9 +8,10 @@ span {
   text-align: center;
   font-size: 20px;
   color: #646cff;
-  border: 10px solid #646cff;
+  border: 5px solid #646cff;
   border-radius: 50%;
-  padding: 10px;
+  padding: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   display: inline-block;
   margin: 5px;
 
@@ -19,7 +20,7 @@ span {
   cursor: pointer;
   font-weight: bold;
   text-transform: uppercase;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  
   /* background-color: #fff;*/
   box-sizing: border-box;
   font-family: "Times New Roman", Times, serif;
@@ -35,18 +36,7 @@ body {
   font-family: (--font-family);
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
+
 .card {
   padding: 2em;
 }

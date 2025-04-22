@@ -1,4 +1,4 @@
-export const sistemaOperativoArray = [
+export const SistemaOperativo = [
     {value: "", label: "Seleccione sistema operativo"},
     {value: "Windows 7", label: "Windows 7"},
     {value: "Windows 7 Starter" , label: "Windows 7 Starter"},

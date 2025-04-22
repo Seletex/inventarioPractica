@@ -1,4 +1,4 @@
-export const versionOfficeArray = [
+export const VersionOffice = [
     {value: "", label: "Seleccione versión de Office"},
     {value: "Office 2010", label: "Office 2010"},
     {value: "Office 2010 Standard", label: "Office 2010 Standard"},

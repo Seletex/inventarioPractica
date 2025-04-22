@@ -9,7 +9,7 @@ import PaginaMenu from "./paginas/autenticacion/PaginaMenu";
 import GestionarEquipos from "./paginas/autenticacion/GestionarEquipos";
 import ManteniminetosProgramados from "./paginas/autenticacion/MantenimientosProgramados";
 import GestionarUsuarios from "./paginas/autenticacion/GestiónUsuarios";
-
+import PaginaRegistrarEquipos from "./paginas/PaginaRegistrarEquipo";
 
 function App() {
   // const { usuario } = useAuth();
@@ -19,16 +19,18 @@ function App() {
         <Navegacion />
         <Router>
           <Routes>
-            <Route path="/gestion-equipo" element={<GestionarEquipos />} />
+            <Route path="/gestion-equipo" element={<GestionarEquipos />}/>
             <Route
               path="/programados"
               element={<ManteniminetosProgramados />}
             />
-            <Route path="/gestion-usuarios" element={<GestionarUsuarios />} />
+            <Route path="/gestion-usuarios" element={<GestionarUsuarios />}/>
             <Route path="/" element={<PaginaLogin />} />
             <Route path="/menu" element={<PaginaMenu />} />
             <Route path="/login" element={<PaginaLogin />} />
             <Route path="/register" element={<PaginaRegistro />} />
+            <Route path="/registrar-equipo" element={<PaginaRegistrarEquipos />}/>
+            <Route path="*" element={<PaginaLogin />} />
           </Routes>
         </Router>
       </div>

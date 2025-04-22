@@ -1,4 +1,4 @@
-export const ramArray = [
+export const RAM = [
     {value: "", label: "Seleccione capacidad de RAM"},
     {value: "2GB", label: "2GB"},
     {value: "4GB", label: "4GB"},

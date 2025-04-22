@@ -2,17 +2,14 @@
 
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import Entrada from "../../componentes/InterfazUsuario/Entrada";
-import Boton from "../../componentes/InterfazUsuario/Boton";
+import Entrada from "../componentes/InterfazUsuario/Entrada";
+import Boton from "../componentes/InterfazUsuario/Boton";
 import * as FiIcons from "react-icons/fi";
 
-// Importar configuración de campos y datos
-import { camposFormularioEquipo, marcasPorTipoEquipo,
-   //  obtenerFechaActual } 
- } from "../componentes/Datos/formDataEquipos.js"; // Asegúrate de la ruta correcta
-
+// Importar configuración de campos y datos (asegúrate de las rutas)
+import { camposFormularioEquipo, marcasPorTipoEquipo, obtenerFechaActual } from "../componentes/Datos/CrearEquipos.jsx";
 // Importar servicio
-import { mockEquiposService as equiposService } from "../../servicios/mockEquipos.api.js"; // Asegúrate de la ruta correcta
+import { mockEquiposService as equiposService } from "../servicios/mockEquipos.api.js";
 
 
 // Componente para renderizar iconos dinámicamente
@@ -23,27 +20,12 @@ const Icono = ({ nombre }) => {
 
 
 export default function PaginaRegistrarEquipos() {
-    // Estado inicial construido desde la configuración
+    // Estado inicial del formulario basado en la configuración
     const initialState = useMemo(() => {
         const state = {};
         camposFormularioEquipo.forEach(campo => {
-            if (campo.defaultValue !== undefined) {
-                 state[campo.name] = campo.defaultValue;
-            } else {
-                switch (campo.type) {
-                    case 'text':
-                    case 'number':
-                    case 'date':
-                    case 'select':
-                        state[campo.name] = '';
-                        break;
-                    case 'boolean':
-                        state[campo.name] = false;
-                        break;
-                    default:
-                        state[campo.name] = '';
-                }
-            }
+            state[campo.name] = campo.defaultValue !== undefined ? campo.defaultValue : '';
+            if (campo.type === 'boolean' && state[campo.name] === '') state[campo.name] = false;
         });
         return state;
     }, []);
@@ -56,33 +38,24 @@ export default function PaginaRegistrarEquipos() {
     const marcasDisponibles = useMemo(() => {
         const tipoSeleccionado = formulario.tipoEquipo;
         const marcas = marcasPorTipoEquipo[tipoSeleccionado];
-        return marcas || [];
+         // Incluir siempre la opción por defecto si los datos originales no la tienen,
+         // o asegurar que los arrays de datos *sí* la incluyan.
+        return marcas && marcas.length > 0 ? marcas : [{ value: "", label: "Seleccionar Marca" }]; // Asegurar opción por defecto
     }, [formulario.tipoEquipo]);
 
-
-    // --- Manejar el cambio en cualquier campo (consolidado) ---
+    // Manejar el cambio en cualquier campo
     const manejarCambio = (e) => {
         const { name, value, type, checked } = e.target;
         const newValue = type === 'checkbox' ? checked : value;
 
         setFormulario(prevFormulario => {
-            // Lógica especial para 'tipoEquipo': resetear 'marca'
             if (name === 'tipoEquipo') {
-                return {
-                    ...prevFormulario,
-                    [name]: newValue, // Actualiza el tipoEquipo
-                    marca: "" // Resetea la marca
-                };
+                return { ...prevFormulario, [name]: newValue, marca: "" };
             } else {
-                // Lógica genérica para otros campos
-                return {
-                    ...prevFormulario,
-                    [name]: newValue
-                };
+                return { ...prevFormulario, [name]: newValue };
             }
         });
     };
-
 
     // Manejar envío del formulario
     const manejarEnvio = async (e) => {
@@ -93,34 +66,58 @@ export default function PaginaRegistrarEquipos() {
         // Validaciones dinámicas
         let valid = true;
         const errores = [];
+         // Iterar sobre camposFormularioEquipo para validar
         camposFormularioEquipo.forEach(campo => {
             if (campo.required) {
                 const valor = formulario[campo.name];
-                if (campo.type !== 'boolean' && (valor === null || valor === undefined || valor === '')) {
-                   valid = false;
-                   errores.push(`${campo.label} es requerido.`);
+                 // Lógica de validación ajustada para diferentes tipos
+                if (campo.type === 'select') {
+                    // Para selects, validar que el valor no sea la cadena vacía ("") de la opción por defecto
+                    if (valor === null || valor === undefined || valor === '') {
+                         valid = false;
+                         errores.push(`${campo.label} es requerido.`);
+                    }
+                 } else if (campo.type === 'boolean') {
+                    // Los booleanos requeridos son raros, usualmente significa que debe ser true
+                  
+                    // if (campo.required && valor !== true) {
+                    //    valid = false;
+                    //    errores.push(`${campo.label} debe estar marcado.`);
+                    // }
+                 } else { // text, number, date, etc.
+                    if (valor === null || valor === undefined || valor === '') {
+                       valid = false;
+                       errores.push(`${campo.label} es requerido.`);
+                    }
                 }
-                // Puedes añadir validación para booleanos si es necesario (ej: debe ser true)
-                // if (campo.type === 'boolean' && campo.required && valor !== true) { valid = false; errores.push(`${campo.label} debe estar marcado.`); }
             }
         });
 
-        // Validación específica para la marca
-        if(formulario.tipoEquipo && marcasDisponibles.length > 0 && !formulario.marca) {
+        // Validación específica para la marca si el tipo está seleccionado y hay opciones de marca (sin la opción por defecto)
+        const hasRealMarcaOptions = marcasDisponibles.some(opt => opt.value !== "");
+        if(formulario.tipoEquipo && hasRealMarcaOptions && !formulario.marca) {
              valid = false;
              errores.push("Debes seleccionar una Marca válida.");
         }
 
+
         if (!valid) {
+            // Mostrar errores acumulados
             setError(errores.join(" "));
             setCargando(false);
             return;
         }
+        const datosParaEnviar = {
+            ...formulario,
+            obtenerFechaActual: obtenerFechaActual(), // Fecha actual en formato YYYY-MM-DD
+            fecha_adquisicion: formulario.fecha_adquisicion || obtenerFechaActual(), // Si no se proporciona, usar la fecha actual
+            
+        };
 
         try {
-            await equiposService.create(formulario);
+            await equiposService.create(datosParaEnviar);
             alert("Equipo registrado exitosamente!"); // Considera Toast
-            setFormulario(initialState); // Limpiar formulario
+            setFormulario(initialState); // Limpiar
         } catch (err) {
             setError("Error al registrar el equipo: " + err.message);
             console.error("Error al registrar equipo:", err);
@@ -128,7 +125,6 @@ export default function PaginaRegistrarEquipos() {
             setCargando(false);
         }
     };
-
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
@@ -145,91 +141,118 @@ export default function PaginaRegistrarEquipos() {
                     )}
 
                     <form className="space-y-6" onSubmit={manejarEnvio}>
-
                         {/* Renderizar campos dinámicamente */}
                         {camposFormularioEquipo.map(campo => {
                             const valorCampo = formulario[campo.name];
 
-                            switch (campo.type) {
-                                case 'text':
-                                case 'number':
-                                case 'date': { // <-- Abre bloque aquí
-                                    return (
-                                        <Entrada
-                                            key={campo.name}
-                                            placeHolder={campo.placeHolder}
-                                            tipo={campo.type}
-                                            nombre={campo.name}
-                                            valor={valorCampo || ''}
-                                            required={campo.required}
-                                            manejarCambio={manejarCambio} // Usar genérica
-                                            icono={campo.icon ? <Icono nombre={campo.icon} /> : null}
-                                        />
-                                    );
-                                } // <-- Cierra bloque aquí
+                            // Omitir renderizado si el campo es undefined o null en la config
+                            if (!campo) return null;
 
-                                case 'select': { // <-- Abre bloque aquí
-                                     let opcionesSelect = campo.options;
-                                     if (campo.name === 'marca') {
-                                         opcionesSelect = marcasDisponibles;
-                                     }
+                            // Contenedor para cada campo (usa flex para alinear label e input/select/checkbox)
+                            return (
+                                <div className="campo" key={campo.name}> {/* Considera añadir flexbox aquí si quieres label al lado */}
+                                     {campo.label && ( // Renderiza si la config tiene 'label'
+                                        <label
+                                            htmlFor={campo.name}
+                                            className={`block text-sm font-medium text-gray-700 ${campo.type !== 'boolean' ? 'mb-1' : 'ml-2 cursor-pointer'}`} // Ajusta margen o alineación si es checkbox
+                                        >
+                                            {campo.label}
+                                            {campo.required && <span className="text-red-500"> *</span>} {/* Indicador de requerido */}
+                                        </label>
+                                     )}
+                                    {(() => {
+                                        switch (campo.type) {
+                                            case 'text':
+                                            case 'number':
+                                            case 'date': {
+                                                return (
+                                                    <Entrada
+                                                        placeHolder={campo.placeHolder || campo.label} // Usar placeholder, si no existe, usar el label
+                                                        tipo={campo.type}
+                                                        nombre={campo.name}
+                                                        valor={valorCampo || ''}
+                                                        required={campo.required}
+                                                        manejarCambio={manejarCambio}
+                                                        icono={campo.icon ? <Icono nombre={campo.icon} /> : null}
+                                                        // Si tu componente Entrada puede tomar un label y renderizarlo DENTRO del input (como algunos diseños modernos), pásalo aquí:
+                                                        // label={campo.label}
+                                                    />
+                                                );
+                                            }
 
-                                    return (
-                                        <div className="campo" key={campo.name}>
-                                            <label htmlFor={campo.name} className="block text-sm font-medium text-gray-700 mb-1">{campo.label}</label>
-                                            <select
-                                                id={campo.name}
-                                                name={campo.name}
-                                                value={valorCampo || ''}
-                                                onChange={manejarCambio} // Usar genérica (la lógica de reset está dentro)
-                                                required={campo.required}
-                                                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                                                disabled={campo.name === 'marca' && !formulario.tipoEquipo}
-                                            >
-                                                 <option value="" disabled>
-                                                      {campo.name === 'marca' && !formulario.tipoEquipo
-                                                          ? "Selecciona Tipo primero"
-                                                          : `Seleccionar ${campo.label.replace(':', '')}`
-                                                      }
-                                                 </option>
-                                                {opcionesSelect.map((opcion) => (
-                                                  <option key={opcion.value} value={opcion.value}>
-                                                    {opcion.label}
-                                                  </option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    );
-                                } // <-- Cierra bloque aquí
+                                            case 'select': {
+                                                 let opcionesSelect = campo.options;
+                                                 // Usar marcas disponibles para el selector 'marca'
+                                                 if (campo.name === 'marca') {
+                                                     opcionesSelect = marcasDisponibles;
+                                                 }
+                                                 // Asegurar que la primera opción sea el placeholder si no viene en los datos
+                                                 const finalOptions = opcionesSelect.length > 0 && opcionesSelect[0].value === ""
+                                                     ? opcionesSelect // Los datos ya incluyen el placeholder
+                                                     : [{ value: "", label: `Seleccionar ${campo.label.replace(':', '')}` }, ...opcionesSelect]; // Añadir placeholder
+      
+                                                return (
+                                                    <select
+                                                    style={{width: "100%", textAlign: "center"}}
+                                                        id={campo.name}
+                                                        name={campo.name}
+                                                        value={valorCampo || ''}
+                                                        onChange={manejarCambio}
+                                                        required={campo.required}
+                                                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                                                        disabled={campo.name === 'marca' && !formulario.tipoEquipo}
+                                                    >
+                                                         {/* Iterar sobre las opciones (ahora con placeholder incluido si fue necesario) */}
+                                                        {finalOptions.map((opcion) => (
+                                                           // Asegúrate de que los value sean únicos para la key
+                                                          <option key={opcion.value} value={opcion.value}>
+                                                            {opcion.label}
+                                                          </option>
+                                                        ))}
+                                                    </select>
+                                                );
+                                            }
 
-                                case 'boolean': { // <-- Abre bloque aquí
-                                    return (
-                                         <div className="campo flex items-center" key={campo.name}>
-                                             <input
-                                                 type="checkbox"
-                                                 id={campo.name}
-                                                 name={campo.name}
-                                                 checked={valorCampo === true}
-                                                 onChange={manejarCambio}
-                                                 required={campo.required}
-                                                 className="mr-2"
-                                             />
-                                             <label htmlFor={campo.name} className="text-sm font-medium text-gray-700">{campo.label}</label>
-                                         </div>
-                                    );
-                                } // <-- Cierra bloque aquí
+                                            case 'boolean': {
+                                                // Para checkbox, el label se renderiza arriba por la lógica común,
+                                                // pero el input y el label "texto" del checkbox están juntos aquí
+                                                // Si quieres el label del checkbox SIEMPRE al lado, elimina el renderizado de label arriba para tipo boolean
+                                                return (
+                                                     <div className="flex items-center mt-1"> {/* Añadir margen superior y flex para checkbox+label */}
+                                                         <input
+                                                         style={{width: "100%", textAlign: "center",fontSize: "1.2rem",}}
+                                                             type="checkbox"
+                                                             id={campo.name}
+                                                             name={campo.name}
+                                                             checked={valorCampo === true}
+                                                             onChange={manejarCambio}
+                                                             required={campo.required}
+                                                             className="mr-2 h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" // Añade estilos básicos de checkbox
+                                                         />
+                                                        
+                                                         {/* campo.label && ( // Si quieres el label al lado del checkbox
+                                                            <label htmlFor={campo.name} className="text-sm font-medium text-gray-700 cursor-pointer">
+                                                                {campo.label}
+                                                                {campo.required && <span className="text-red-500"> *</span>}
+                                                            </label>
+                                                          )*/}
+                                                     </div>
+                                                );
+                                            }
 
-                                default:
-                                    return <p key={campo.name}>Tipo de campo desconocido: {campo.type}</p>;
-                            }
+                                            default:
+                                                return null;
+                                        }
+                                    })()}
+                                </div>
+                            );
                         })}
-
 
                         <Boton tipo="submit" disabled={cargando}>
                             {cargando ? "Registrando..." : "Registrar Equipo"}
                         </Boton>
 
-                        <div className="text-center text-sm text-gray-600">
+                        <div className="text-center text-sm text-gray-600" style={{width: "100%", textAlign: "center", fontSize: "1.2rem"}}>
                             <Link to="/gestionar-equipos" className="text-blue-600 hover:text-blue-800 font-medium">
                                 Volver a la gestión de equipos
                             </Link>
@@ -241,3 +264,20 @@ export default function PaginaRegistrarEquipos() {
         </div>
     );
 }
+/* const datosParaEnviar = {
+            ...formulario,
+            obtenerFechaActual: obtenerFechaActual(), // Fecha actual en formato YYYY-MM-DD
+            fecha_adquisicion: formulario.fecha_adquisicion || obtenerFechaActual(), // Si no se proporciona, usar la fecha actual
+            
+        };
+
+        try {
+            await equiposService.create(datosParaEnviar);
+            alert("Equipo registrado exitosamente!"); // Considera Toast
+            setFormulario(initialState); // Limpiar
+        } catch (err) {
+            setError("Error al registrar el equipo: " + err.message);
+            console.error("Error al registrar equipo:", err);
+        } finally {
+            setCargando(false);
+        }*/

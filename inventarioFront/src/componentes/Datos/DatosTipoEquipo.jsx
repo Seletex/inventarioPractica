@@ -1,4 +1,4 @@
-export const ubicacionesArray = [
+export const DatosTipoEquipo = [
     {value: "",label:"Seleccione tipo de equipo"},
     {value: "Computador",label:"Computador"},
     {value: "Laptop",label:"Laptop"},

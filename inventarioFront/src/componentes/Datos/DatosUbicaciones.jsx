@@ -1,6 +1,6 @@
-export const ubicacionesArray = [
+export const DatosUbicacion = 
     [
-        {value: "", label: "Seleccione ubicación" },
+        {value: "", label: "Seleccione la Ubicación" },
         { value: "CM", label: "Consejo Municipal" },
         { value: "PM", label: "Personeria Municipal" },
         { value: "OACR",label: "Oficina Asesora de Comunicaciones y Relaciones" },
@@ -94,5 +94,5 @@ export const ubicacionesArray = [
         { value: "CFA", label: "Comisaría de Familia-Abogado" }
 
 
-      ]
+      
   ];
