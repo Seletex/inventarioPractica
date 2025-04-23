@@ -10,48 +10,14 @@ import { SistemaOperativo } from "./SistemaOperativo.jsx"; // Verifica la ruta
 import { TiempoGarantia} from "./TiempoGarantia.jsx"; // Verifica la ruta
 import { VersionOffice } from "./VersionOffice.jsx"; // Verifica la ruta
 
-const obtenerFechaActual = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-};
-
-export const siNoOpcionesGarantia = [
-    {value: "", label: "¿Tiene Garantía?"}, // Opción por defecto
-    {value: "true", label: "Sí"}, // Usamos strings "true" y "false" como valores para la select
-    {value: "false", label: "No"},
-];
-export const siNoOpcionesTeclado = [
-    {value: "", label: "¿Tiene Teclado?"}, // Opción por defecto
-    {value: "true", label: "Sí"}, // Usamos strings "true" y "false" como valores para la select
-    {value: "false", label: "No"},
-];
-export const siNoOpcionesMouse = [
-    {value: "", label: "¿Tiene Mouse?"}, // Opción por defecto
-    {value: "true", label: "Sí"}, // Usamos strings "true" y "false" como valores para la select
-    {value: "false", label: "No"},
-];
-export const siNoOpcionesEntrega=[
-    {value: "", label: "¿Ha sido Entregado?"}, // Opción por defecto
-    {value: "true", label: "Sí"}, // Usamos strings "true" y "false" como valores para la select
-    {value: "false", label: "No"},
-];
-
-// Mapeo de Tipos de Equipo a sus arrays de Marcas
-const marcasPorTipoEquipo = {
-  'Laptop': MarcaComputador,
-  'Computador': MarcaComputador,
-  'Impresora': MarcaImpresora,
-  'Proyector': MarcaComputador,
-  'Escáner': MarcaImpresora,
-  'Monitor': MarcaMonitor,
-  'MiniPC': MarcaComputador,
-  'Computadores': MarcaComputador,
-    'Servidor': MarcaComputador,
-};
-
+import {
+    siNoOpcionesEntrega,
+    siNoOpcionesGarantia,
+    siNoOpcionesMouse,
+    siNoOpcionesTeclado,
+  } from "./SiNoOpciones.jsx";
+ 
+  import { obtenerFechaActual } from "../utiles/FechaActual.jsx"; 
 
 // Definición de los campos del formulario
 const camposFormularioEquipo = [
@@ -101,6 +67,6 @@ const camposFormularioEquipo = [
     {type: "select", name: "entregado", options:siNoOpcionesEntrega, required: false},
 ];
 
-export { camposFormularioEquipo, marcasPorTipoEquipo, obtenerFechaActual };
+export { camposFormularioEquipo};
 
 // Revisa rutas y nombres de exportación

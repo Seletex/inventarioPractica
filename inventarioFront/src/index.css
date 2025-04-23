@@ -63,7 +63,7 @@ label{
   margin: 2px;
   font-size: 16px;
   font-weight: 500;
-  font-family: inherit;
+  
   background-color: rgb(255, 255, 255);
 
 }
@@ -90,7 +90,27 @@ select {
   font-size: 16px;
   font-weight: 500;
 }
-
+Button{
+  button {
+    text-align: center;
+    font-family: "Times New Roman", Times, serif;
+    width: 100%;
+    box-sizing: border-box;
+    max-width: 100%;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    font-size: 20px;
+    padding: 0.6em 1.2em;
+    margin: 2px;
+    font-size: 1em;
+    font-weight: 500;
+  
+    color: #000000;
+  
+    cursor: pointer;
+    transition: border-color 0.25s;
+  }
+}
 button {
   text-align: center;
   font-family: "Times New Roman", Times, serif;
@@ -113,6 +133,30 @@ button {
 InputText {
   width: 100%;
 }
+Button:hover {
+  border-color: #646cff;
+}
+Button:focus,
+Button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+Button:disabled {
+  pointer-events: none;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+Button:disabled:hover {
+  border-color: transparent;
+}
+Button:disabled:focus,
+Button:disabled:focus-visible {
+  outline: none;
+}
+Button:disabled:active {
+  background-color: transparent;
+}
+
 button:hover {
   border-color: #646cff;
 }
