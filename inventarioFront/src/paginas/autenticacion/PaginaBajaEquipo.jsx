@@ -1,32 +1,17 @@
-import { useState, useEffect, useContext } from "react"; // *** Importar useContext ***
+import { useState, useEffect } from "react"; // *** Importar useContext ***
 import { useNavigate, Link, useParams } from "react-router-dom";
-import Entrada from "../../componentes/InterfazUsuario/Entrada";
+import Entrada from "../../componentes/InterfazUsuario/Entrada.jsx";
 import { Card } from "primereact/card";
-import { FiTag, FiMapPin, FiUser } from "react-icons/fi"; // Iconos
+import { FiTag, FiUser } from "react-icons/fi"; // Iconos
 import { mockEquiposService as equiposService } from "../../servicios/mockEquipos.api.js"; // Servicio
 import { toast } from "react-toastify"; // Importar toast
-import Boton from "../../componentes/InterfazUsuario/Boton"; // Importar Boton
+import Boton from "../../componentes/InterfazUsuario/Boton.jsx"; // Importar Boton
 import { DatosUbicacion } from "../../componentes/Datos/DatosUbicaciones.jsx"; // Importar DatosUbicacion } from "../../componentes/Datos/DatosUbicaciones.jsx";
 import "react-toastify/dist/ReactToastify.css"; // Estilos de toast
-import  {ProveedorAutenticacion} from "../../autenticacion/contexto/ContextoAutenticacion.jsx"; // <<< Asegúrate de que la ruta sea correcta
+import { useUsuarioLogueado } from "../../autenticacion/contexto/UsuarioLogueado.jsx"; // <<< Asegúrate de que la ruta sea correcta
 
 // Dentro de PaginaDarDeBajaEquipo.jsx
 
-const useUsuarioLogueado = () => {
-    const contextValue = useContext(ProveedorAutenticacion);
-
-    // *** Añade este console.log TEMPORALMENTE para depurar ***
-    console.log("Valor del contexto en useUsuarioLogueado:", contextValue);
-
-    if (contextValue === undefined || contextValue === null) {
-        // Mostrar el error SOLO si contextValue es inválido
-        //console.error("Error: useUsuarioLogueado debe usarse dentro de un ProveedorAutenticacion. contextValue es:", contextValue);
-        return null; // Retornar null porque el contexto no está disponible
-    }
-
-    const { usuario } = contextValue;
-    return usuario;
-};
 export default function PaginaDarDeBajaEquipo() {
   const [formulario, setFormulario] = useState({
     placa: "",
@@ -76,14 +61,11 @@ export default function PaginaDarDeBajaEquipo() {
         console.warn("Página de baja accedida sin placa en URL.");
       }
 
-
       if (usuarioLogueado && usuarioLogueado.nombreCompleto) {
         // Asumiendo que el objeto usuario tiene 'nombreCompleto'
         responsableInicial = usuarioLogueado.nombreCompleto;
       } else {
-
         responsableInicial = "Invitado"; // O simplemente "", o dejarlo vacío
-       
       }
 
       // 3. Pre-llenar el estado del formulario
@@ -235,7 +217,6 @@ export default function PaginaDarDeBajaEquipo() {
 
               {/* --- Campo Ubicación (Select) --- */}
               <div className="campo">
-                
                 <select
                   id="ubicacion"
                   name="ubicacion"

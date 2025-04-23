@@ -23,8 +23,6 @@ export default function PaginaRegistrarEquipos() {
   const marcasDisponibles = useMemo(() => {
     const tipoSeleccionado = formulario.tipoEquipo;
     const marcas = marcasPorTipoEquipo[tipoSeleccionado];
-    // Incluir siempre la opción por defecto si los datos originales no la tienen,
-    // o asegurar que los arrays de datos *sí* la incluyan.
     return marcas && marcas.length > 0
       ? marcas
       : [{ value: "", label: "Seleccionar Marca" }]; // Asegurar opción por defecto

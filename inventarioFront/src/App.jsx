@@ -17,8 +17,8 @@ import ManteniminetosProgramados from "./paginas/autenticacion/MantenimientosPro
 import GestionarUsuarios from "./paginas/autenticacion/GestiónUsuarios";
 import PaginaRegistrarEquipos from "./paginas/autenticacion/PaginaRegistrarEquipo";
 import PaginaActualizarEquipos from "./paginas/autenticacion/PaginaActualizarEquipo";
-import PaginaDarDeBajaEquipo from "./paginas/autenticacion/PaginaBaja"; // Asegúrate de que el nombre del archivo sea correcto (PaginaBaja.jsx)
-
+import PaginaDarDeBajaEquipo from "./paginas/autenticacion/PaginaBajaEquipo"; // Asegúrate de que el nombre del archivo sea correcto (PaginaBaja.jsx)
+import PaginaNuevoMantenimiento from "./paginas/autenticacion/PaginaNuevoMantenimiento";
 // *** Importar tu ProveedorAutenticacion ***
 import { ProveedorAutenticacion } from "./autenticacion/contexto/ContextoAutenticacion"; // Asegúrate de la ruta
 
@@ -46,7 +46,7 @@ function App() {
               <Route path="/registrar-equipo" element={<PaginaRegistrarEquipos />}/>
               {/* --- CORRECCIÓN: Mantener solo la ruta con el parámetro --- */}
               <Route path="/actualizar-equipo/:placa" element={<PaginaActualizarEquipos />}/>
-              
+              <Route path="/nuevo-mantenimiento/:placa" element={<PaginaNuevoMantenimiento />}/>
               {/* --- CORRECCIÓN: Mantener solo la ruta con el parámetro --- */}
               <Route path="/dar-de-baja/:placa" element={<PaginaDarDeBajaEquipo />}/>
               <Route path="*" element={<PaginaLogin />} />
