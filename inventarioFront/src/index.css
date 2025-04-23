@@ -1,16 +1,16 @@
+@import "primereact/resources/themes/lara-light-indigo/theme.css";
+@import "primereact/resources/primereact.min.css";
+@import "primeicons/primeicons.css";
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  max-width: 100%; /* O el ancho que necesites */
+  margin: 2px auto; /* Centra horizontalmente el contenedor de la aplicación */
+  padding: 10px; /* O el padding que necesites */
+  text-align: center; /* Centra el texto dentro de la aplicación */
+  display: flex; /* Convierte #root en un contenedor Flexbox */
+  justify-content: center; /* Centra horizontalmente los hijos de #root */
+  align-items: center; /* Centra verticalmente los hijos de #root */
+  min-height: 100vh; /* Asegura que ocupe toda la altura de la pantalla */
 }
 
 a {
@@ -23,10 +23,11 @@ a:hover {
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
+  margin: 2px;
+  /*display: flex;
+  place-items: center;*/
   min-width: 320px;
+  max-width: 100%;
   min-height: 100vh;
 }
 
@@ -34,17 +35,83 @@ h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
-
-button {
-  border-radius: 8px;
+input {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 21px;
+  width: 100%;
+  min-width: 320px;
+  max-width: 100%;
+   border-radius: 1px;
+   text-align: center;
   border: 1px solid transparent;
-  padding: 0.6em 1.2em;
+  border: solidrgb(150, 151, 160);
+  padding: 1.2em 1.2em;
+  margin: 1px;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: rgb(255, 255, 255);
+  border-color: #535fff;
+}
+label{
+  font-family: 'Times New Roman', Times, serif;
+  width: 100%;
+  border-color: #535fff;
+  border-radius: 1px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  margin: 2px;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: rgb(255, 255, 255);
+
+}
+select {
+  font-family: 'Times New Roman', Times, serif;
+  width: 100%;
+  border-color: #535fff;
+  border-radius: 1px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  margin: 2px;
+  font-size: 21px;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: rgb(255, 255, 255);
+}
+.p-button {
+  border-radius: 4px;
+  border: 1px solid transparent;
+  padding: 1.2em 1.2em;
+  margin: 2px;
+  background: #fff;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+button {
+  text-align: center;
+  font-family: "Times New Roman", Times, serif;
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  font-size: 20px;
+  padding: 0.6em 1.2em;
+  margin: 2px;
+  font-size: 1em;
+  font-weight: 500;
+
+  color: #000000;
+
   cursor: pointer;
   transition: border-color 0.25s;
+}
+InputText {
+  width: 100%;
 }
 button:hover {
   border-color: #646cff;
@@ -54,15 +121,106 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+button:disabled {
+  pointer-events: none;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+button:disabled:hover {
+  border-color: transparent;
+}
+button:disabled:focus,
+button:disabled:focus-visible {
+  outline: none;
+}
+button:disabled:active {
+  background-color: transparent;
+}
+/* Para asegurar que los botones se mantengan en línea */
+.p-button {
+  min-width: 2rem !important;
+  height: 2rem !important;
+  margin: 0 0.1rem !important;
+}
+
+/* Para la columna de acciones */
+.action-cell {
+  white-space: nowrap;
+  display: flex;
+  justify-content: center;
+}
+.estado-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 2rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.estado-badge.activo {
+  background-color: #c8e6c9;
+  color: #256029;
+}
+
+.estado-badge.inactivo {
+  background-color: #ffcdd2;
+  color: #c63737;
+}
+.p-datatable .p-datatable-tbody > tr > td {
+  white-space: nowrap;
+}
+
+/* Estilo específico para el contenedor de botones */
+.acciones-container {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  gap: 0.3rem;
+}
+
+/* Tamaño consistente para los botones */
+.acciones-container .p-button {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* Bordes para todas las celdas */
+.tabla-con-bordes .p-datatable .p-datatable-thead > tr > th,
+.tabla-con-bordes .p-datatable .p-datatable-tbody > tr > td {
+  border-right: 1px solid #dee2e6 !important; /* Color del borde */
+}
+
+/* Elimina el borde del último elemento */
+.tabla-con-bordes .p-datatable .p-datatable-thead > tr > th:last-child,
+.tabla-con-bordes .p-datatable .p-datatable-tbody > tr > td:last-child {
+  border-right: none !important;
+}
+
+/* Bordes en el header */
+.tabla-con-bordes .p-datatable .p-datatable-thead > tr > th {
+  border-bottom: 1px solid #dee2e6 !important;
+}
+:root {
+  --color-borde: #e5e7eb;
+  --grosor-borde: 1px;
+}
+
+.tabla-estilizada {
+  --border-style: var(--grosor-borde) solid var(--color-borde);
+
+  & th,
+  & td {
+    border-right: var(--border-style);
+    padding: 0.75rem;
   }
-  a:hover {
-    color: #747bff;
+
+  & th:last-child,
+  & td:last-child {
+    border-right: none;
   }
-  button {
-    background-color: #f9f9f9;
+
+  & thead {
+    border-bottom: var(--border-style);
   }
 }

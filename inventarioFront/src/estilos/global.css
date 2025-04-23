@@ -1,0 +1,26 @@
+* {
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family: "Times New Roman", Times, serif;
+    line-height: 1.5;
+    background-color: #f4f4f4;
+    color: #333;
+    font-size: 16px;
+}
+
+.tabla-datos {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+
+.tabla-datos th, .tabla-datos td {
+    background: #2c3e50;
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
