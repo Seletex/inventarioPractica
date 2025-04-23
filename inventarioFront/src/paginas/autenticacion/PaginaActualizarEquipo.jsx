@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import Entrada from "../../componentes/InterfazUsuario/Entrada";
-import Boton from "../../componentes/InterfazUsuario/Boton";
+
 import { Card } from "primereact/card";
 import { Icono } from "../../componentes/utiles/Icono.jsx";
 import { camposFormularioEquipo } from "../../componentes/Datos/ActualizarEquipo.jsx";
@@ -298,7 +298,7 @@ export default function PaginaActualizarEquipos() {
                 })}
 
               {/* Botón de envío */}
-              <Boton
+              <button
                 tipo="submit"
                 disabled={cargandoEnvio}
                 style={{
@@ -308,7 +308,7 @@ export default function PaginaActualizarEquipos() {
                 }}
               >
                 {cargandoEnvio ? "Guardando..." : "Actualizar Equipo"}
-              </Boton>
+              </button>
 
               <div className="text-center text-sm text-gray-600">
                 <Link

@@ -1,5 +1,5 @@
 import 'primeicons/primeicons.css';
-import { Button } from 'primereact/button';
+
 
 export default function Boton({
   tipo = "button",
@@ -9,7 +9,7 @@ export default function Boton({
   ...props
 }) {
   return (
-    <Button
+    <button
       style={{width: "100%", textAlign: "center", fontSize: "1.2rem",}}
 
    
@@ -33,6 +33,6 @@ export default function Boton({
       ) : (
         children
       )}
-    </Button>
+    </button>
   );
 }
