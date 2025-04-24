@@ -61,7 +61,7 @@ export default function PaginaDarDeBajaEquipo() {
         console.warn("Página de baja accedida sin placa en URL.");
       }
 
-      if (usuarioLogueado && usuarioLogueado.nombreCompleto) {
+      if (usuarioLogueado?.nombreCompleto) {
         // Asumiendo que el objeto usuario tiene 'nombreCompleto'
         responsableInicial = usuarioLogueado.nombreCompleto;
       } else {

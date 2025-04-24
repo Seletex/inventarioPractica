@@ -8,19 +8,17 @@ import { ROLES, rolUsuarioArray } from "../../componentes/Datos/RolUsuario";
 // Si usas un componente Select estilizado, impórtalo aquí
 
 export default function PaginaRegistro() {
-  // Usar useMemo para filtrar los roles una vez.
-  // Filtramos para incluir solo los roles que quieres que sean seleccionables en el registro.
-  // Excluir la opción por defecto (value: "") y roles como ADMIN.
+
+  const[setError] = useState(""); // Considera usar setError y actualizarlo en la lógica de validación/envío
   const rolesSeleccionablesParaRegistro = useMemo(() => {
     return rolUsuarioArray.filter(rol =>
       // Excluir la opción por defecto
       rol.value !== "" &&
-      // Excluir roles que no deberían ser registrados por un usuario normal
-      // Por ejemplo, excluir ADMIN y ADMINISTRATIVO
+ 
       rol.value !== ROLES.ADMIN // && rol.value !== ROLES.ADMINISTRATIVO // Descomenta si Usuario Administrativo tampoco debe registrarse
     );
-  }, [rolUsuarioArray, ROLES]); // Dependencias: si los datos de roles o ROLES cambian
-
+  }, []); // Dependencias: si los datos de roles o ROLES cambian
+  //[rolUsuarioArray, ROLES]
   const [formulario, setFormulario] = useState({
     nombre: "",
     correo: "",
@@ -32,31 +30,30 @@ export default function PaginaRegistro() {
   const [error] = useState(""); // Considera usar setError y actualizarlo en la lógica de validación/envío
 
    // Función para manejar el envío del formulario (debes agregarla)
-   const manejarEnvio = (e) => {
+   const manejarEnvio = async (e) => {
        e.preventDefault();
        // Aquí agregarías la lógica de validación y envío de datos
        console.log("Formulario enviado:", formulario);
        // Validaciones adicionales:
        if (formulario.contraseña !== formulario.confirmarContraseña) {
-           // setError("Las contraseñas no coinciden."); // Necesitas un setError
+           setError("Las contraseñas no coinciden."); // Necesitas un setError
            console.error("Las contraseñas no coinciden.");
-           return;
        }
        if (!formulario.rol) {
-            // setError("Debes seleccionar un rol."); // Necesitas un setError
+            setError("Debes seleccionar un rol."); // Necesitas un setError
             console.error("Debes seleccionar un rol.");
-            return;
+            
        }
-       // Si todo es válido, procede con el envío a tu API
-       // console.log("Datos listos para enviar:", formulario);
-       // try {
-       //     await tuServicioDeRegistro.registrarUsuario(formulario);
-       //     // Mostrar mensaje de éxito y redirigir
-       //     console.log("Registro exitoso!");
-       // } catch (err) {
-       //     // setError("Error en el registro: " + err.message); // Necesitas un setError
-       //     console.error("Error en el registro:", err);
-       // }
+       // Si es válido, procede con el envío a tu API
+        console.log("Datos listos para enviar:", formulario);
+       try {
+          // await tuServicioDeRegistro.registrarUsuario(formulario);
+         // Mostrar mensaje de éxito y redirigir
+          console.log("Registro exitoso!");
+       } catch (err) {
+           setError("Error en el registro: " + err.message); // Necesitas un setError
+            console.error("Error en el registro:", err);
+        }
    };
 
 
@@ -149,12 +146,12 @@ export default function PaginaRegistro() {
               Registrarse
             </Boton>
 
-            {/*<div className="text-center text-sm text-gray-600">
-              ¿Ya tienes cuenta?{" "}
-              <Link to="/login" className="text-blue-600 hover:text-blue-800 font-medium">
-                Inicia sesión
+            <div className="text-center text-sm text-gray-600">
+              
+              <Link to="/gestion-usuarios" className="text-blue-600 hover:text-blue-800 font-medium">
+                Volver a Gestion de Usuarios
               </Link>
-            </div>*/}
+            </div>
           </form>
         </div>
       </div>

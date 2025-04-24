@@ -1,10 +1,11 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
 import { crearEquipo } from "../servicios/api";
 import { formularioInicial } from "./Datos/Formularioinicial";
 
 
 function FormularioEquipos ({onSuccess}) {
-    const [formularioDatos, asignarFormularioDatos] = useState(formularioInicial);
+    const [formularioDatos, setFormularioDatos] = useState(formularioInicial);
 
     const manejarCambioDeEntrada = (event) => {
         const { nombre, valor, tipo, checked } = event.target;
@@ -21,9 +22,7 @@ function FormularioEquipos ({onSuccess}) {
           [name]: value,
         }));
       };
-    const setFormularioDatos = (nuevosDatos) => {
-        asignarFormularioDatos(nuevosDatos);
-      };    
+
     const enviarActo = async (e) => {
         e.prevenirPredeterminado();
         try {
@@ -50,5 +49,12 @@ function FormularioEquipos ({onSuccess}) {
                             />)
                      }</div>))}           
             <button type="submit">Guardar Equipo</button>
-        </form>)}
-export default FormularioEquipos;
+        </form>
+    );
+
+  }
+  export default FormularioEquipos;
+
+FormularioEquipos.propTypes = {
+    onSuccess: PropTypes.func.isRequired,
+};

@@ -41,91 +41,45 @@ export const mockMantenimientoService = {
 
   filtrarAvanzado: (filtros) =>
     new Promise((resolve) => {
-      const resultados = MantenimientoMock.filter((equipo) => {
-        const normalizeDateString = (dateStr) => {
-          if (!dateStr) return null;
-          try {
-            const date = new Date(dateStr);
+      const normalizeDateString = (dateStr) => {
+        if (!dateStr) return null;
+        try {
+          const date = new Date(dateStr);
 
-            if (isNaN(date.getTime())) {
-              return null; // Fecha inválida
-            }
-
-            return date.toISOString().split("T")[0];
-          } catch (e) {
-            console.error("Error parsing date string:", dateStr, e);
-            return null; // Manejar errores de parseo
+          if (isNaN(date.getTime())) {
+            return null; // Fecha inválida
           }
-        };
-        let cumpleFiltro = true;
 
-        if (filtros.placa) {
-          cumpleFiltro = cumpleFiltro && equipo.placa?.includes(filtros.placa);
+          return date.toISOString().split("T")[0];
+        } catch (e) {
+          console.error("Error parsing date string:", dateStr, e);
+          return null; // Manejar errores de parseo
         }
+      };
 
-        if (filtros.marca) {
-          cumpleFiltro =
-            cumpleFiltro &&
-            equipo.marca?.toLowerCase().includes(filtros.marca.toLowerCase());
-        }
+      const cumpleFiltros = (equipo, filtros) => {
+        const checks = [
+          () => !filtros.placa || equipo.placa?.includes(filtros.placa),
+          () => !filtros.marca || equipo.marca?.toLowerCase().includes(filtros.marca.toLowerCase()),
+          () => !filtros.estado || equipo.estado === filtros.estado,
+          () => !filtros.fecha_compra || compareDates(filtros.fecha_compra, equipo.fecha_compra),
+          () => !filtros.responsable || equipo.responsable?.toLowerCase().includes(filtros.responsable.toLowerCase()),
+          () => !filtros.ubicacion || equipo.ubicacion?.toLowerCase().includes(filtros.ubicacion.toLowerCase()),
+          () => !filtros.fechaProgramada || compareDates(filtros.fechaProgramada, equipo.fechaProgramada),
+          () => !filtros.tecnico || equipo.tecnico?.toLowerCase().includes(filtros.tecnico.toLowerCase()),
+          () => !filtros.tipo || equipo.tipo === filtros.tipo,
+        ];
 
-        if (filtros.estado) {
-          cumpleFiltro = cumpleFiltro && equipo.estado === filtros.estado;
-        }
+        return checks.every((check) => check());
+      };
 
-        // Filtro por Fecha Compra
-        if (filtros.fecha_compra) {
-          const filtroFecha = normalizeDateString(filtros.fecha_compra);
-          const equipoFecha = normalizeDateString(equipo.fecha_compra);
-          // Solo comparamos si ambas fechas (filtro y dato) son válidas y coincidentes
-          cumpleFiltro =
-            cumpleFiltro &&
-            filtroFecha &&
-            equipoFecha &&
-            filtroFecha === equipoFecha;
-        }
+      const compareDates = (filtroFecha, equipoFecha) => {
+        const filtro = normalizeDateString(filtroFecha);
+        const equipo = normalizeDateString(equipoFecha);
+        return !filtro || !equipo || filtro === equipo;
+      };
 
-        if (filtros.responsable) {
-          cumpleFiltro =
-            cumpleFiltro &&
-            equipo.responsable
-              ?.toLowerCase()
-              .includes(filtros.responsable.toLowerCase());
-        }
-
-        if (filtros.ubicacion) {
-          cumpleFiltro =
-            cumpleFiltro &&
-            equipo.ubicacion
-              ?.toLowerCase()
-              .includes(filtros.ubicacion.toLowerCase());
-        }
-
-        if (filtros.fechaProgramada) {
-          const filtroFecha = normalizeDateString(filtros.fechaProgramada);
-          const equipoFecha = normalizeDateString(equipo.fechaProgramada);
-
-          cumpleFiltro =
-            cumpleFiltro &&
-            filtroFecha &&
-            equipoFecha &&
-            filtroFecha === equipoFecha;
-        }
-
-        if (filtros.tecnico) {
-          cumpleFiltro =
-            cumpleFiltro &&
-            equipo.tecnico
-              ?.toLowerCase()
-              .includes(filtros.tecnico.toLowerCase());
-        }
-
-        if (filtros.tipo) {
-          cumpleFiltro = cumpleFiltro && equipo.tipo === filtros.tipo;
-        }
-
-        return cumpleFiltro;
-      });
+      const resultados = MantenimientoMock.filter((equipo) => cumpleFiltros(equipo, filtros));
 
       setTimeout(() => resolve(resultados), 500);
     }),

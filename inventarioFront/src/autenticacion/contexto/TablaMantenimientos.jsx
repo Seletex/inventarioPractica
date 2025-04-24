@@ -1,6 +1,7 @@
 import { useTable, useSortBy, usePagination } from "react-table";
 import { Button } from "primereact/button";
-import { Calendar } from "primereact/calendar";
+import PropTypes from "prop-types";
+
 import { Tag } from "primereact/tag";
 
 export const TablaMantenimientos = ({ columns, data }) => {
@@ -71,9 +72,13 @@ export const TablaMantenimientos = ({ columns, data }) => {
                             severity={
                               cell.column.id === "fechaRealizacion"
                                 ? "success"
-                                : new Date(cell.value) < new Date()
-                                ? "danger"
-                                : "info"
+                                : (() => {
+                                    const severity =
+                                      new Date(cell.value) < new Date()
+                                        ? "danger"
+                                        : "info";
+                                    return severity;
+                                  })()
                             }
                           />
                         ) : (
@@ -152,5 +157,13 @@ export const TablaMantenimientos = ({ columns, data }) => {
         </div>
       </div>
     </div>
-  );
+)};
+
+TablaMantenimientos.propTypes = {
+  columns: PropTypes.array.isRequired,
+  data: PropTypes.array,
 };
+TablaMantenimientos.defaultProps = {
+  data: [],
+};
+export default TablaMantenimientos;

@@ -1,67 +1,105 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import PropTypes from "prop-types";
 
 import { mockUsuariosService as usuariosService } from "../../servicios/mockUsuarios.api.js"; 
 import { TablaEquipos } from "../../autenticacion/contexto/TablaDatos.jsx"; 
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { InputText } from "primereact/inputtext";
-import { mostrarErrorFn , mostrarExitoFn,cargarEntidadesFn, manejoEliminarEntidadFn,}
- from "../../autenticacion/anzuelos/usoGestionFuncionesUsuario.js";
+import { 
+  mostrarErrorFn, 
+  mostrarExitoFn, 
+  cargarEntidadesFn, 
 
+} from "../../autenticacion/anzuelos/usoGestionFuncionesUsuario.js";
+// Importar el componente modal (falta en el código original)
+// import { ModalFormularioUsuario } from './ruta/al/ModalFormularioUsuario';
+export function UserActionsCellWrapper({ row, onEdit }) {
+  return (
+    <UserActionsCell
+      row={row}
+      onEdit={onEdit}
+    />
+  );
+}
+export function UserActionsCell({ row, onEdit }) {
+  return (
+    <div
+      className="flex flex-row gap-1"
+      style={{ display: "flex", flexWrap: "nowrap" }}
+    >
+      <Button
+        icon="pi pi-pencil"
+        className="p-button-rounded p-button-sm p-button-text p-button-primary"
+        tooltip="Editar Usuario"
+        tooltipOptions={{ position: "top" }}
+        onClick={() => onEdit(row.original)}
+      />
+    </div>
+  );
+}
+UserActionsCellWrapper.propTypes = {
+  row: PropTypes.object.isRequired, // Add validation for row
+  onEdit: PropTypes.func.isRequired,
+};
 
-export default function GestionarUsuarios() {
+export default function GestionUsuarios() {
   const [usuarios, setUsuarios] = useState([]);
   const [usuariosFiltrados, setUsuariosFiltrados] = useState([]);
-  const [carga, asignarCarga] = useState(true);
-  const [mostrarModelo, asignarMostrarModelo] = useState(false); // Esto probablemente controlará un modal para editar/crear usuario
-  const [usuarioEditando, setUsuarioEditando] = useState(null); // Renombrado
   const [busqueda, setBusqueda] = useState("");
+  const [carga, setCarga] = useState(false);
+  const [mostrarModelo, setMostrarModelo] = useState(false);
+  const [usuarioEditando, setUsuarioEditando] = useState(null);
   const toast = useRef(null);
 
+  // Definir mostrarError antes de usarlo
+  const mostrarError = useCallback((mensaje) => {
+    mostrarErrorFn(mensaje, toast);
+  }, []);
+
+  const mostrarExito = (mensaje) => {
+    mostrarExitoFn(mensaje, toast);
+  };
+
+  // Definir cargarUsuarios antes de usarlo en useEffect
+  const cargarUsuarios = useCallback(async () => {
+    await cargarEntidadesFn(
+      setCarga,
+      usuariosService,
+      setUsuarios,
+      setUsuariosFiltrados,
+      mostrarError,
+      "usuarios"
+    );
+  }, [setCarga, mostrarError]);
+
+  // Definir manejoEliminarUsuario antes de usarlo en columnas
   
 
-  const columnas = [
-    { Header: "Nombre Completo", accessor: "nombreCompleto" },
-    { Header: "Correo Electrónico", accessor: "correo" },
-    { Header: "Rol", accessor: "rol" },
+  // Componente de celda de acciones fuera del componente principal
+ 
+  
+  UserActionsCell.propTypes = {
+    row: PropTypes.shape({
+      original: PropTypes.object.isRequired,
+    }).isRequired,
+    onEdit: PropTypes.func.isRequired,
+  };
 
+  // Wrapper component for UserActionsCell
+  
+  // Definir columnas después de los hooks y funciones que usa
+  const columnas = [
     {
       Header: "Acciones",
       accessor: "acciones",
-      Cell: ({ row }) => (
-        <div
-          className="flex flex-row gap-1"
-          style={{ display: "flex", flexWrap: "nowrap" }}
-        >
-          <Button
-            icon="pi pi-pencil" // Icono para editar
-            className="p-button-rounded p-button-sm p-button-text p-button-primary"
-            tooltip="Editar Usuario"
-            tooltipOptions={{ position: "top" }}
-            onClick={() => {
-              setUsuarioEditando(row.original); // Pasa el objeto de usuario
-              asignarMostrarModelo(true); // Mostrar modal de edición/creación
-            }}
-          />
-
-          <Button
-            icon="pi pi-trash" // Icono para eliminar
-            className="p-button-rounded p-button-sm p-button-text p-button-danger"
-            tooltip="Eliminar Usuario"
-            tooltipOptions={{ position: "top" }}
-            onClick={() => manejoEliminarUsuario(row.original.id)} // Usa la función adaptada/creada para eliminar usuario
-          />
-        </div>
-      ),
-      disableSortBy: true,
-      style: { whiteSpace: "nowrap" },
-      width: 150,
-    },
+      Cell: UserActionsCellWrapper
+    }
   ];
-
+     
   useEffect(() => {
     cargarUsuarios();
-  }, []);
+  }, [cargarUsuarios]); // Efecto inicial para cargar usuarios
 
   useEffect(() => {
     if (busqueda) {
@@ -69,48 +107,19 @@ export default function GestionarUsuarios() {
         Object.values(usuario).some(
           (val) =>
             val != null &&
-            val.toString().toLowerCase().includes(busqueda.toLowerCase()) // Añadir val != null para evitar errores si algún valor es null/undefined
+            val.toString().toLowerCase().includes(busqueda.toLowerCase())
         )
       );
       setUsuariosFiltrados(filtrados);
     } else {
       setUsuariosFiltrados(usuarios);
     }
-  }, [busqueda, usuarios]);
-  const manejoEliminarUsuario = async (id) => {
-    await manejoEliminarEntidadFn(
-      id,
-      usuariosService,
-      mostrarExito,
-      cargarUsuarios,
-      mostrarError,
-      "usuario", // Nombre de la entidad
-      toast // Pasar la referencia del toast
-    );
-  };
-  const cargarUsuarios = async()=> (
-    await cargarEntidadesFn(
-      asignarCarga,
-      usuariosService,
-      setUsuarios,
-      setUsuariosFiltrados,
-      mostrarError,
-      "usuarios" // Nombre de la entidad
-    ));
-
-  const mostrarExito = (mensaje) => {
-    mostrarExitoFn(mensaje, toast);
-  };
-
-  const mostrarError = (mensaje) => {
-    mostrarErrorFn(mensaje, toast);
-  };
+  }, [busqueda, usuarios]); // Separar este efecto y quitar cargarUsuarios de las dependencias
 
   return (
     <div className="p-4">
       <Toast ref={toast} />
       <div className="flex justify-content-between align-items-center mb-4">
-        {/* Cambiar título */}
         <h1 className="text-2xl font-bold">Gestión de Usuarios</h1>
         <div className="flex gap-2">
           <span className="p-input-icon-left">
@@ -118,47 +127,42 @@ export default function GestionarUsuarios() {
             <InputText
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
-              placeholder="Buscar usuarios..." // Cambiar placeholder
+              placeholder="Buscar usuarios..."
               className="w-full"
             />
           </span>
-          {/* Botón para crear nuevo usuario */}
           <Button
-            label="Nuevo Usuario" // Cambiar label
+            label="Nuevo Usuario"
             icon="pi pi-plus"
             onClick={() => {
               setUsuarioEditando(null);
-              asignarMostrarModelo(true);
+              setMostrarModelo(true);
             }}
           />
         </div>
       </div>
       <div className="tabla-con-bordes">
-        <TablaEquipos // El componente TablaDatos es genérico, el nombre del archivo está bien
+        <TablaEquipos
           columns={columnas}
-          data={usuariosFiltrados} // Pasar los usuarios filtrados
+          data={usuariosFiltrados}
           loading={carga}
         />
       </div>
 
       {mostrarModelo && (
         <ModalFormularioUsuario
-          usuario={usuarioEditando} // Pasa el objeto de usuario (null para nuevo)
+          usuario={usuarioEditando}
           visible={mostrarModelo}
-          onHide={() => asignarMostrarModelo(false)} // Función para cerrar el modal
+          onHide={() => setMostrarModelo(false)}
           onSave={() => {
-            // Función que se llama al guardar
-            asignarMostrarModelo(false); // Cerrar modal
-            cargarUsuarios(); // Recargar la lista después de guardar
+            setMostrarModelo(false);
+            cargarUsuarios();
           }}
-          mostrarExito={mostrarExito} // Pasar funciones de mensaje
+          mostrarExito={mostrarExito}
           mostrarError={mostrarError}
-          usuariosService={usuariosService} // Pasar el servicio de usuarios
+          usuariosService={usuariosService}
         />
       )}
     </div>
   );
 }
-
-// Probablemente necesites un componente ModalFormularioUsuario en otro archivo
-// import { ModalFormularioUsuario } from './ModalFormularioUsuario'; // Ejemplo

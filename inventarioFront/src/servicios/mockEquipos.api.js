@@ -62,91 +62,63 @@ export const mockEquiposService = {
 
   filtrarAvanzado: (filtros) =>
     new Promise((resolve) => {
-      const resultados = equiposMock.filter((equipo) => {
-        const normalizeDateString = (dateStr) => {
-          if (!dateStr) return null;
-          try {
-            const date = new Date(dateStr);
-
-            if (isNaN(date.getTime())) {
-              return null; // Fecha inválida
-            }
-
-            return date.toISOString().split("T")[0];
-          } catch (e) {
-            console.error("Error parsing date string:", dateStr, e);
-            return null; // Manejar errores de parseo
+      const normalizeDateString = (dateStr) => {
+        if (!dateStr) return null;
+        try {
+          const date = new Date(dateStr);
+          if (isNaN(date.getTime())) {
+            return null; // Fecha inválida
           }
-        };
-        let cumpleFiltro = true;
-
-        if (filtros.placa) {
-          cumpleFiltro = cumpleFiltro && equipo.placa?.includes(filtros.placa);
+          return date.toISOString().split("T")[0];
+        } catch (e) {
+          console.error("Error parsing date string:", dateStr, e);
+          return null; // Manejar errores de parseo
         }
+      };
 
-        if (filtros.marca) {
-          cumpleFiltro =
-            cumpleFiltro &&
-            equipo.marca?.toLowerCase().includes(filtros.marca.toLowerCase());
-        }
-
-        if (filtros.estado) {
-          cumpleFiltro = cumpleFiltro && equipo.estado === filtros.estado;
-        }
-
-        // Filtro por Fecha Compra
-        if (filtros.fecha_compra) {
-          const filtroFecha = normalizeDateString(filtros.fecha_compra);
-          const equipoFecha = normalizeDateString(equipo.fecha_compra);
-          // Solo comparamos si ambas fechas (filtro y dato) son válidas y coincidentes
-          cumpleFiltro =
-            cumpleFiltro &&
-            filtroFecha &&
-            equipoFecha &&
-            filtroFecha === equipoFecha;
-        }
-
-        if (filtros.responsable) {
-          cumpleFiltro =
-            cumpleFiltro &&
+      const cumpleFiltro = (equipo, filtros) => {
+        const filtrosAplicados = [
+          () => !filtros.placa || equipo.placa?.includes(filtros.placa),
+          () =>
+            !filtros.marca ||
+            equipo.marca?.toLowerCase().includes(filtros.marca.toLowerCase()),
+          () => !filtros.estado || equipo.estado === filtros.estado,
+          () => {
+            if (!filtros.fecha_compra) return true;
+            const filtroFecha = normalizeDateString(filtros.fecha_compra);
+            const equipoFecha = normalizeDateString(equipo.fecha_compra);
+            return filtroFecha && equipoFecha && filtroFecha === equipoFecha;
+          },
+          () =>
+            !filtros.responsable ||
             equipo.responsable
               ?.toLowerCase()
-              .includes(filtros.responsable.toLowerCase());
-        }
-
-        if (filtros.ubicacion) {
-          cumpleFiltro =
-            cumpleFiltro &&
+              .includes(filtros.responsable.toLowerCase()),
+          () =>
+            !filtros.ubicacion ||
             equipo.ubicacion
               ?.toLowerCase()
-              .includes(filtros.ubicacion.toLowerCase());
-        }
-
-        if (filtros.fechaProgramada) {
-          const filtroFecha = normalizeDateString(filtros.fechaProgramada);
-          const equipoFecha = normalizeDateString(equipo.fechaProgramada);
-
-          cumpleFiltro =
-            cumpleFiltro &&
-            filtroFecha &&
-            equipoFecha &&
-            filtroFecha === equipoFecha;
-        }
-
-        if (filtros.tecnico) {
-          cumpleFiltro =
-            cumpleFiltro &&
+              .includes(filtros.ubicacion.toLowerCase()),
+          () => {
+            if (!filtros.fechaProgramada) return true;
+            const filtroFecha = normalizeDateString(filtros.fechaProgramada);
+            const equipoFecha = normalizeDateString(equipo.fechaProgramada);
+            return filtroFecha && equipoFecha && filtroFecha === equipoFecha;
+          },
+          () =>
+            !filtros.tecnico ||
             equipo.tecnico
               ?.toLowerCase()
-              .includes(filtros.tecnico.toLowerCase());
-        }
+              .includes(filtros.tecnico.toLowerCase()),
+          () => !filtros.tipo || equipo.tipo === filtros.tipo,
+        ];
 
-        if (filtros.tipo) {
-          cumpleFiltro = cumpleFiltro && equipo.tipo === filtros.tipo;
-        }
+        return filtrosAplicados.every((filtro) => filtro());
+      };
 
-        return cumpleFiltro;
-      });
+      const resultados = equiposMock.filter((equipo) =>
+        cumpleFiltro(equipo, filtros)
+      );
 
       setTimeout(() => resolve(resultados), 500);
     }),

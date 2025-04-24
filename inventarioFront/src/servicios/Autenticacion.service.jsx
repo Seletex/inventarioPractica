@@ -1,7 +1,7 @@
 
 import api from './api'; // Asegúrate de que la ruta sea correcta
 
-//const API_URL = import.meta.env.VITE_API_URL; // Cambia esto a la URL de tu API
+/*const API_URL = import.meta.env.VITE_API_URL; // Cambia esto a la URL de tu API*/
 
 export const loginUsuario = async (correo, contraseña) => {
     try {

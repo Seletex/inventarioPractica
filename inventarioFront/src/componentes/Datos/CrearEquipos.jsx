@@ -1,9 +1,9 @@
 import {DatosUbicacion} from "./DatosUbicaciones.jsx"; // Verifica la ruta
 
 import {DatosTipoEquipo} from "./DatosTipoEquipo.jsx"; // Verifica la ruta
-import {MarcaComputador} from "./MarcaComputador.jsx"; // Verifica la ruta
+
 import { MarcaMonitor } from "./MarcaMonitor.jsx"; // Verifica la ruta
-import { MarcaImpresora } from "./MarcaImpresora.jsx"; // Verifica la ruta
+
 import { RAM } from "./RAM.jsx"; // Verifica la ruta
 import { TipoAlmacenamiento } from "./TipoAlmacenamiento.jsx"; // Verifica la ruta
 import { SistemaOperativo } from "./SistemaOperativo.jsx"; // Verifica la ruta

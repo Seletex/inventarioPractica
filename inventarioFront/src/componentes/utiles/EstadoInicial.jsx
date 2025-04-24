@@ -1,4 +1,4 @@
-;
+
 import { camposFormularioEquipo} from "../../componentes/Datos/CrearEquipos.jsx";
 export const estadoinicial = (() => {
     const state = {};

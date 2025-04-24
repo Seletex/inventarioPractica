@@ -1,23 +1,31 @@
 
-import { createContext,useState } from "react";
+import React, { createContext, useState, useMemo, useCallback } from "react";
+import PropTypes from 'prop-types';
 import './InterfazUsuario/FormularioAutenticacion.css'; // Asegúrate de que la ruta sea correcta
 
 
 const FormularioAutenticacion = createContext();
 export const ProveedorFormularioAutenticacion = ({ eventos }) => {
- const {usuario, asignarUsuario} = useState({});
+const [usuario] = useState({});
 
- const login = (DatosUsuario) => asignarUsuario(DatosUsuario);
- const logout = () => {
+ const login = useCallback((DatosUsuario) => usuario(DatosUsuario), [usuario]);
+ const logout = useCallback(() => {
   localStorage.removeItem('token'); // Eliminar el token del almacenamiento local
-    asignarUsuario(null);
+  usuario(null);
     window.location.href = '/login'; // Redirigir a la página de inicio de sesión
-  };
+  }, [usuario]);
+
+ const contextValue = useMemo(() => ({ usuario, login, logout }), [usuario, login, logout]);
+
   return(
-    <FormularioAutenticacion.Provider value={{usuario, login, logout }}>
+    <FormularioAutenticacion.Provider value={contextValue}>
       {eventos}
     </FormularioAutenticacion.Provider>
   )
  };
-
+  ProveedorFormularioAutenticacion.propTypes = {
+    eventos: PropTypes.node.isRequired,
+  };
+  
   export default FormularioAutenticacion;
+ 

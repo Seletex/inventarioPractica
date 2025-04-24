@@ -1,5 +1,6 @@
 import 'primeicons/primeicons.css';
 import { InputText } from 'primereact/inputtext';
+import PropTypes from 'prop-types';
 
 export default function Entrada({
   placeHolder,
@@ -37,5 +38,16 @@ export default function Entrada({
         `}
       />
     </div>
-  );
-}
+)}
+
+Entrada.propTypes = {
+  placeHolder: PropTypes.string,
+  tipo: PropTypes.string,
+  nombre: PropTypes.string.isRequired,
+  valor: PropTypes.string.isRequired,
+  required: PropTypes.bool,
+  manejarCambio: PropTypes.func.isRequired,
+  icono: PropTypes.string,
+  className: PropTypes.string,
+};
+

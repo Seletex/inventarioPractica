@@ -5,7 +5,7 @@ import Entrada from "../../componentes/InterfazUsuario/Entrada";
 import { Card } from "primereact/card";
 import { Icono } from "../../componentes/utiles/Icono.jsx";
 import { camposFormularioEquipo } from "../../componentes/Datos/ActualizarEquipo.jsx";
-// import { marcasPorTipoEquipo } from "../../componentes/Datos/MarcasTipoEquipo.jsx";
+
 import { mockEquiposService as equiposService } from "../../servicios/mockEquipos.api.js";
 
 export default function PaginaActualizarEquipos() {
@@ -82,40 +82,45 @@ export default function PaginaActualizarEquipos() {
       return;
     }
 
-    let valid = true;
-    const errores = [];
-    camposFormularioEquipo.forEach((campo) => {
-      if (["placa"].includes(campo.name)) {
-        // Omitir validación de 'placa' si no es editable
-        return;
-      }
-      // Asumiendo que la marca no es editable y por lo tanto no se valida su 'required' aquí
-      if (["marca"].includes(campo.name)) {
-        return;
-      }
+  //si toca otra vez validar
+   
+    const validarCampos = (campos, formulario) => {
+      const erroresLocales = [];
+      let esValido = true;
 
-      if (campo.required) {
-        const valor = formulario[campo.name];
-        if (campo.type === "select") {
-          if (valor === null || valor === undefined || valor === "") {
-            valid = false;
-            errores.push(`${campo.label} es requerido.`);
-          }
-        } else {
-          // text, number, date
-          if (valor === null || valor === undefined || valor === "") {
-            valid = false;
-            errores.push(`${campo.label} es requerido.`);
+      campos.forEach((campo) => {
+        if (["placa", "marca"].includes(campo.name)) {
+          return; // Omitir validación de 'placa' y 'marca'
+        }
+
+        if (campo.required) {
+          const valor = formulario[campo.name];
+          if (
+            (campo.type === "select" &&
+              (valor === null || valor === undefined || valor === "")) ||
+            (campo.type !== "select" && valor === "")
+          ) {
+            esValido = false;
+            erroresLocales.push(`${campo.label} es requerido.`);
           }
         }
-      }
-    });
+      });
 
-    if (!valid) {
-      setError(errores.join(" "));
+      return { esValido, erroresLocales };
+    };
+
+    const { esValido, erroresLocales } = validarCampos(
+      camposFormularioEquipo,
+      formulario
+    );
+
+    if (!esValido) {
+      setError(erroresLocales.join(" "));
       setCargandoEnvio(false);
       return;
     }
+
+    // Remove redundant block as 'errores' is always empty
 
     // --- Preparar datos antes de enviar (conversión de strings "true"/"false") ---
     const datosParaEnviar = { ...formulario };
@@ -299,7 +304,7 @@ export default function PaginaActualizarEquipos() {
 
               {/* Botón de envío */}
               <button
-                tipo="submit"
+                type="submit"
                 disabled={cargandoEnvio}
                 style={{
                   width: "100%",

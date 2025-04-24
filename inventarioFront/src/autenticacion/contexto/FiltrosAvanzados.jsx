@@ -2,7 +2,8 @@ import { Calendar } from 'primereact/calendar';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
-import { Divider } from 'primereact/divider';
+import PropTypes from 'prop-types';
+
 
 
 export const FiltrosAvanzados = ({ filtros, setFiltros, onFiltrar, onReset }) => {
@@ -92,5 +93,18 @@ export const FiltrosAvanzados = ({ filtros, setFiltros, onFiltrar, onReset }) =>
         />
       </div>
     </div>
-  );
+)};
+
+FiltrosAvanzados.propTypes = {
+  filtros: PropTypes.shape({
+    placa: PropTypes.string,
+    marca: PropTypes.string,
+    modelo: PropTypes.string,
+    estado: PropTypes.string,
+    fecha_inicio: PropTypes.instanceOf(Date),
+    fecha_fin: PropTypes.instanceOf(Date),
+  }).isRequired,
+  setFiltros: PropTypes.func.isRequired,
+  onFiltrar: PropTypes.func.isRequired,
+  onReset: PropTypes.func.isRequired,
 };

@@ -3,8 +3,9 @@ import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
+import PropTypes from "prop-types";
 
-export const FormMantenimiento = ({ mantenimiento, onSubmit, equipos }) => {
+export const FormMantenimiento = ({ mantenimiento, onSubmit,equipos }) => {
   const [setMostrarModal] = useState(false);
   const [setMantenimientoEditando] = useState(null);
   const [formData, setFormData] = useState(
@@ -28,20 +29,29 @@ export const FormMantenimiento = ({ mantenimiento, onSubmit, equipos }) => {
     { label: "Media", value: "Media" },
     { label: "Baja", value: "Baja" },
   ];
-
-  const handleSubmit = (e) => {
+ const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({
-      ...formData,
-      fechaProgramada: formData.fechaProgramada.toISOString(),
-    });
+    const { equipoId, tipo, fechaProgramada, descripcion, prioridad } = formData;
+    const nuevoMantenimiento = {
+      equipoId,
+      tipo,
+      fechaProgramada: fechaProgramada.toISOString(),
+      descripcion,
+      prioridad,
+    };
+    onSubmit(nuevoMantenimiento);
+    setMostrarModal(false);
   };
+  
+  
+ 
 
   return (
     <form onSubmit={handleSubmit} className="p-fluid">
       <div className="field">
-        <label>Equipo</label>
+        <label htmlFor="equipo">Equipo</label>
         <Dropdown
+          id="equipo"
           value={formData.equipoId}
           options={equipos.map((e) => ({
             label: `${e.placa} - ${e.marca} (${e.modelo})`,
@@ -54,8 +64,9 @@ export const FormMantenimiento = ({ mantenimiento, onSubmit, equipos }) => {
       </div>
 
       <div className="field">
-        <label>Tipo de mantenimiento</label>
+        <label htmlFor="tipoMantenimiento">Tipo de mantenimiento</label>
         <Dropdown
+          id="tipoMantenimiento"
           value={formData.tipo}
           options={tiposMantenimiento}
           onChange={(e) => setFormData({ ...formData, tipo: e.value })}
@@ -63,8 +74,9 @@ export const FormMantenimiento = ({ mantenimiento, onSubmit, equipos }) => {
       </div>
 
       <div className="field">
-        <label>Fecha programada</label>
+        <label htmlFor="fechaProgramada">Fecha programada</label>
         <Calendar
+          id="fechaProgramada"
           value={formData.fechaProgramada}
           onChange={(e) =>
             setFormData({ ...formData, fechaProgramada: e.value })
@@ -76,8 +88,9 @@ export const FormMantenimiento = ({ mantenimiento, onSubmit, equipos }) => {
       </div>
 
       <div className="field">
-        <label>Prioridad</label>
+        <label htmlFor="prioridad">Prioridad</label>
         <Dropdown
+          id="prioridad"
           value={formData.prioridad}
           options={prioridades}
           onChange={(e) => setFormData({ ...formData, prioridad: e.value })}
@@ -85,8 +98,9 @@ export const FormMantenimiento = ({ mantenimiento, onSubmit, equipos }) => {
       </div>
 
       <div className="field">
-        <label>Descripción</label>
+        <label htmlFor="descripcion">Descripción</label>
         <InputText
+          id="descripcion"
           value={formData.descripcion}
           onChange={(e) =>
             setFormData({ ...formData, descripcion: e.target.value })
@@ -108,4 +122,16 @@ export const FormMantenimiento = ({ mantenimiento, onSubmit, equipos }) => {
       </div>
     </form>
   );
+};
+FormMantenimiento.propTypes = {
+  mantenimiento: PropTypes.object,
+  onSubmit: PropTypes.func.isRequired,
+  equipos: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      placa: PropTypes.string.isRequired,
+      marca: PropTypes.string.isRequired,
+      modelo: PropTypes.string.isRequired,
+    })
+  ).isRequired,
 };

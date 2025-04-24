@@ -21,4 +21,3 @@ const RutasAplicacion = () => {
     )
 }
 export default RutasAplicacion
-// export default RutasAplicacion;

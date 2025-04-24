@@ -56,18 +56,10 @@ export default function PaginaRegistrarEquipos() {
       if (campo.required) {
         const valor = formulario[campo.name];
         // Lógica de validación ajustada para diferentes tipos
-        if (campo.type === "select") {
-          // Para selects, validar que el valor no sea la cadena vacía ("") de la opción por defecto
-          if (valor === null || valor === undefined || valor === "") {
-            valid = false;
-            errores.push(`${campo.label} es requerido.`);
-          }
-        }else {
-          // text, number, date, etc.
-          if (valor === null || valor === undefined || valor === "") {
-            valid = false;
-            errores.push(`${campo.label} es requerido.`);
-          }
+        // Validar que el valor no sea nulo, indefinido o vacío
+        if (valor === null || valor === undefined || valor === "") {
+          valid = false;
+          errores.push(`${campo.label} es requerido.`);
         }
       }
     });

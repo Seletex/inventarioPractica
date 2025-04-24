@@ -11,6 +11,8 @@
   justify-content: center; /* Centra horizontalmente los hijos de #root */
   align-items: center; /* Centra verticalmente los hijos de #root */
   min-height: 100vh; /* Asegura que ocupe toda la altura de la pantalla */
+  --color-borde: #e5e7eb;
+  --grosor-borde: 1px;
 }
 
 a {
@@ -24,8 +26,6 @@ a:hover {
 
 body {
   margin: 2px;
-  /*display: flex;
-  place-items: center;*/
   min-width: 320px;
   max-width: 100%;
   min-height: 100vh;
@@ -37,7 +37,7 @@ h1 {
 }
 input {
   font-family: "Times New Roman", Times, serif;
-  font-size: 21px;
+  font-size: 18px;
   width: 100%;
   min-width: 320px;
   max-width: 100%;
@@ -47,9 +47,9 @@ input {
   border: solidrgb(150, 151, 160);
   padding: 1.2em 1.2em;
   margin: 1px;
-  font-size: 1em;
+
   font-weight: 500;
-  font-family: inherit;
+
   background-color: rgb(255, 255, 255);
   border-color: #535fff;
 }
@@ -76,7 +76,7 @@ select {
   margin: 2px;
   font-size: 21px;
   font-weight: 500;
-  font-family: inherit;
+
   background-color: rgb(255, 255, 255);
 }
 .p-button {
@@ -101,7 +101,7 @@ Button {
     font-size: 20px;
     padding: 0.6em 1.2em;
     margin: 2px;
-    font-size: 1em;
+
     font-weight: 500;
 
     color: #000000;
@@ -119,7 +119,7 @@ Card {
   width: 100%;
   box-sizing: border-box;
   max-width: 100%;
-  width: 350px;
+
   border-radius: 4px;
   border: 1px solid #e0e0e0;
   box-shadow: 0 4px 8px #000;
@@ -145,8 +145,7 @@ button {
   border: 1px solid transparent;
   font-size: 21px;
   padding: 0.6em 1.2em;
-  margin: 2px;
-  font-size: 20px;
+
   font-weight: 500;
 
   color: #000000;
@@ -154,7 +153,7 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
-InputText {
+.input-text {
   width: 100%;
 }
 Button:hover {
@@ -205,17 +204,7 @@ button:disabled:active {
   background-color: transparent;
 }
 /* Para asegurar que los botones se mantengan en línea */
-.p-button {
-  text-align: center;
-  font-family: "Times New Roman", Times, serif;
-  width: 100%;
-  box-sizing: border-box;
-  max-width: 100%;
-  border-radius: 4px;
-  min-width: 2rem !important;
-  height: 2rem !important;
-  margin: 0 0.1rem !important;
-}
+/* Removed duplicate .p-button selector */
 
 /* Para la columna de acciones */
 .action-cell {
@@ -273,10 +262,7 @@ button:disabled:active {
 
 /* Bordes en el header */
 .tabla-con-bordes .p-datatable .p-datatable-thead > tr > th {
-  border-bottom: 1px solid #dee2e6 !important;
-}
-:root {
-  --color-borde: #e5e7eb;
+/* Removed duplicate :root selector */
   --grosor-borde: 1px;
 }
 
