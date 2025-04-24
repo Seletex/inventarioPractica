@@ -2,26 +2,22 @@
 import { useState, useEffect, useRef, useCallback,useMemo } from "react";
 import { mockEquiposService as equiposService } from "../../servicios/mockEquipos.api.js";
 // *** IMPORTAR LA TABLA MEJORADA (TablaEquipos) ***
-import { TablaEquipos } from "../../autenticacion/contexto/TablaEquipos.jsx"; // <-- Usa la ruta correcta de tu TablaEquipos
+import { TablaEquipos } from "../../autenticacion/contexto/TablaDatos.jsx" // <-- Usa la ruta correcta de tu TablaEquipos
 import { Button } from "primereact/button"; // Botón de PrimeReact
 // *** IMPORTAR EL COMPONENTE AccionesCell ***
-import { AccionesCell } from "../../componentes/tabla/AccionesCell.jsx"; // <-- Usa la ruta donde creaste AccionesCell
+// <-- Usa la ruta donde creaste AccionesCell
 import { Toast } from "primereact/toast";
 import { InputText } from "primereact/inputtext";
 import {
-  cargarEntidadesFn, // Usar la función genérica de carga
-  manejoEliminarEntidadFn, // Usar la función genérica de eliminación
+  cargarEntidadesFn,
+
   mostrarExitoFn,
   mostrarErrorFn,
-} from "../../autenticacion/anzuelos/usoGestionFunciones.js"; // <-- Asegúrate de la ruta a tus funciones genéricas
-// *** Importar ProveedorAutenticacion y useUsuarioLogueado si gestionFuncionesUsuario las usa y no quieres pasarlas directamente ***
-// import { ProveedorAutenticacion } from "../../autenticacion/contexto/ContextoAutenticacion";
-// import { useUsuarioLogueado } from "../../autenticacion/contexto/UsuarioLogueado.jsx";
-
+} from "../../autenticacion/anzuelos/usoGestionFuncionesEquipo.js"; // <-- Revisa esta ruta
 import PropTypes from "prop-types"; // Importar PropTypes
 import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog'; // Para la confirmación de baja/eliminación
 import { useNavigate } from 'react-router-dom'; // Importar useNavigate para redirigir a actualizar/nuevo mantenimiento
-import ModalFormularioEquipo from "../componentes/ModalFormularioEquipo"; // Importar el componente ModalFormularioEquipo
+//import ModalFormularioEquipo from "../componentes/ModalFormularioEquipo"; // Importar el componente ModalFormularioEquipo
 function EstadoCell({ value }) {
   return (
     <span className={`estado-badge ${value === "Baja" ? "Inactivo" : "Activo"}`}>
@@ -34,14 +30,7 @@ EstadoCell.propTypes = {
   value: PropTypes.string.isRequired,
 };
 
-AccionesCell.propTypes = {
-  row: PropTypes.shape({
-    original: PropTypes.object.isRequired, // Valida que 'row.original' sea un objeto
-  }).isRequired,
-  onEdit: PropTypes.func.isRequired, // Valida que 'onEdit' sea una función
-  onDecommission: PropTypes.func.isRequired, // Valida que 'onDecommission' sea una función
-  onDelete: PropTypes.func.isRequired, // Valida que 'onDelete' sea una función
-};
+
 
 function AccionesCellWrapper({ row }) {
   const manejarEdicion = (equipo) => {
@@ -147,29 +136,7 @@ export default function GestionarEquipos() {
 
    // Manejar Eliminación (con confirmación)
    // Esto es diferente a Dar de Baja (que cambia el estado), esto BORRA el registro
-  const manejarEliminacion = useCallback((placa) => {
-      confirmDialog({
-          message: `¿Estás seguro de ELIMINAR el equipo con placa ${placa}? Esta acción es irreversible.`,
-          header: 'Confirmar Eliminación',
-          icon: 'pi pi-exclamation-triangle',
-          acceptClassName: 'p-button-danger', // Estilo del botón de aceptar para eliminación
-          accept: async () => { // Lógica al confirmar la eliminación
-               await manejoEliminarEntidadFn( // Usar la función genérica de eliminación
-                   placa, // Pasar el identificador (placa)
-                   equiposService, // Pasar el servicio específico
-                   mostrarExito,
-                   cargarEquipos, // Pasar la función de recarga
-                   mostrarError,
-                   'Equipo' // Pasar el nombre de la entidad
-               );
-          },
-          reject: () => {
-              toast.info("Operación de eliminación cancelada");
-          }
-      });
-  }, [mostrarExito, mostrarError, cargarEquipos]); // Dependencias
-
-
+  
   // Cargar equipos al iniciar (usando el hook cargado)
   useEffect(() => {
     cargarEquipos();
@@ -203,7 +170,7 @@ export default function GestionarEquipos() {
                   row={row} // Pasar la prop 'row' recibida
                   onEdit={manejarEdicion} // Pasar la función manejarEdicion como callback
                   onDecommission={manejarDarDeBaja} // Pasar la función manejarDarDeBaja como callback
-                  onDelete={manejarEliminacion} // Pasar la función manejarEliminacion como callback
+                  // Pasar la función manejarEliminacion como callback
                   // Puedes pasar otras props si AccionesCell las espera (ej: usuario logueado para permisos)
                   // usuario={usuarioLogueado}
               />
@@ -212,7 +179,7 @@ export default function GestionarEquipos() {
           // style: { whiteSpace: "nowrap" }, // Estilos para la celda (puede ir en CSS)
           // width: 150, // Ancho (prop de react-table, no de estilo CSS)
       },
-  ], [manejarEdicion, manejarDarDeBaja, manejarEliminacion]); // Dependencias: funciones de acción (envueltas en useCallback)
+  ], [manejarEdicion, manejarDarDeBaja]); // Dependencias: funciones de acción (envueltas en useCallback)
 
    // Si usas un modal para Crear/Editar, necesitas definirlo aquí
    const handleNuevoEquipoClick = () => { setEquipoEditando(null); setMostrarModelo(true); };

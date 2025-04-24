@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Button } from "primereact/button"; // Importar Button de PrimeReact
 import { useNavigate } from "react-router-dom"; // Importar useNavigate
 
-export default function AccionesCell({ row, onEdit, onDecommission }) {
+function AccionesCell({ row, onEdit, onDecommission, onDelete, onProgramMaintenance }) {
   // 'row.original' contiene el objeto de datos completo de la fila actual
   const equipo = row.original;
   const navigate = useNavigate(); // Hook para navegación programática (si se necesita para redirección)
@@ -18,6 +18,21 @@ export default function AccionesCell({ row, onEdit, onDecommission }) {
       navigate(`/actualizar-equipo/${equipo.placa}`);
     }
   };
+  const handleProgramMaintenanceClick = () => {
+    // Llama al callback pasado como prop
+    if (onProgramMaintenance) {
+      navigate(`/nuevo-mantenimiento/${equipo.placa}`); // Navegar a la página de nuevo mantenimiento
+      onProgramMaintenance(equipo.placa, "Baja");
+    }
+  };
+
+  const handleDeleteClick = () => {
+    // Llama al callback pasado como prop
+    if (onDelete) {
+      // Se puede pasar el identificador (placa) y quizás el nuevo estado si el callback lo necesita
+      onDelete(equipo.placa, "Baja");
+    }
+  }
 
   const handleDecommissionClick = () => {
     // Llama al callback pasado como prop
@@ -65,16 +80,38 @@ export default function AccionesCell({ row, onEdit, onDecommission }) {
           onClick={() => navigate(`/nuevo-mantenimiento/${equipo.placa}`)} // Navegar a la página de nuevo mantenimiento
         />
       )}
+      {equipo.estado !== "Baja" && (
+        <Button
+          icon="pi pi-calendar" // Icono de calendario
+          className="p-button-rounded p-button-sm p-button-text p-button-info"
+          tooltip="Programar Mantenimiento"
+          tooltipOptions={{ position: "top" }}
+          onClick={handleProgramMaintenanceClick} // Navegar a la página de nuevo mantenimiento
+        />
+      )}
+      {equipo.estado !== "Baja" && ( // Ejemplo: No permitir editar si ya está de baja
+        <Button
+          icon="pi pi-pencil"
+          className="p-button-rounded p-button-sm p-button-text p-button-primary"
+          tooltip="Editar"
+          tooltipOptions={{ position: "top" }}
+          onClick={handleDeleteClick} // Llama a la función manejadora
+        />
+      )}
     </div>
   );
 }
 
 // Prop Types para AccionesCell
 AccionesCell.propTypes = {
+  // 'row' es la prop que react-table pasa a las funciones Cell
   row: PropTypes.shape({
-    original: PropTypes.object.isRequired, // Aseguramos que row.original sea un objeto
+    original: PropTypes.object, // Permite que original sea null o undefined para mayor robustez, aunque idealmente no debería serlo
   }).isRequired,
-  // Callbacks para las acciones, pasados desde el componente padre (GestionarEquipos)
-  onEdit: PropTypes.func,
-  onDecommission: PropTypes.func,
+  // Funciones callback pasadas desde el padre
+  onEdit: PropTypes.func.isRequired, // Función para manejar la edición
+  onDecommission: PropTypes.func.isRequired, // Función para manejar la baja
+  onDelete: PropTypes.func.isRequired, // Función para manejar la eliminación
+  onProgramMaintenance: PropTypes.func, // Añadido Programar Mantenimiento (si lo implementaste)
 };
+export { AccionesCell };

@@ -139,7 +139,25 @@ export const guardarMantenimiento = async (
     mostrarError(`Error al guardar: ${error.message}`);
   }
 };
-
+export const cargarEntidadesFn = async (
+  setCarga,
+  entityService,
+  setEntities,
+  setFilteredEntities,
+  showError,
+  entityName = "entidades" // Valor por defecto
+) => {
+  setCarga(true);
+  try {
+    const data = await entityService.getAll();
+    setEntities(data);
+    setFilteredEntities(data); // Inicialmente, los datos filtrados son todos los datos
+  } catch (error) {
+    showError(`Error cargando ${entityName}: ` + error.message);
+  } finally {
+    setCarga(false);
+  }
+};
 export const mostrarExitoFn = (mensaje, toastRef) => {
   toastRef.current?.show({
     severity: "success",

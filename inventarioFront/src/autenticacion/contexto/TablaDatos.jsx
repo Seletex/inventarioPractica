@@ -1,146 +1,126 @@
-import { useTable, useSortBy, usePagination } from "react-table"; // *** IMPORTAR usePagination ***
-import React from "react";
-import PropTypes from "prop-types"; // Importar PropTypes
-import { Button } from "primereact/button"; // Importa Button
+// Archivo: TablaEquipos.jsx (o TablaDatos.jsx)
 
-export const TablaEquipos = ({ columns, data, ...extraProps }) => { // Permite pasar props adicionales a la tabla principal si es necesario
+import { useTable, useSortBy, usePagination } from "react-table";
+import React from "react";
+import PropTypes from "prop-types";
+
+import { Button } from "primereact/button";
+// Importa tus estilos si los moviste a un archivo CSS
+// import './TablaEquipos.css'; // <<< Asegúrate de que esta línea exista y la ruta sea correcta si usas un archivo CSS
+
+
+/**
+ * Componente de tabla que utiliza react-table para paginación, ordenación y renderizado flexible.
+ * Incluye controles de paginación básicos con PrimeReact.
+ */
+// *** 1. Consumir la prop 'loading' y otras props específicas ***
+export const TablaEquipos = ({ columns, data, }) => { // Captura 'loading' y el resto en 'restProps'
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
     prepareRow,
-    rows,
-    page, // Contiene solo las filas de la página actual
-    // Props y funciones para paginación
+    page,
     canPreviousPage,
     canNextPage,
-    //pageOptions, // Array de índices de página (ej: [0, 1, 2])
-    pageCount, // Número total de páginas
-   // gotoPage, // Función para ir a una página específica (si la necesitas en UI avanzada)
-    nextPage, // Función para ir a la siguiente página
-    previousPage, // Función para ir a la página anterior
-    setPageSize, // Función para cambiar el tamaño de la página
-    state: { pageIndex, pageSize }, // Estado actual de paginación (índice, tamaño)
+    //pageOptions,
+    pageCount,
+    //gotoPage,
+    nextPage,
+    previousPage,
+    setPageSize,
+    state: { pageIndex, pageSize },
   } = useTable(
     {
       columns,
-      data: data || [], // Usar un array vacío si 'data' es null/undefined
-      initialState: { pageIndex: 0, pageSize: 10 }, // Estado inicial de paginación
+      data: data || [],
+      initialState: { pageIndex: 0, pageSize: 10 },
     },
-    useSortBy, // Habilitar ordenación
-    usePagination // *** HABILITAR PAGINACIÓN ***
+    useSortBy,
+    usePagination
   );
 
-  // Cuando la paginación está activa (usePagination), 'page' ya contiene solo las filas de la página actual.
-  const datosAMostrar = page || rows; 
-
-
+  // La prop 'loading' ahora está disponible aquí para ser usada (ej: mostrar un spinner o overlay)
+  // {loading && <Spinner />} // Implementa tu indicador de carga si es necesario
 
   return (
-    <div className="w-full"> {/* Contenedor principal */}
+    <div className="w-full">
       <table
-        {...getTableProps()} // Props básicas de react-table para la tabla
-        className="w-full border-separate" // Clases de Tailwind
-        style={{ borderSpacing: 0 }} // Eliminar espacio entre bordes de celdas
-        {...extraProps} // Pasar props adicionales al elemento <table>
+        {...getTableProps()} // Esto pasa las props estándar de react-table (role="table", etc.)
+        className="w-full border-separate tabla-react" // Aplica clases de estilo (Tailwind + tu clase CSS)
+        style={{ borderSpacing: 0 }}
+        // *** 1. NO PASAR la prop 'loading' al <table> ***
+        // {...restProps} // Quita esto si no estás pasando otras props HTML válidas desde el padre
       >
-        {/* Estilos básicos para bordes y padding (pueden ir en CSS separado) */}
-        <style>{`
-          .tabla-react th, .tabla-react td { /* Añadir clase para aplicar estilos */
-            border-right: 1px solid #e5e7eb;
-            padding: 0.5rem;
-          }
-          .tabla-react th:last-child, .tabla-react td:last-child {
-            border-right: none;
-          }
-          /* Estilo opcional para ordenación */
-          .tabla-react th {
-              cursor: pointer; /* Indicar que la cabecera es clickeable para ordenar */
-          }
-          .tabla-react th.is-sorted-asc::after { content: " ▲"; } /* Indicador de orden ascendente */
-          .tabla-react th.is-sorted-desc::after { content: " ▼"; } /* Indicador de orden descendente */
-          .tabla-react th.is-sorted-none::after { content: " ◇"; opacity: 0.2;} /* Indicador de no ordenado */
-
+        {/* Si usas un archivo CSS importado, elimina la etiqueta <style> */ }
+        {/*
+        <style jsx>{` // O <style> sin jsx si no usas styled-jsx
+          // ... Tus estilos CSS aquí ...
         `}</style>
-        {/* Aplicar clase para los estilos CSS */ }
+        */}
         <thead className="tabla-react">
           {headerGroups.map((headerGroup) => (
-            // getHeaderGroupProps() ya incluye una key única
             <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.getHeaderGroupProps().key}>
-              {headerGroup.headers.map((column) => {
-                let sortedClass = 'is-sorted-none';
-                if (column.isSorted) {
-                  sortedClass = column.isSortedDesc ? 'is-sorted-desc' : 'is-sorted-asc';
-                }
-                return (
-                  <th {...column.getHeaderProps(column.getSortByToggleProps())} key={column.getHeaderProps().key}
-                      className={` /* Clases de estilos para cabecera */ ${sortedClass}`}
-                  >
-                    {/* Renderizar el contenido de la cabecera (string o componente) */}
-                    {column.render("Header")}
-                  </th>
-                );
-              })}
+              {headerGroup.headers.map((column) => (
+                 <th {...column.getHeaderProps(column.getSortByToggleProps())} key={column.getHeaderProps().key}
+                     className={`tabla-react ${column.isSorted ? (column.isSortedDesc ? 'is-sorted-desc' : 'is-sorted-asc') : 'is-sorted-none'}`}
+                 >
+                   {column.render("Header")}
+                 </th>
+               ))}
             </tr>
           ))}
         </thead>
-        <tbody {...getTableBodyProps()} className="tabla-react"> {/* Aplicar clase para los estilos CSS */}
-          {/* Mapear sobre 'page' porque la paginación está activa */}
-          {datosAMostrar.map((row) => {
-            prepareRow(row); // Preparar cada fila es esencial
-            // getRowProps() ya incluye una key única
-            return (
+        {/* *** 2. Eliminar espacios en blanco o saltos de línea aquí *** */}
+        <tbody {...getTableBodyProps()} className="tabla-react">{page.map((row) => { // Inicia el map inmediatamente después de <tbody>
+            prepareRow(row);
+            return ( // El <tr> inicia inmediatamente después del return
               <tr {...row.getRowProps()} key={row.getRowProps().key}>
                 {row.cells.map((cell) => (
-                   // getCellProps() ya incluye una key única
                    <td {...cell.getCellProps()} key={cell.getCellProps().key}>
-                     {/* Renderizar el contenido de la celda (basado en accessor o Cell función) */}
                      {cell.render("Cell")}
                    </td>
                  ))}
               </tr>
             );
-          })}
-        </tbody>
+          })}{/* 2. Cierra el map inmediatamente antes de </tbody> */}</tbody>
       </table>
 
-      {/* Controles de Paginación */}
+      {/* Controles de Paginación (usan componentes de PrimeReact y HTML) */}
       <div className="flex justify-between items-center mt-3 p-2">
         {/* Botones de navegación */}
         <div className="flex items-center gap-2">
           <Button
             icon="pi pi-angle-left"
-            className="p-button-rounded p-button-text p-button-sm items-center text-align-center"
+            className="p-button-rounded p-button-text p-button-sm" // Clases de PrimeReact
             onClick={previousPage}
-            disabled={!canPreviousPage} // Deshabilitar si no se puede ir atrás
+            disabled={!canPreviousPage}
             tooltip="Página anterior"
           />
-          {/* Indicador de página actual / total */}
           <span className="text-sm">
             Página <strong>{pageIndex + 1}</strong> de{" "}
-            <strong>{pageCount}</strong> {/* Mostrar número total de páginas */}
+            <strong>{pageCount}</strong>
           </span>
           <Button
             icon="pi pi-angle-right"
-            className="p-button-rounded p-button-text p-button-sm"
+            className="p-button-rounded p-button-text p-button-sm" // Clases de PrimeReact
             onClick={nextPage}
-            disabled={!canNextPage} // Deshabilitar si no se puede ir adelante
+            disabled={!canNextPage}
             tooltip="Página siguiente"
           />
         </div>
 
         {/* Selector de tamaño de página */}
         <div className="flex items-center gap-2">
-          <span className="text-sm">Filas por página:</span> {/* Ajustar texto */}
+          <span className="text-sm">Filas por página:</span>
           <select
             value={pageSize}
             onChange={(e) => {
-              setPageSize(Number(e.target.value)); // Actualizar tamaño de página
+              setPageSize(Number(e.target.value));
             }}
-            className="p-inputtext p-component p-inputtext-sm"
+            className="p-inputtext p-component p-inputtext-sm" // Clases de PrimeReact InputText
           >
-            {/* Opciones de tamaño de página */}
-            {[5, 10, 20, 30, 50, 100].map((size) => ( // Añadir 100 como opción
+            {[5, 10, 20, 30, 50, 100].map((size) => (
               <option key={size} value={size}>
                 {size}
               </option>
@@ -152,29 +132,20 @@ export const TablaEquipos = ({ columns, data, ...extraProps }) => { // Permite p
   );
 };
 
-// *** Prop Types Actualizados para react-table ***
-// Definen la estructura que se espera para las props 'columns' y 'data'
+// Prop Types
 TablaEquipos.propTypes = {
-  /**
-   * Array de definiciones de columna para react-table.
-   * Cada objeto debe tener al menos 'Header' y 'accessor'.
-   * 'Cell' es una función opcional para renderizado custom.
-   */
   columns: PropTypes.arrayOf(
     PropTypes.shape({
-      Header: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired, // Título de la columna
-      accessor: PropTypes.string.isRequired, // Clave para acceder al dato en la fila
-      Cell: PropTypes.func, // Función opcional para renderizar la celda
-      // Puedes añadir más props de react-table si las usas (ej: disableSortBy, id)
+      Header: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
+      accessor: PropTypes.string, // accessor puede ser opcional si se usa un 'id' de columna y Cell
+      Cell: PropTypes.func,
+      disableSortBy: PropTypes.bool,
+      // Añade aquí proptypes para otras propiedades de columna que uses (ej: id si no usas accessor)
     })
   ).isRequired,
-  /**
-   * Array de objetos que representan los datos de la tabla.
-   * Cada objeto debe tener claves que coincidan con los 'accessor' de las columnas.
-   */
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
-  // Puedes añadir validación para otras props que pases al componente si las hay
+  loading: PropTypes.bool, // *** 1. Validar la prop loading como booleano ***
+  // Puedes añadir validación para otras props que pases y uses en el componente
 };
 
-
-export default TablaEquipos; // Eliminar si usas export const
+// No exportamos por defecto
