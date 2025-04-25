@@ -19,7 +19,7 @@ export default function PaginaRegistro() {
       // Por ejemplo, excluir ADMIN y ADMINISTRATIVO
       rol.value !== ROLES.ADMIN // && rol.value !== ROLES.ADMINISTRATIVO // Descomenta si Usuario Administrativo tampoco debe registrarse
     );
-  }, [rolUsuarioArray, ROLES]); // Dependencias: si los datos de roles o ROLES cambian
+  }, []); // Dependencias eliminadas ya que no son necesarias
 
   const [formulario, setFormulario] = useState({
     nombre: "",
@@ -121,7 +121,7 @@ export default function PaginaRegistro() {
 
             <div className="campo">
                {/* Añadir label para accesibilidad */}
-              <label htmlFor="rol" className="block text-sm font-medium text-gray-700 mb-1">Rol:</label>
+             {/* <label htmlFor="rol" className="block text-sm font-medium text-gray-700 mb-1">Rol:</label>*/}
               <select
                 id="rol"
                 name="rol"
@@ -149,12 +149,12 @@ export default function PaginaRegistro() {
               Registrarse
             </Boton>
 
-            {/*<div className="text-center text-sm text-gray-600">
-              ¿Ya tienes cuenta?{" "}
-              <Link to="/login" className="text-blue-600 hover:text-blue-800 font-medium">
-                Inicia sesión
+            <div className="text-center text-sm text-gray-600">
+              ¿No deseas crear una cuenta?{" "}
+              <Link to="/gestion-usuarios" className="text-blue-600 hover:text-blue-800 font-medium">
+                Volver
               </Link>
-            </div>*/}
+            </div>
           </form>
         </div>
       </div>

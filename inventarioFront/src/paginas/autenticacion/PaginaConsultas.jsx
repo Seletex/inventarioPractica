@@ -82,9 +82,14 @@ export default function PaginaConsultas() {
 
     const filtros = {
       placa: filtroPlaca.trim() !== "" ? filtroPlaca.trim() : null, // Convert empty string to null
-      ubicacion: filtroUbicacion && filtroUbicacion.value ? filtroUbicacion.value : null, // Safely access value
-      fechaDesde: filtroFechaDesde ? normalizeDateToISOString(filtroFechaDesde) : null, // Normalize date or set null
-      fechaHasta: filtroFechaHasta ? normalizeDateToISOString(filtroFechaHasta) : null,
+      ubicacion:
+        filtroUbicacion && filtroUbicacion.value ? filtroUbicacion.value : null, // Safely access value
+      fechaDesde: filtroFechaDesde
+        ? normalizeDateToISOString(filtroFechaDesde)
+        : null, // Normalize date or set null
+      fechaHasta: filtroFechaHasta
+        ? normalizeDateToISOString(filtroFechaHasta)
+        : null,
       tipo: filtroTipo?.value,
       // Podrías añadir más filtros específicos si los servicios los soportan
     };
@@ -257,6 +262,9 @@ export default function PaginaConsultas() {
         {/* 1. Selección de Entidad */}
         <div className="mb-6 text-center">
           <SelectButton
+            style={{ width: "100%", textAlign: "center" }}
+            // Add a custom class for styling
+            className="entity-selector center"
             value={entidadSeleccionada}
             options={opcionesEntidad}
             onChange={handleEntidadChange}
@@ -273,24 +281,21 @@ export default function PaginaConsultas() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Filtro Placa */}
             <div>
-              <label
-                htmlFor="filtroPlaca"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Placa Equipo:
-              </label>
+              
               <InputText
                 id="filtroPlaca"
                 value={filtroPlaca}
                 onChange={(e) => setFiltroPlaca(e.target.value)}
-                placeholder="Ej: XYZ123"
+                placeholder="Placa del Equipo 12234"
                 className="p-inputtext-sm w-full"
+                style={{ fontSize: "18px", minWidth: "300px", maxWidth: "400px" }} // Cambiar tamaño de fuente
               />
             </div>
 
             {/* Filtro Ubicación */}
-            <div>
+            <div style={{fontSize: "21px", marginTop: "10px"}}>
               <label
+              style={{fontSize: "21px"}}
                 htmlFor="filtroUbicacion"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
@@ -346,6 +351,7 @@ export default function PaginaConsultas() {
             {/* Filtro Tipo (Equipo o Mantenimiento) */}
             <div>
               <label
+              style={{fontSize: "21px"}}  
                 htmlFor="filtroTipo"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
@@ -354,6 +360,7 @@ export default function PaginaConsultas() {
                   : "Tipo Mantenimiento:"}
               </label>
               <Dropdown
+                style={{fontSize: "21px"}}
                 inputId="filtroTipo"
                 value={filtroTipo}
                 onChange={(e) => setFiltroTipo(e.value)}
@@ -368,6 +375,7 @@ export default function PaginaConsultas() {
           {/* Botón Consultar */}
           <div className="text-center mt-6">
             <Button
+            style={{fontSize: "21px"}}
               label="Consultar"
               icon="pi pi-search"
               onClick={handleConsultar}

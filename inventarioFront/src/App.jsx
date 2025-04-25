@@ -20,10 +20,12 @@ import PaginaActualizarEquipos from "./paginas/autenticacion/PaginaActualizarEqu
 import PaginaDarDeBajaEquipo from "./paginas/autenticacion/PaginaBajaEquipo"; // Asegúrate de que el nombre del archivo sea correcto (PaginaBaja.jsx)
 import PaginaNuevoMantenimiento from "./paginas/autenticacion/PaginaNuevoMantenimiento";
 import PaginaProgramarMantenimientos from "./paginas/autenticacion/PaginaProgramarMantenimientos";
-import { ProveedorAutenticacion } from "./autenticacion/contexto/ContextoAutenticacion"; // Asegúrate de la ruta
+import { ProveedorAutenticacion } from "./autenticacion/contexto/ProveedorAutenticacion"; // Asegúrate de la ruta
 import PaginaGeneradorReportes from "./paginas/autenticacion/PaginaGeneradorReportes";
 import MenuMantenimientos from "./paginas/autenticacion/MenuMantenimiento";
 import PaginaConsultas from "./paginas/autenticacion/PaginaConsultas";
+import PaginaAcercaDe from "./paginas/autenticacion/PaginaAcercaDe";
+import PaginaContacto from "./paginas/autenticacion/PaginaContacto";
 
 function App() {
   return (
@@ -56,6 +58,8 @@ function App() {
               <Route path="/programar-mantenimiento" element={<PaginaProgramarMantenimientos />}/>
               <Route path="/consultas" element={<PaginaConsultas />}/>
               <Route path="/menu-mantenimientos" element={<MenuMantenimientos />}/>
+              <Route path="/acerca-de" element={<PaginaAcercaDe />} />
+              <Route path="/contacto" element={<PaginaContacto />} />
               {/* --- CORRECCIÓN: Mantener solo la ruta con el parámetro --- */}
               <Route path="/dar-de-baja/:placa" element={<PaginaDarDeBajaEquipo />}/>
               <Route path="*" element={<PaginaLogin />} />

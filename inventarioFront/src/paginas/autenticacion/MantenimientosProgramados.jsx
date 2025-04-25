@@ -80,7 +80,7 @@ export default function MantenimientosProgramados() {
       Header: "Acciones",
       accessor: "acciones",
       Cell: ({ row }) => (
-        <div className="flex gap-1">
+        <div className="flex gap-1" style={{display: "flex" , flexWrap: "nowrap"}}>
           {!row.original.fechaRealizacion && (
             <Button
               icon="pi pi-check"
@@ -183,7 +183,11 @@ export default function MantenimientosProgramados() {
           <span className="p-input-icon-left">
             <i className="pi pi-search w-full" />
             <InputText
-              value={busqueda}
+            style={{ minWidth: "200px", maxWidth: "600px", width: "100%" }}
+              className="w-full"
+              type="text"
+              aria-label="Buscar"
+            value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
               placeholder="Busqueda de ..."
             />
