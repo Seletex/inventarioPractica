@@ -19,9 +19,11 @@ import PaginaRegistrarEquipos from "./paginas/autenticacion/PaginaRegistrarEquip
 import PaginaActualizarEquipos from "./paginas/autenticacion/PaginaActualizarEquipo";
 import PaginaDarDeBajaEquipo from "./paginas/autenticacion/PaginaBajaEquipo"; // Asegúrate de que el nombre del archivo sea correcto (PaginaBaja.jsx)
 import PaginaNuevoMantenimiento from "./paginas/autenticacion/PaginaNuevoMantenimiento";
-// *** Importar tu ProveedorAutenticacion ***
+import PaginaProgramarMantenimientos from "./paginas/autenticacion/PaginaProgramarMantenimientos";
 import { ProveedorAutenticacion } from "./autenticacion/contexto/ContextoAutenticacion"; // Asegúrate de la ruta
-
+import PaginaGeneradorReportes from "./paginas/autenticacion/PaginaGeneradorReportes";
+import MenuMantenimientos from "./paginas/autenticacion/MenuMantenimiento";
+import PaginaConsultas from "./paginas/autenticacion/PaginaConsultas";
 
 function App() {
   return (
@@ -47,6 +49,13 @@ function App() {
               {/* --- CORRECCIÓN: Mantener solo la ruta con el parámetro --- */}
               <Route path="/actualizar-equipo/:placa" element={<PaginaActualizarEquipos />}/>
               <Route path="/nuevo-mantenimiento/:placa" element={<PaginaNuevoMantenimiento />}/>
+              <Route path="/reporte/:placa" element={<PaginaGeneradorReportes />}/>
+              <Route path="/reporte" element={<PaginaGeneradorReportes />}/>
+              <Route path="/dar-de-baja" element={<PaginaDarDeBajaEquipo />}/>
+              <Route path="/programar-mantenimiento/:placa" element={<PaginaProgramarMantenimientos />}/>
+              <Route path="/programar-mantenimiento" element={<PaginaProgramarMantenimientos />}/>
+              <Route path="/consultas" element={<PaginaConsultas />}/>
+              <Route path="/menu-mantenimientos" element={<MenuMantenimientos />}/>
               {/* --- CORRECCIÓN: Mantener solo la ruta con el parámetro --- */}
               <Route path="/dar-de-baja/:placa" element={<PaginaDarDeBajaEquipo />}/>
               <Route path="*" element={<PaginaLogin />} />

@@ -7,7 +7,7 @@ import { FiTag, FiUser, FiCalendar, FiSettings } from "react-icons/fi";
 import { DatosTipoMantenimiento } from "../../componentes/Datos/DatosTipoMantenimiento.jsx"; 
 import { mockEquiposService as equiposService } from "../../servicios/mockEquipos.api.js"; // Servicio
 // Importar el servicio de mantenimientos (NECESITAS CREAR ESTE SERVICIO)
-import { mockMantenimientosService as mantenimientosService } from "../../servicios/mockMantenimientos.api.js" // Servicio
+import { mockMantenimientoService as mantenimientosService } from "../../servicios/mockMantenimientos.api.js" // Servicio
 
 // Importar toastify
 import { toast } from "react-toastify";

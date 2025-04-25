@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef,useCallback } from "react";
 import { mockEquiposService as equiposService } from "../../servicios/mockEquipos.api.js";
 import { TablaEquipos } from "../../autenticacion/contexto/TablaDatos.jsx";
 import { Button } from "primereact/button";
@@ -109,12 +109,12 @@ export default function MantenimientosProgramados() {
   };
 
   // Función para mostrar mensajes de error
-  const mostrarError = (mensaje) => {
+  const mostrarError = useCallback((mensaje) => {
     mostrarErrorFn(mensaje, toast);
-  };
+  }, [toast]);
 
   // Cargar equipos al iniciar el componente
-  const cargarEquipos = async () => {
+  const cargarEquipos = useCallback(async () => {
     await cargarEquiposFn(
       asignarCarga,
       equiposService,
@@ -122,7 +122,7 @@ export default function MantenimientosProgramados() {
       setEquiposFiltrados,
       mostrarError
     );
-  };
+  }, [asignarCarga, setEquipos, setEquiposFiltrados, mostrarError]);
 
   // Manejar eliminar un equipo
   const manejoEliminar = async (id) => {
@@ -156,7 +156,7 @@ export default function MantenimientosProgramados() {
   // Cargar equipos al iniciar el componente
   useEffect(() => {
     cargarEquipos();
-  }, []);
+  }, [cargarEquipos]);
 
   // Filtrar equipos cuando cambia la búsqueda
   useEffect(() => {
