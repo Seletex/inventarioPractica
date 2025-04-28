@@ -1,5 +1,6 @@
 export const mostrarExitoFn = (mensaje, toastRef) => {
-  toastRef.current?.show({
+  // Cambiado a toastRef?.current?.show
+  toastRef?.current?.show({
     severity: "success",
     summary: "Éxito",
     detail: mensaje,
@@ -8,7 +9,8 @@ export const mostrarExitoFn = (mensaje, toastRef) => {
 };
 
 export const mostrarErrorFn = (mensaje, toastRef) => {
-  toastRef.current?.show({
+  // Cambiado a toastRef?.current?.show
+  toastRef?.current?.show({
     severity: "error",
     summary: "Error",
     detail: mensaje,

@@ -53,7 +53,7 @@ export const mockMantenimientoService = {
 
             return date.toISOString().split("T")[0];
           } catch (e) {
-            console.error("Error parsing date string:", dateStr, e);
+            console.error("Error parsing date string: ", dateStr, e);
             return null; // Manejar errores de parseo
           }
         };
