@@ -1,0 +1,28 @@
+inventarioBack/
+├── src/
+│   ├── domain/                 # El Núcleo (Lógica de negocio pura)
+│   │   ├── entities/           # (Opcional) Clases/objetos de dominio (ej. User)
+│   │   ├── services/           # Lógica de negocio, orquestación (ej. AuthService)
+│   │   └── ports/              # Interfaces (Puertos)
+│   │       ├── input/          # Puertos de entrada (ej. ILoginUseCase.js)
+│   │       └── output/         # Puertos de salida (ej. IUserRepository.js)
+│   │
+│   ├── application/            # Casos de Uso (Implementación de Puertos de Entrada)
+│   │   └── usecases/           # (ej. LoginUseCase.js)
+│   │
+│   ├── infrastructure/         # Adaptadores y detalles externos
+│   │   ├── driving-adapters/   # Adaptadores de entrada
+│   │   │   └── http/           # Adaptadores para web (Express)
+│   │   │       ├── routes/     # Definición de rutas (ej. auth.routes.js)
+│   │   │       └── controllers/ # Controladores (ej. AuthController.js)
+│   │   │
+│   │   ├── driven-adapters/    # Adaptadores de salida
+│   │   │   ├── persistence/    # Adaptadores para base de datos (ej. MongoUserRepository.js)
+│   │   │   └── external-apis/  # Adaptadores para APIs externas
+│   │   │
+│   │   └── config/             # Configuración (ej. conexión a DB, variables entorno)
+│   │
+│   └── server.js               # Punto de entrada: Configura Express, middleware, rutas
+│
+├── package.json
+└── ...
