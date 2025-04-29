@@ -13,4 +13,6 @@ export default defineConfig({
     clearMocks: false, // Limpia mocks antes de cada test
     restoreMocks: false, // Restaura mocks después de cada test
   },
+  css: {
+    postcss: './postcss.config.js',},
 });
