@@ -1,4 +1,5 @@
 import 'primeicons/primeicons.css';
+import { InputText } from 'primereact/inputtext';
 
 export default function Entrada({
   placeHolder,
@@ -17,10 +18,11 @@ export default function Entrada({
           <i className={`pi ${icono} text-gray-500`}></i>
         </div>
       )}
-      <input
+      <InputText
       style={{width: "100%", textAlign: "center", fontSize: "1.2rem",
-        padding: "5px", 
-        box: "0 4px 8px rgba(0, 0, 0, 0.2)"}}
+        padding: "5px", borderRadius: "5px",textColor: "rgb(0, 0, 0)",
+        border: "1px solid rgb(0, 0, 0)",
+        box: "0 4px 8px rgb(0, 0, 0)"}}
         placeholder={placeHolder}
         type={tipo}
         name={nombre}

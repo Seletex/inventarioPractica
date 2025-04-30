@@ -1,13 +1,3 @@
-export const confirmarCambioEstadoFn = (
-  id,
-  nuevoEstado,
-  cambiarEstadoEquipo
-) => {
-  if (confirm(`¿Estás seguro de dar de baja este equipo?`)) {
-    cambiarEstadoEquipo(id, nuevoEstado);
-  }
-};
-
 export const cambiarEstadoEquipoFn = async (
   id,
   nuevoEstado,
@@ -17,16 +7,31 @@ export const cambiarEstadoEquipoFn = async (
   cargarEquipos,
   mostrarError
 ) => {
+  const equipoEncontrado = equipos.find((e) => e.id === id); // Guardar el resultado de find
+
+  // Verificar si el equipo se encontró
+  if (!equipoEncontrado) {
+    mostrarError(`Error: Equipo con ID ${id} no encontrado.`);
+    return; // Detiene la ejecución de la función aquí
+  }
+
   try {
     const equipoActualizado = {
-      ...equipos.find((e) => e.id === id),
+      ...equipoEncontrado, // Usar el equipo encontrado
       estado: nuevoEstado,
     };
     await equiposService.update(id, equipoActualizado);
-    mostrarExito(`Equipo dado de baja correctamente`);
+    mostrarExito(`Equipo dado de baja correctamente`); // O un mensaje más genérico si aplica a otros estados
     cargarEquipos();
   } catch (error) {
     mostrarError(`Error al cambiar estado: ${error.message}`);
+  }
+};
+export const confirmarCambioEstadoFn = (id, nuevoEstado, cambiarEstadoEquipo) => {
+  // Ajusta el mensaje si es necesario
+  const mensajeConfirmacion = `¿Estás seguro de dar de baja este equipo?`; // O un mensaje más dinámico basado en nuevoEstado
+  if (window.confirm(mensajeConfirmacion)) {
+    cambiarEstadoEquipo(id, nuevoEstado);
   }
 };
 
@@ -69,11 +74,13 @@ export const setMantenimientos = (prev, fechaRealizacion, id) =>
     m.id === id ? { ...m, fechaRealizacion, estado: "Completado" } : m
   );
 
+// Añadir setMantenimientos como argumento
 export const registrarRealizacion = async (
   id,
   mantenimientosService,
   mostrarExito,
-  mostrarError
+  mostrarError,
+  setMantenimientos // <-- Argumento añadido
 ) => {
   try {
     const fechaRealizacion = new Date().toISOString();
@@ -83,7 +90,7 @@ export const registrarRealizacion = async (
       estado: "Completado",
     });
 
-    // Actualización optimista del estado local
+    // Llamar a la función pasada como argumento
     setMantenimientos((prev) =>
       prev.map((m) =>
         m.id === id ? { ...m, fechaRealizacion, estado: "Completado" } : m
@@ -114,12 +121,14 @@ export const guardarMantenimiento = async (
   mostrarExito,
   setMostrarModal,
   setMantenimientoEditando,
-  mostrarError
+  mostrarError,
+  setMantenimientos // <-- Argumento añadido
 ) => {
   try {
     if (mantenimientoEditando) {
       // Actualizar existente
       await mantenimientosService.update(mantenimientoEditando.id, formData);
+      // Llamar a la función pasada como argumento
       setMantenimientos((prev) =>
         prev.map((m) =>
           m.id === mantenimientoEditando.id ? { ...m, ...formData } : m
@@ -129,6 +138,7 @@ export const guardarMantenimiento = async (
     } else {
       // Crear nuevo
       const nuevoMantenimiento = await mantenimientosService.create(formData);
+      // Llamar a la función pasada como argumento
       setMantenimientos((prev) => [nuevoMantenimiento, ...prev]);
       mostrarExito("Mantenimiento creado");
     }
@@ -139,7 +149,6 @@ export const guardarMantenimiento = async (
     mostrarError(`Error al guardar: ${error.message}`);
   }
 };
-
 export const mostrarExitoFn = (mensaje, toastRef) => {
   toastRef.current?.show({
     severity: "success",

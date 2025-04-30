@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef,useCallback } from "react";
 import { mockEquiposService as equiposService } from "../../servicios/mockEquipos.api.js";
 import { TablaEquipos } from "../../autenticacion/contexto/TablaDatos.jsx";
 import { Button } from "primereact/button";
@@ -80,7 +80,7 @@ export default function MantenimientosProgramados() {
       Header: "Acciones",
       accessor: "acciones",
       Cell: ({ row }) => (
-        <div className="flex gap-1">
+        <div className="flex gap-1" style={{display: "flex" , flexWrap: "nowrap"}}>
           {!row.original.fechaRealizacion && (
             <Button
               icon="pi pi-check"
@@ -109,12 +109,12 @@ export default function MantenimientosProgramados() {
   };
 
   // Función para mostrar mensajes de error
-  const mostrarError = (mensaje) => {
+  const mostrarError = useCallback((mensaje) => {
     mostrarErrorFn(mensaje, toast);
-  };
+  }, [toast]);
 
   // Cargar equipos al iniciar el componente
-  const cargarEquipos = async () => {
+  const cargarEquipos = useCallback(async () => {
     await cargarEquiposFn(
       asignarCarga,
       equiposService,
@@ -122,7 +122,7 @@ export default function MantenimientosProgramados() {
       setEquiposFiltrados,
       mostrarError
     );
-  };
+  }, [asignarCarga, setEquipos, setEquiposFiltrados, mostrarError]);
 
   // Manejar eliminar un equipo
   const manejoEliminar = async (id) => {
@@ -156,7 +156,7 @@ export default function MantenimientosProgramados() {
   // Cargar equipos al iniciar el componente
   useEffect(() => {
     cargarEquipos();
-  }, []);
+  }, [cargarEquipos]);
 
   // Filtrar equipos cuando cambia la búsqueda
   useEffect(() => {
@@ -183,7 +183,11 @@ export default function MantenimientosProgramados() {
           <span className="p-input-icon-left">
             <i className="pi pi-search w-full" />
             <InputText
-              value={busqueda}
+            style={{ minWidth: "200px", maxWidth: "600px", width: "100%" }}
+              className="w-full"
+              type="text"
+              aria-label="Buscar"
+            value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
               placeholder="Busqueda de ..."
             />

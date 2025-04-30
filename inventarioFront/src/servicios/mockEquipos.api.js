@@ -32,13 +32,16 @@ const equiposMock = [
     estado: "Mantenimiento",
   },
   {
-    id: 3,
+    
     placa: "789",
+    tipoEquipo: "Laptop",
     marca: "Dell",
     modelo: "XPS 13",
     equipo: function () {
       return `${this.marca}-${this.modelo}`;
     },
+    almacenamiento:512,
+    ram: "16GB",
     tipo: "Preventivo",
     fechaProgramada: "2025-05-15T00:00:00Z",
     fechaRealizacion: null,
@@ -48,6 +51,7 @@ const equiposMock = [
     fecha_compra: "2025-03-20",
     estado: "Inactivo",
   },
+  
 ];
 
 export const mockEquiposService = {
@@ -146,9 +150,16 @@ export const mockEquiposService = {
 
       setTimeout(() => resolve(resultados), 500);
     }),
-  getById: (placa) =>
-    new Promise((resolve) => {
-      const equipo = equiposMock.find((e) => e.id === placa);
-      setTimeout(() => resolve(equipo), 500);
-    }),
+  getById: async (placa) =>{
+  
+      // Buscar el equipo por placa
+      const equipo = equiposMock.find(e => e.placa === placa);
+      
+      // Si no encuentra el equipo, debería manejar este caso
+      if (!equipo) {
+        throw new Error(`No se encontró equipo con placa ${placa}`);
+      }
+      
+      return equipo;
+    },
 };
