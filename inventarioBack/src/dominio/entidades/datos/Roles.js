@@ -3,3 +3,4 @@ const Roles = Object.freeze({
   ADMINISTRATIVO: 'USUARIO ADMINISTRATIVO',
   CONSULTOR: 'CONSULTOR',
 })
+module.exports = Roles;

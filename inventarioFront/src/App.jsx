@@ -47,6 +47,7 @@ function App() {
               <Route path="/gestion-usuarios" element={<GestionarUsuarios />}/>
 
               {/* Rutas de gestión de equipos específicas */}
+              {/* Rutas de gestión de equipos específicas */}
               <Route path="/registrar-equipo" element={<PaginaRegistrarEquipos />}/>
               {/* --- CORRECCIÓN: Mantener solo la ruta con el parámetro --- */}
               <Route path="/actualizar-equipo/:placa" element={<PaginaActualizarEquipos />}/>
@@ -54,17 +55,22 @@ function App() {
               <Route path="/reporte/:placa" element={<PaginaGeneradorReportes />}/>
               <Route path="/reporte" element={<PaginaGeneradorReportes />}/>
               <Route path="/dar-de-baja" element={<PaginaDarDeBajaEquipo />}/>
+              {/* <Route path="/reporte" element={<PaginaGeneradorReportes />}/> */} {/* Probablemente redundante */}
               <Route path="/programar-mantenimiento/:placa" element={<PaginaProgramarMantenimientos />}/>
               <Route path="/programar-mantenimiento" element={<PaginaProgramarMantenimientos />}/>
+              {/* <Route path="/programar-mantenimiento" element={<PaginaProgramarMantenimientos />}/> */} {/* Probablemente redundante */}
               <Route path="/consultas" element={<PaginaConsultas />}/>
               <Route path="/menu-mantenimientos" element={<MenuMantenimientos />}/>
               <Route path="/acerca-de" element={<PaginaAcercaDe />} />
               <Route path="/contacto" element={<PaginaContacto />} />
               {/* --- CORRECCIÓN: Mantener solo la ruta con el parámetro --- */}
               <Route path="/dar-de-baja/:placa" element={<PaginaDarDeBajaEquipo />}/>
-              <Route path="*" element={<PaginaLogin />} />
-
-            </Routes>
+              {/* <Route path="/dar-de-baja" element={<PaginaDarDeBajaEquipo />}/> */} {/* Probablemente redundante */}
+              <Route path="/acerca-de" element={<PaginaAcercaDe />} />
++              <Route path="/contacto" element={<PaginaContacto />} />
+               <Route path="*" element={<PaginaLogin />} />
+ 
+             </Routes>
           </div>
         </Router>
       </ProveedorAutenticacion>
