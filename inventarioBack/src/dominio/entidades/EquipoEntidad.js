@@ -1,6 +1,7 @@
 const EspecificacionesEquipo = require("./EspecificacionesEquipo");
 const GarantiaEquipo = require("./GarantiaEquipo");
 const EstadoEquipo = require("./datos/EstadosEquipo");
+const UbicacionesEnum = require("./datos/UbicacionesEnum")
 class Equipo {
   constructor(
     placa,
@@ -121,10 +122,7 @@ class Equipo {
     if (this.estado === EstadoEquipo.Baja) {
       throw new Error("No se puede cambiar la ubicación de un equipo en baja.");
     }
-    const ubicacionesValidas = Object.values(UbicacionesEnum);
-    if (!ubicacionesValidas.includes(nuevaUbicacionId)) {
-      throw new Error(`Ubicación '${nuevaUbicacionId}' no es válida.`);
-    }
+    
     this.ubicacionId = nuevaUbicacionId;
     console.log(
       `Equipo ${this.placa} ubicación cambiada a ${nuevaUbicacionId}`
