@@ -122,8 +122,8 @@ class Equipo {
       throw new Error("No se puede cambiar la ubicación de un equipo en baja.");
     }
     const ubicacionesValidas = Object.values(UbicacionesEnum);
-    if(!ubicacionesValidas.includes(nuevaUbicacionId)) {
-        throw new Error(`Ubicación '${nuevaUbicacionId}' no es válida.`);
+    if (!ubicacionesValidas.includes(nuevaUbicacionId)) {
+      throw new Error(`Ubicación '${nuevaUbicacionId}' no es válida.`);
     }
     this.ubicacionId = nuevaUbicacionId;
     console.log(
@@ -220,8 +220,13 @@ class Equipo {
   }
   reactivar() {
     // Quizás no se debería poder reactivar desde BAJA sin más lógica.
-    if (this.estado !== EstadoEquipo.Mantenimiento /* && this.estado !== ESTADOS_EQUIPO.BAJA */) {
-        throw new Error(`No se puede reactivar un equipo en estado ${this.estado}.`);
+    if (
+      this.estado !==
+      EstadoEquipo.Mantenimiento /* && this.estado !== ESTADOS_EQUIPO.BAJA */
+    ) {
+      throw new Error(
+        `No se puede reactivar un equipo en estado ${this.estado}.`
+      );
     }
 
     const estadoAnterior = this.estado;
@@ -230,7 +235,7 @@ class Equipo {
     this.fechaBaja = null;
     console.log(`Equipo ${this.placa} reactivado desde ${estadoAnterior}.`);
     // Emitir evento: EquipoReactivado
-}
+  }
   toPlainObject() {
     return {
       id: this.id,
@@ -260,10 +265,11 @@ class Equipo {
       responsable: this.responsable,
       entregado: this.entregado,
       estado: this.estado,
-      estado: this.estado,
+     
       motivoBaja: this.motivoBaja,
-      fechaBaja: this.fechaBaja ? this.fechaBaja.toISOString().split('T')[0] : null,
-  
+      fechaBaja: this.fechaBaja
+        ? this.fechaBaja.toISOString().split("T")[0]
+        : null,
     };
   }
 
