@@ -1,3 +1,5 @@
+require("dotenv").config();
+require('./src/infraestructura/configuracion/firebaseAdmin'); // Ejecuta la inicialización
 const express = require("express");
 const cors = require("cors"); // Asegúrate de tener cors instalado y configurado
 const AutenticacionControlador = require("./aplicacion/controladores/AutenticacionControlador");

@@ -1,0 +1,10 @@
+const HEADER_AUTHORIZATION = "Authorization";
+
+const TOKEN_BEARER_PREFIX = "Bearer ";
+
+const TOKEN_EXPIRATION_TIME_DEFAULT = "85m"; // 85 minutos
+module.exports = {
+  HEADER_AUTHORIZATION,
+  TOKEN_BEARER_PREFIX,
+  TOKEN_EXPIRATION_TIME_DEFAULT,
+};

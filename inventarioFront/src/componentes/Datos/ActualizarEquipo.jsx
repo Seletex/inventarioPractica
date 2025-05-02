@@ -148,6 +148,13 @@ const camposFormularioEquipo = [
     required: false,
     icon: "FiUser",
   },
+  {
+    type: "text",
+    name: "usaurioAsignado",
+    placeHolder: "Usuario asignado",
+    required: false,
+    icon: "FiUser",
+  },
 
   {
     type: "select",

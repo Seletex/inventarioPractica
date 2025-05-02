@@ -1,0 +1,8 @@
+{
+    "hosting": {
+      "site": "inventario-alcaldia-la-ceja",
+  
+      "public": "public"
+    
+    }
+  }

@@ -1,0 +1,5 @@
+# Archivo .gitignore
+.env
+node_modules
+
+src/infraestructura/configuracion/inventario-ff7df-firebase-adminsdk-fbsvc-bbc0fb09d6
