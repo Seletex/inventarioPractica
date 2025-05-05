@@ -1,4 +1,3 @@
-//dominio/servicios
 class ServicioValidacionAsignacion {
   constructor(equipoRepositorio, usuarioRepositorio) {
     this.equipoRepositorio = equipoRepositorio;
@@ -6,8 +5,6 @@ class ServicioValidacionAsignacion {
   }
 
   async puedeAsignarEquipo(equipo, usuarioId) {
-    // 1. Verificar si el equipo está en estado asignable (ya lo hace la entidad)
-    // 2. Buscar otros equipos del mismo tipo asignados al usuario
     const equiposAsignados =
       await this.equipoRepositorio.buscarPorResponsableYTipo(
         usuarioId,

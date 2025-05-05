@@ -2,7 +2,7 @@ const ICasoDeUsoInicioSesion = require("../dominio/puertos/ICasoDeUsoInicioSesio
 // const IUserRepository = require('../../domain/ports/output/IUserRepository'); // Ejemplo si usaras DB
 // const ITokenService = require('../../domain/ports/output/ITokenService'); // Ejemplo si usaras un servicio de token
 
-class CasoDeUsoInicioSesion extends ICasoDeUsoInicioSesion {
+class InicioSesionCasoUso extends ICasoDeUsoInicioSesion {
   constructor(usuarioRepository, tokenService) {
     super();
     // this.usuarioRepository = usuarioRepository; // Ejemplo si usaras DB
@@ -34,4 +34,4 @@ class CasoDeUsoInicioSesion extends ICasoDeUsoInicioSesion {
   }
 }
 
-module.exports = CasoDeUsoInicioSesion;
+module.exports = InicioSesionCasoUso;
