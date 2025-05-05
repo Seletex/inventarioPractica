@@ -1,0 +1,20 @@
+# Archivo .gitignore
+.env
+node_modules
+
+inventarioFront/node_modules/ # Si aplica
+
+# Environment variables file (if you use .env)
+.env*
+inventarioBack/.env*
+
+# Firebase service account key - SHOULD NOT BE HERE ANYWAY
+# but add just in case of accidents
+*.json
+# Archivos de credenciales - NUNCA SUBIR A GIT
+*.json # Bloquea cualquier .json en la raíz (por si acaso)
+inventarioBack/*.json # Bloquea .json dentro del backend (por si acaso)
+**/serviceAccountKey.json # Nombre genérico común
+
+# OS generated files
+.DS_Store

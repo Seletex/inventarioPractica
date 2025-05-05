@@ -1,0 +1,7 @@
+package c:\Users\Admin\Documents\Github\inventarioPractica\inventarioBack.src.aplicacion.casos-uso.dtos;
+
+public class ResultadoCreacionUsuarioDTO {
+    public String id;
+    public String nombreUsuario;
+    public String correo;
+}

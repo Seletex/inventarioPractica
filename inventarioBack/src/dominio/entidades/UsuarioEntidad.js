@@ -1,3 +1,5 @@
+
+const Roles = require("./datos/Roles"); // Corregir nombre de importación
 class Usuario {
   constructor(id, nombre, correo, passwordHash, rol) {
     if (!nombre || !correo || !passwordHash || !rol) {
@@ -5,10 +7,13 @@ class Usuario {
         "El nombre, apellido y email son obligatorios, ya que son necesarios para crear la cuenta de usuario."
       );
     }
+    if (!Object.values(Roles).includes(rol)) {
+      throw new Error(`Rol '${rol}' no es válido.`);
+    }
     this.id(id);
     this.nombre(nombre);
 
-    this.email(correo);
+    this.correo(correo);
     this.passwordHash(passwordHash);
     this.rol(rol);
   }

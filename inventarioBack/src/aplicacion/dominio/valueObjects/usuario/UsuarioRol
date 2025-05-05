@@ -1,0 +1,6 @@
+package c:\Users\Admin\Documents\Github\inventarioPractica\inventarioBack\src\aplicacion\dominio\valueObjects\usuario;
+
+public enum UsuarioRol {
+    ADMINISTRADOR,
+    OPERADOR
+}

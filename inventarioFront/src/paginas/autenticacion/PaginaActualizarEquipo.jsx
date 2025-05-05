@@ -96,17 +96,9 @@ export default function PaginaActualizarEquipos() {
 
       if (campo.required) {
         const valor = formulario[campo.name];
-        if (campo.type === "select") {
-          if (valor === null || valor === undefined || valor === "") {
-            valid = false;
-            errores.push(`${campo.label} es requerido.`);
-          }
-        } else {
-          // text, number, date
-          if (valor === null || valor === undefined || valor === "") {
-            valid = false;
-            errores.push(`${campo.label} es requerido.`);
-          }
+        if (valor === null || valor === undefined || valor === "") {
+          valid = false;
+          errores.push(`${campo.label} es requerido.`);
         }
       }
     });
