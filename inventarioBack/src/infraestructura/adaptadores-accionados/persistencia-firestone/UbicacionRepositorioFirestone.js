@@ -12,6 +12,16 @@ class UbicacionRepositorioFirestore extends IUbicacionRepositorio {
   }
 
   /**
+   * Método privado para manejar errores comunes de Firestore.
+   * @private
+   * @param {Error} error - El error original capturado.
+   * @param {string} mensajePrefijo - Mensaje para el log y el nuevo error.
+   */
+  _manejarError(error, mensajePrefijo) {
+    console.error(`${mensajePrefijo}:`, error);
+    throw new Error(`${mensajePrefijo}: ${error.message}`);
+  }
+  /**
    * Guarda una nueva ubicación.
    * @param {Ubicacion} ubicacion - Datos de la ubicación.
    * @returns {Promise<Ubicacion>} La ubicación guardada con su ID.
@@ -28,8 +38,7 @@ class UbicacionRepositorioFirestore extends IUbicacionRepositorio {
       console.log(`Ubicación guardada con ID: ${docRef.id}`);
       return { ...ubicacion, id: docRef.id };
     } catch (error) {
-      console.error("Error guardando ubicación en Firestore:", error);
-      throw new Error(`Error al guardar ubicación: ${error.message}`);
+      this._manejarError(error, "Error al guardar ubicación");
     }
   }
 
@@ -47,8 +56,7 @@ class UbicacionRepositorioFirestore extends IUbicacionRepositorio {
         return null;
       }
     } catch (error) {
-      console.error(`Error buscando ubicación por ID ${id}:`, error);
-      throw new Error(`Error al buscar ubicación por ID: ${error.message}`);
+      this._manejarError(error, `Error al buscar ubicación por ID ${id}`);
     }
   }
 
@@ -71,10 +79,7 @@ class UbicacionRepositorioFirestore extends IUbicacionRepositorio {
       });
       return ubicaciones;
     } catch (error) {
-      console.error("Error buscando todas las ubicaciones:", error);
-      throw new Error(
-        `Error al buscar todas las ubicaciones: ${error.message}`
-      );
+      this._manejarError(error, "Error al buscar todas las ubicaciones");
     }
   }
 
@@ -93,8 +98,7 @@ class UbicacionRepositorioFirestore extends IUbicacionRepositorio {
       });
       console.log(`Ubicación con ID ${id} actualizada.`);
     } catch (error) {
-      console.error(`Error actualizando ubicación con ID ${id}:`, error);
-      throw new Error(`Error al actualizar ubicación: ${error.message}`);
+      this._manejarError(error, `Error al actualizar ubicación con ID ${id}`);
     }
   }
 }

@@ -1,4 +1,4 @@
-const crypto = require('crypto');
+import crypto from 'crypto'; // Cambiar a import de ES Module
 /**
  * @class UsuarioDTO
  * @description Data Transfer Object para representar la información de un usuario.
@@ -36,4 +36,6 @@ class UsuarioDTO{
     }
 
 }
-module.exports = UsuarioDTO;
+// module.exports = UsuarioDTO; // Eliminar exportación CommonJS
+export { UsuarioDTO }; // Usar exportación nombrada de ES Module
+// O podrías usar: export default UsuarioDTO; si prefieres exportación por defecto

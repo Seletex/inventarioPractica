@@ -1,12 +1,23 @@
-import IEquipoRepositorio from "../../../dominio/puertos/salida/IRepositorioMantenimiento.js";
+import IRepositorioMantenimiento from "../../../dominio/puertos/salida/IRepositorioMantenimiento.js"; // Corregido el import de la interfaz
 import { db } from "../configuracion/firebaseAdmin.js";
-
+ 
 const COLECCION_MANTENIMIENTOS = "mantenimientos";
 
 class MantenimientoRepositorioFirestore extends IRepositorioMantenimiento {
   constructor() {
     super();
     this.coleccion = db.collection(COLECCION_MANTENIMIENTOS);
+  }
+
+  /**
+   * Método privado para manejar errores comunes de Firestore.
+   * @private
+   * @param {Error} error - El error original capturado.
+   * @param {string} mensajePrefijo - Mensaje para el log y el nuevo error.
+   */
+  _manejarError(error, mensajePrefijo) {
+    console.error(`${mensajePrefijo}:`, error);
+    throw new Error(`${mensajePrefijo}: ${error.message}`);
   }
 
   async guardar(mantenimiento) {
@@ -25,8 +36,7 @@ class MantenimientoRepositorioFirestore extends IRepositorioMantenimiento {
       console.log(`Mantenimiento guardado con ID: ${docRef.id}`);
       return { ...mantenimiento, id: docRef.id };
     } catch (error) {
-      console.error("Error guardando mantenimiento en Firestore:", error);
-      throw new Error(`Error al guardar mantenimiento: ${error.message}`);
+      this._manejarError(error, "Error al guardar mantenimiento");
     }
   }
 
@@ -39,8 +49,7 @@ class MantenimientoRepositorioFirestore extends IRepositorioMantenimiento {
         return null;
       }
     } catch (error) {
-      console.error(`Error buscando mantenimiento por ID ${id}:`, error);
-      throw new Error(`Error al buscar mantenimiento por ID: ${error.message}`);
+      this._manejarError(error, `Error al buscar mantenimiento por ID ${id}`);
     }
   }
 
@@ -57,13 +66,7 @@ class MantenimientoRepositorioFirestore extends IRepositorioMantenimiento {
       });
       return mantenimientos;
     } catch (error) {
-      console.error(
-        `Error buscando mantenimientos para equipo ${equipoId}:`,
-        error
-      );
-      throw new Error(
-        `Error al buscar mantenimientos por equipo: ${error.message}`
-      );
+      this._manejarError(error, `Error al buscar mantenimientos para equipo ${equipoId}`);
     }
   }
 
@@ -76,8 +79,7 @@ class MantenimientoRepositorioFirestore extends IRepositorioMantenimiento {
       });
       console.log(`Mantenimiento con ID ${id} actualizado.`);
     } catch (error) {
-      console.error(`Error actualizando mantenimiento con ID ${id}:`, error);
-      throw new Error(`Error al actualizar mantenimiento: ${error.message}`);
+      this._manejarError(error, `Error al actualizar mantenimiento con ID ${id}`);
     }
   }
   async buscarProgramados() {
@@ -87,11 +89,13 @@ class MantenimientoRepositorioFirestore extends IRepositorioMantenimiento {
         .get();
 
       const mantenimientos = [];
+      // Falta llenar el array mantenimientos aquí
+      snapshot.forEach((doc) => {
+        mantenimientos.push({ id: doc.id, ...doc.data() });
+      });
+      return mantenimientos; // Devolver el array
     } catch (error) {
-      console.error(`Error buscando mantenimientos programados:`, error);
-      throw new Error(
-        `Error al buscar mantenimientos programados: ${error.message}`
-      );
+      this._manejarError(error, "Error al buscar mantenimientos programados");
     }
   }
   async cambiarEstado(id, nuevoEstado) {
@@ -106,13 +110,7 @@ class MantenimientoRepositorioFirestore extends IRepositorioMantenimiento {
         console.log(`No se encontró un mantenimiento con ID ${id}.`);
       }
     } catch (error) {
-      console.error(
-        `Error cambiando estado del mantenimiento con ID ${id}:`,
-        error
-      );
-      throw new Error(
-        `Error al cambiar estado del mantenimiento: ${error.message}`
-      );
+      this._manejarError(error, `Error cambiando estado del mantenimiento con ID ${id}`);
     }
   }
 }

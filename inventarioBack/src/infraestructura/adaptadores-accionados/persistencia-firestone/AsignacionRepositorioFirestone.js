@@ -11,6 +11,11 @@ class AsignacionRepositorioFirestore extends IAsignacionRepositorio {
     this.coleccion = db.collection(COLECCION_ASIGNACIONES);
   }
 
+  _mensajeError(error, mensajePrefijo) {
+    console.error(`${mensajePrefijo}:`, error);
+    throw new Error(`${mensajePrefijo}: ${error.message}`);
+  }
+
   /**
    * Guarda un nuevo registro de asignación.
    * @param {Asignacion} asignacion - Datos de la asignación.
@@ -30,8 +35,7 @@ class AsignacionRepositorioFirestore extends IAsignacionRepositorio {
       console.log(`Asignación guardada con ID: ${docRef.id}`);
       return { ...asignacion, id: docRef.id };
     } catch (error) {
-      console.error("Error guardando asignación en Firestore:", error);
-      throw new Error(`Error al guardar asignación: ${error.message}`);
+      this._mensajeError(error, "Error al guardar asignación");
     }
   }
 
@@ -49,8 +53,7 @@ class AsignacionRepositorioFirestore extends IAsignacionRepositorio {
         return null;
       }
     } catch (error) {
-      console.error(`Error buscando asignación por ID ${id}:`, error);
-      throw new Error(`Error al buscar asignación por ID: ${error.message}`);
+      this._mensajeError(error, `Error al buscar asignación por ID ${id}`);
     }
   }
 
@@ -73,12 +76,9 @@ class AsignacionRepositorioFirestore extends IAsignacionRepositorio {
       const docSnap = snapshot.docs[0];
       return { id: docSnap.id, ...docSnap.data() };
     } catch (error) {
-      console.error(
-        `Error buscando asignación activa para equipo ${equipoId}:`,
-        error
-      );
-      throw new Error(
-        `Error al buscar asignación activa por equipo: ${error.message}`
+      this_mensajeError(
+        error,
+        `Error al buscar asignación activa por equipo ${equipoId}`
       );
     }
   }
@@ -92,33 +92,37 @@ class AsignacionRepositorioFirestore extends IAsignacionRepositorio {
       });
       console.log(`Asignación con ID ${id} actualizada.`);
     } catch (error) {
-      console.error(`Error actualizando asignación con ID ${id}:`, error);
-      throw new Error(`Error al actualizar asignación: ${error.message}`);
+   this._mensajeError(error, `Error al actualizar asignación con ID ${id}`);
     }
   }
   async buscarHistorialPorEquipoPlaca(equipoPlaca) {
     try {
-        const snapshot = await this.coleccion
-          .where("equipoPlaca", "==", equipoPlaca)
-          .orderBy("fechaAsignacion", "desc")
-          .get();
-  
-        if (snapshot.empty) {
-          return null;
-        }
-  
+      const snapshot = await this.coleccion
+        .where("equipoPlaca", "==", equipoPlaca)
+        .orderBy("fechaAsignacion", "desc")
+        .get();
+
+      if (snapshot.empty) {
+        return null;
+      }
     } catch (error) {
-        console.log("Hubo un problema o al buscar el historial por la placa", error)
+      console.log(
+        "Hubo un problema o al buscar el historial por la placa",
+        error
+      );
     }
   }
   async buscarActivaPorUsuarioId(usuarioId) {
     try {
-        const snapshot = await this.coleccion
-          .where("usuarioId", "==", usuarioId)
-
+      const snapshot = await this.coleccion.where("usuarioId", "==", usuarioId);
     } catch (error) {
-        console.error(`Error buscando asignación activa para usuario ${usuarioId}:`, error);
-        throw new Error(`Error al buscar asignación activa por usuario: ${error.message}`);
+      console.error(
+        `Error buscando asignación activa para usuario ${usuarioId}:`,
+        error
+      );
+      throw new Error(
+        `Error al buscar asignación activa por usuario: ${error.message}`
+      );
     }
   }
 

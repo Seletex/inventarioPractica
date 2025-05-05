@@ -7,7 +7,7 @@ import { Navigate } from "react-router-dom";
 import { ROLES, rolUsuarioArray } from "../../componentes/Datos/RolUsuario.jsx"; // Asegúrate que la extensión sea correcta si es necesario
 
 import { mockUsuariosService as usuariosService } from "../../servicios/mockUsuarios.api.js"; // Ajusta la ruta y el nombre del servicio
-import UsuarioDTO from "../../../../inventarioBack/src/infraestructura/dto/UsuarioDTO.js"; // Ajusta la ruta al DTO en tu backend
+import {UsuarioDTO} from "../../../../inventarioBack/src/infraestructura/dto/UsuarioDTO.js"; // Ajusta la ruta al DTO en tu backend
 
 export default function PaginaRegistro() {
   const rolesSeleccionablesParaRegistro = useMemo(() => {

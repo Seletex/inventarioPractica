@@ -19,6 +19,11 @@ import {
 
 import { obtenerFechaActual } from "../utiles/FechaActual.jsx";
 
+// Función auxiliar para generar opciones de select
+const generarOpcionesSelect = (dataArray) => {
+  return dataArray.map((item) => ({ value: item.value, label: item.label }));
+};
+
 // Definición de los campos del formulario
 const camposFormularioEquipo = [
   {
@@ -33,10 +38,7 @@ const camposFormularioEquipo = [
     name: "tipoEquipo",
     placeHolder: "Tipo Equipo:",
     required: true,
-    options: DatosTipoEquipo.map((tipoEquipo) => ({
-      value: tipoEquipo.value,
-      label: tipoEquipo.label,
-    })),
+    options: generarOpcionesSelect(DatosTipoEquipo), // Usar función auxiliar
     icon: "FiMonitor",
   },
   // Marca depende del tipo, se maneja dinámicamente, puede ser searchable
@@ -69,10 +71,7 @@ const camposFormularioEquipo = [
     name: "ubicacion",
     placeholder: "Ubicación:",
     required: true,
-    options: DatosUbicacion.map((ubicacion) => ({
-      value: ubicacion.value,
-      label: ubicacion.label,
-    })),
+    options: generarOpcionesSelect(DatosUbicacion), // Usar función auxiliar
     icon: "FiMapPin",
     searchable: true,
   }, // Añadido 'searchable'
@@ -82,7 +81,7 @@ const camposFormularioEquipo = [
     name: "ram",
     placeholder: "RAM:",
     required: false,
-    options: RAM.map((ram) => ({ value: ram.value, label: ram.label })),
+    options: generarOpcionesSelect(RAM), // Usar función auxiliar
     icon: "FiCpu",
   },
   {
@@ -90,10 +89,7 @@ const camposFormularioEquipo = [
     name: "tipo_almacenamiento",
     placeholder: "Tipo de Almacenamiento:",
     required: false,
-    options: TipoAlmacenamiento.map((tipoAlmacenamiento) => ({
-      value: tipoAlmacenamiento.value,
-      label: tipoAlmacenamiento.label,
-    })),
+    options: generarOpcionesSelect(TipoAlmacenamiento), // Usar función auxiliar
     icon: "FiHardDrive",
   },
   {
@@ -109,20 +105,14 @@ const camposFormularioEquipo = [
     name: "sistema_operativo",
     placeHolder: "Sistema Operativo: ",
     required: false,
-    options: SistemaOperativo.map((sistemaOperativo) => ({
-      value: sistemaOperativo.value,
-      label: sistemaOperativo.label,
-    })),
+    options: generarOpcionesSelect(SistemaOperativo), // Usar función auxiliar
     icon: "FiCpu",
   },
   {
     type: "select",
     name: "office",
     required: false,
-    options: VersionOffice.map((versionOffice) => ({
-      value: versionOffice.value,
-      label: versionOffice.label,
-    })),
+    options: generarOpcionesSelect(VersionOffice), // Usar función auxiliar
     icon: "FiMonitor",
   },
   {
@@ -146,10 +136,7 @@ const camposFormularioEquipo = [
     name: "tiempo_garantia",
     placeHolder: "Tiempo de Garantía:",
     required: false,
-    options: TiempoGarantia.map((tiempoGarantia) => ({
-      value: tiempoGarantia.value,
-      label: tiempoGarantia.label,
-    })),
+    options: generarOpcionesSelect(TiempoGarantia), // Usar función auxiliar
     icon: "FiCalendar",
   },
 
@@ -170,10 +157,7 @@ const camposFormularioEquipo = [
     type: "select",
     name: "monitor",
     required: false,
-    options: MarcaMonitor.map((marcaMonitor) => ({
-      value: marcaMonitor.value,
-      label: marcaMonitor.label,
-    })),
+    options: generarOpcionesSelect(MarcaMonitor), // Usar función auxiliar
     icon: "FiMonitor",
     searchable: true, // Puede ser searchable
   },
