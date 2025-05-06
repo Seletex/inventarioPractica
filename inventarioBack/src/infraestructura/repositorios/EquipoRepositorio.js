@@ -1,4 +1,4 @@
-import { Equipo } from "../../dominio/entidades/Equipo";
+import { Equipo } from "../../dominio/entidades/EquipoEntidad";
 
 export class EquipoRepositorio {
   constructor(database) {
