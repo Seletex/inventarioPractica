@@ -25,11 +25,11 @@ const Navegacion = () => {
 
   const estaLogueado = !!usuario;
 
-  const handleNavigation = (path) => {
+  const manejarNavigation = (path) => {
     navigate(path);
   };
 
-  const handleLogout = () => {
+  const manejarCerarSesion = () => {
     if (logout) {
       logout();
     } else {
@@ -37,15 +37,15 @@ const Navegacion = () => {
     }
   };
 
-  const navlist = [
+  const itemsGenerales = [
     {
       label: "Principal",
       icon: "pi pi-home",
       command: () => {
         if (estaLogueado) {
-          handleNavigation("/menu");
+          manejarNavigation("/menu");
         } else {
-          handleNavigation("/login");
+          manejarNavigation("/login");
         }
       },
     },
@@ -53,23 +53,23 @@ const Navegacion = () => {
       label: "Acerca de",
       icon: "pi pi-info",
       command: () => {
-        handleNavigation("/acerca-de");
+        manejarNavigation("/acerca-de");
       },
     },
     {
       label: "Contacto",
       icon: "pi pi-envelope",
       command: () => {
-        handleNavigation("/contacto");
+        manejarNavigation("/contacto");
       },
     },
   ];
 
   if (estaLogueado) {
-    navlist.push({
+    itemsGenerales.push({
       label: "Cerrar Sesión",
       icon: "pi pi-sign-out",
-      command: handleLogout,
+      command: manejarCerarSesion,
       className: "p-menuitem-logout",
     });
   }
@@ -83,7 +83,7 @@ const Navegacion = () => {
 
   return (
     <div className="card">
-      <Menubar style={menubarStyles} model={navlist} />
+      <Menubar style={menubarStyles} model={itemsGenerales} />
     </div>
   );
 };

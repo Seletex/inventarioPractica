@@ -23,17 +23,13 @@ export default function PaginaActualizarEquipos() {
     const cargarEquipo = async () => {
       setCargandoInicial(true);
       setError("");
-
       try {
-        // *** CAMBIO AQUÍ: Llamar al servicio usando la PLACA ***
-        // Asume que tu servicio 'getById' realmente busca por placa
         const datosEquipo = await equiposService.getById(placa);
         console.log("Datos del equipo:", datosEquipo);
         console.log("Placa en los parámetros:", placa);
-        // Establecer los datos cargados en el estado del formulario
+
         setFormulario(datosEquipo);
       } catch (err) {
-        // Ajustar el mensaje de error
         setError(
           `Error cargando datos del equipo con placa ${placa}: ` + err.message
         );
@@ -44,7 +40,6 @@ export default function PaginaActualizarEquipos() {
       }
     };
 
-    // *** CAMBIO AQUÍ: Solo cargar si tenemos una PLACA válida ***
     if (placa) {
       cargarEquipo();
       console.log("Placa en los parámetros:", placa);
@@ -155,7 +150,7 @@ export default function PaginaActualizarEquipos() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-xl shadow-2xl p-8 sm:p-10">
-                    {/* Mostrar errores de carga O de envío */}
+          {/* Mostrar errores de carga O de envío */}
           {error && (
             <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm">
               {error}
@@ -163,7 +158,9 @@ export default function PaginaActualizarEquipos() {
           )}
           <Card
             title="Actualizar Equipo"
-            subTitle=<p className="text-gray-600 text-sm">Placa: {formulario?.placa || placa}</p>
+            subTitle=<p className="text-gray-600 text-sm">
+              Placa: {formulario?.placa || placa}
+            </p>
             className="w-full md:w-30rem"
             style={{
               width: "350px", // Ajusta el ancho de la tarjeta según necesites

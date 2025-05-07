@@ -17,6 +17,7 @@ import {
   mostrarErrorFn,
 } from "../../autenticacion/anzuelos/usoGestionFuncionesEquipo.js";
 import { useNavigate } from "react-router-dom";
+import { useDebounce, useMediaQuery } from "../../componentes/utiles/GanchosAMedida.jsx";
 
 export default function MantenimientosProgramados() {
   const [mantenimientosProgramados, setMantenimientosProgramados] = useState([]);
@@ -44,32 +45,6 @@ export default function MantenimientosProgramados() {
     observaciones: "",
     // Podrías añadir más campos si fueran editables, como 'tecnico'
   });
-
-  // Hook simple para debouncing
-  function useDebounce(value, delay) {
-    const [debouncedValue, setDebouncedValue] = useState(value);
-    useEffect(() => {
-      const handler = setTimeout(() => {
-        setDebouncedValue(value);
-      }, delay);
-      return () => {
-        clearTimeout(handler);
-      };
-    }, [value, delay]);
-    return debouncedValue;
-  }
-  // Hook para detectar el tamaño de la pantalla
-  const useMediaQuery = (query) => {
-    const [matches, setMatches] = useState(window.matchMedia(query).matches);
-    useEffect(() => {
-      const media = window.matchMedia(query);
-      const listener = () => setMatches(media.matches);
-      media.addEventListener("change", listener); // Usar addEventListener y removeEventListener
-      return () => media.removeEventListener("change", listener);
-    }, [query]);
-    return matches;
-  };
-
   const isMobileSmall = useMediaQuery("(max-width: 575px)"); // Breakpoint similar a sm de PrimeFlex
   const debouncedBusqueda = useDebounce(busqueda, 300); // 300ms de delay
 

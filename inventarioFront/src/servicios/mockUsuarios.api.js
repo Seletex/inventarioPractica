@@ -1,15 +1,18 @@
 const usuariosMock = [
   {
+    id:1,
     nombreCompleto: "Juan Pérez",
     correo: "juape@gmail.com",
     rol: "Administrador",
   },
   {
+    id:2,
     nombreCompleto: "María López",
     correo: "MarPez@hotmail.com",
     rol: "Usuario Administrativo",
   },
   {
+    id:3,
     nombreCompleto: "Carlos García",
     correo: "Carcia@yahoo.com",
     rol: "Consultor",

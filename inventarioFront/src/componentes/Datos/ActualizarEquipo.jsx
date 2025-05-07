@@ -16,22 +16,7 @@ import {
 } from "./SiNoOpciones.jsx";
 
 import { obtenerFechaActual } from "../utiles/FechaActual.jsx";
-
-// Función auxiliar para generar opciones de select (la que ya creaste)
-const generarOpcionesSelect = (dataArray) => {
-  // Asegúrate de manejar el caso donde dataArray pueda ser null/undefined
-  if (!dataArray) return [];
-  // Si el primer elemento ya es { value: "", label: "Seleccionar..." }, no lo añadas de nuevo
-  if (dataArray.length > 0 && dataArray[0].value === "") {
-    return dataArray.map((item) => ({ value: item.value, label: item.label }));
-  }
-  // Si no, añade una opción por defecto genérica si es necesario
-  return [
-    { value: "", label: "Seleccionar..." },
-    ...dataArray.map((item) => ({ value: item.value, label: item.label })),
-  ];
-};
-
+import { generarOpcionesSelect } from "../utiles/FormulariosAyuda.jsx";
 
 export const marcasPorTipoEquipo = {
   Portatil: MarcaComputador, // Usa los arrays importados
@@ -121,7 +106,7 @@ export const camposFormularioEquipo = [
     name: "placa",
     label: "Placa:",
     placeHolder: "Placa 11111",
-    required: true,
+    required: false,
     icon: "FiTag",
   }),
   createTextField({
@@ -135,7 +120,7 @@ export const camposFormularioEquipo = [
     name: "serial",
     label: "Número de Serie:",
     placeHolder: "Número de serie",
-    required: false,
+    required: true,
     icon: "FiTag",
   }),
   createTextField({

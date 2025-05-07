@@ -30,7 +30,7 @@ const camposFormularioEquipo = [
     type: "text",
     name: "placa",
     placeHolder: "Placa",
-    required: true,
+    required: false,
     icon: "FiTag",
   },
   {
@@ -61,9 +61,24 @@ const camposFormularioEquipo = [
     type: "text",
     name: "serial",
     placeHolder: "Número de Serie:",
-    required: false,
+    required: true,
     icon: "FiTag",
   },
+  {
+    type: "text",
+    name: "ip",
+    placeHolder: "Dirección IP:",
+    required: false,
+    icon: "FiGlobe",
+  },
+  {
+    type: "text",
+    name: "nombre",
+    placeHolder: "Nombre de Equipo: ",
+    required: false,
+    icon: "FiMonitor",
+  },
+
 
   // --- CAMBIO AQUÍ: Añadimos searchable a Ubicación ---
   {

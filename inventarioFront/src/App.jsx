@@ -28,15 +28,33 @@ import PaginaAcercaDe from "./paginas/autenticacion/PaginaAcercaDe";
 import PaginaContacto from "./paginas/autenticacion/PaginaContacto";
 import PaginaSolicitarMantenimiento from "./paginas/publicas/PaginaSolicitarMantenimiento";
 import PaginaConsultarEquipoPlaca from "./paginas/publicas/PaginaConsultarEquipoPlaca";
+import React,{useContext} from "react";
+import NavegacionPrivada from "./componentes/NavegacionPrivada";
+import { ContextoAutenticacion } from "./autenticacion/contexto/ContextoAutenticacion"
+
+
 
 // Componente Layout para rutas que necesitan Navegacion
 const AppLayout = () => {
+  const authContext = useContext(ContextoAutenticacion);
+  const estaLogueado = authContext && authContext.usuario;
+  
   return (
     <>
-      <Navegacion />
-      <div className="container mx-auto">
+      <div className="flex flex-col min-h-screen">
+      <header className="sticky top-0 z-50 bg-white shadow-sm">
+        {/* Navegacion principal/pública siempre visible en este layout */}
+        <Navegacion />
+        {/* Navegacion privada solo si el usuario está logueado */}
+        {estaLogueado && <NavegacionPrivada />}
+      </header>
+      {/* El contenido de la página con un padding y centrado */}
+      <main className="flex-grow container mx-auto p-4">
+      
         <Outlet /> {/* Las rutas anidadas se renderizarán aquí */}
-      </div>
+        </main>
+      {/* <Footer /> */} {/* Descomenta si tienes un componente Footer */}
+    </div>
     </>
   );
 };

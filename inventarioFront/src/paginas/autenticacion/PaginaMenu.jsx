@@ -5,36 +5,9 @@ import { Button } from "primereact/button";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
-import { rolUsuarioArray } from "../../componentes/Datos/RolUsuario";
-
+//import { rolUsuarioArray } from "../../componentes/Datos/RolUsuario";
+import { permisosPorRol } from "../../autenticacion/permisos";
 // Configuración de permisos por rol
-const permisosPorRol = {
-  Administrador: {
-    gestionEquipo: true,
-    gestionMantenimientos: true,
-    gestionUsuarios: true,
-    importarExportar: true,
-    reportes: true,
-    consultas: true,
-  },
-
-  UsuarioAdministrativo: {
-    gestionEquipo: true,
-    gestionMantenimientos: true,
-    gestionUsuarios: false,
-    importarExportar: true,
-    reportes: true,
-    consultas: true,
-  },
-  Consultor: {
-    gestionEquipo: false,
-    gestionMantenimientos: false,
-    gestionUsuarios: false,
-    importarExportar: false,
-    reportes: true,
-    consultas: true,
-  },
-};
 
 export default function PaginaMenu() {
   const { usuario, logout } = useState(""); // Asume que tu AuthContext proporciona el usuario actual
@@ -44,8 +17,8 @@ export default function PaginaMenu() {
   });
 
   // Obtener permisos del usuario actual
-  const rolValido = rolUsuarioArray.some((rol) => rol.value === usuario?.rol);
-  const permisos = rolValido ? permisosPorRol[usuario.rol] : {};
+  const rolActual = usuario?.rol || "Default"; // Usar 'Default' si el rol no está definido o es invitado
+  const permisos = permisosPorRol[rolActual] || permisosPorRol.Default; // Fallback a permisos por defecto
   if (vistaActual === "gestion-equipos") {
     return <GestionEquipos onVolver={() => setVistaActual("menu")} />;
   }

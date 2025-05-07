@@ -18,13 +18,12 @@ import {
   mostrarExitoFn,
   mostrarErrorFn,
 } from "../../autenticacion/anzuelos/usoGestionFuncionesEquipo.js"; // Revisa si este hook sigue siendo la mejor aproximación
-const normalizarString = (str) => {
-  if (typeof str !== "string") return "";
-  return str
-    .normalize("NFD") // Descomponer caracteres acentuados
-    .replace(/[\u0300-\u036f]/g, "") // Eliminar diacríticos
-    .toLowerCase();
-};
+import { normalizarString } from "../../componentes/utiles/UtilidadesTexto.jsx";
+import {
+  useDebounce,
+  useMediaQuery,
+} from "../../componentes/utiles/GanchosAMedida.jsx";
+
 export default function GestionarEquipos() {
   const [equipos, setEquipos] = useState([]); // Lista completa de equipos
   const [equiposFiltrados, setEquiposFiltrados] = useState([]); // Equipos mostrados en tabla
@@ -35,32 +34,14 @@ export default function GestionarEquipos() {
   const toast = useRef(null); // Referencia para notificaciones
   const navigate = useNavigate(); // Hook para navegación
 
-  // Hook simple para debouncing
-  
-  function useDebounce(value, delay) {
-    const [debouncedValue, setDebouncedValue] = useState(value);
-    useEffect(() => {
-      const handler = setTimeout(() => {
-        setDebouncedValue(value);
-      }, delay);
-      return () => clearTimeout(handler);
-    }, [value, delay]);
-    return debouncedValue;
-  }
-
-  // Hook para detectar el tamaño de la pantalla
-  const useMediaQuery = (query) => {
-    const [matches, setMatches] = useState(window.matchMedia(query).matches);
-    useEffect(() => {
-      const media = window.matchMedia(query);
-      const listener = () => setMatches(media.matches);
-      media.addEventListener("change", listener);
-      return () => media.removeEventListener("change", listener);
-    }, [query]);
-    return matches;
+  const getEstadoSeverity = (estado) => {
+    const lowerEstado = estado?.toLowerCase();
+    if (lowerEstado === "activo") return "success";
+    if (lowerEstado === "inactivo") return "warning";
+    if (lowerEstado === "baja") return "danger";
+    if (lowerEstado === "mantenimiento") return "info";
+    return "info"; // Default
   };
-
-  // Funciones para mostrar mensajes (usando useCallback para estabilidad)
   const mostrarMensajeExito = useCallback((mensaje) => {
     mostrarExitoFn(mensaje, toast);
   }, []);
@@ -132,12 +113,8 @@ export default function GestionarEquipos() {
         Header: "Estado",
         accessor: "estado",
         // Usar Tag de PrimeReact para mjeorar
-        Cell: ({ value }) => {
-          let severity = "info";
-          if (value === "Activo") severity = "success";
-          else if (value === "Inactivo") severity = "warning";
-          else if (value === "Baja") severity = "danger";
-          else if (value === "Mantenimiento") severity = "info";
+        Cell: ({ value }) => {          const severity = getEstadoSeverity(value);
+        
           return <Tag severity={severity} value={value || "N/A"} />;
         },
       },
@@ -192,21 +169,11 @@ export default function GestionarEquipos() {
               tooltip="Nuevo Mantenimiento"
               tooltipOptions={{ position: "top" }}
               onClick={() => manejarNuevoMantenimiento(row.original.placa)}
-            />
-
-            {/* Botón Eliminar (si es necesario, usualmente se prefiere dar de baja) */}
-            {/* <Button
-            icon="pi pi-trash"
-            className="p-button-rounded p-button-sm p-button-text p-button-danger"
-            tooltip="Eliminar Permanentemente"
-            tooltipOptions={{ position: "top" }}
-            onClick={() => manejoEliminar(row.original.placa)} // Confirmación sería ideal aquí también
-          /> */}
+            />            
           </div>
         ),
         disableSortBy: true,
-        // style: { whiteSpace: "nowrap" }, // No suele ser necesario con flex
-        // width: 150, // Dejar
+
       },
     ],
     [cambiarEstadoEquipo, manejarNuevoMantenimiento]
@@ -250,12 +217,7 @@ export default function GestionarEquipos() {
     alAlternarEstado,
     alNuevoMantenimiento,
   }) => {
-    let estadoSeverity = "info";
-    if (equipo.estado === "Activo") estadoSeverity = "success";
-    else if (equipo.estado === "Inactivo") estadoSeverity = "warning";
-    else if (equipo.estado === "Baja") estadoSeverity = "danger";
-    else if (equipo.estado === "Mantenimiento") estadoSeverity = "info";
-
+    const estadoSeverity = getEstadoSeverity(equipo.estado);
     return (
       <Card className="mb-3 w-full shadow-1 hover:shadow-3 transition-shadow transition-duration-300">
         <div className="flex flex-column sm:flex-row justify-content-between">
