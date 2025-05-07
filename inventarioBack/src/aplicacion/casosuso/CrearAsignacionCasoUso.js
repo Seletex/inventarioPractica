@@ -1,4 +1,4 @@
-import { Asignacion } from "../../dominio/entidades/Asignacion.js";
+import { Asignacion } from "../../dominio/entidades/AsignacionEntidad.js";
 import { AsignacionRepositorio } from "../../dominio/repositorios/AsignacionRepositorio.js";
 
 export class CrearAsignacionCasoUso {

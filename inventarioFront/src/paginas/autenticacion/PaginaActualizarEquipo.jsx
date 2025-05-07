@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import Entrada from "../../componentes/InterfazUsuario/Entrada";
+import Entrada from "../../componentes/InterfazUsuario/Entrada.jsx";
 
 import { Card } from "primereact/card";
 import { Icono } from "../../componentes/utiles/Icono.jsx";

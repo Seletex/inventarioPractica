@@ -22,7 +22,7 @@ export default function PaginaContacto()  {
                     <div>
                         <i className="pi pi-envelope p-mr-2" style={{ verticalAlign: 'middle' }}></i>
                         <span style={{ verticalAlign: 'middle' }}>
-                            <strong>Email:</strong> <a href="mailto:tuemail@ejemplo.com">tuemail@ejemplo.com</a>
+                            <strong>Email:</strong> <a href="mailto:tuemail@ejemplo.com">sistemas@laceja-antioquia-sistemas.gov.co</a>
                         </span>
                     </div>
 
@@ -31,7 +31,7 @@ export default function PaginaContacto()  {
                     <div style={{ marginTop: '1rem' }}>
                         <i className="pi pi-phone p-mr-2" style={{ verticalAlign: 'middle' }}></i>
                         <span style={{ verticalAlign: 'middle' }}>
-                            <strong>Teléfono:</strong> +1 234 567 890
+                            <strong>Teléfono:</strong> Teléfono conmutador: +57 (604) 5531414 extención 1429 o extención 1430
                         </span>
                     </div>
 
@@ -40,7 +40,7 @@ export default function PaginaContacto()  {
                     <div style={{ marginTop: '1rem' }}>
                         <i className="pi pi-map-marker p-mr-2" style={{ verticalAlign: 'middle' }}></i>
                         <span style={{ verticalAlign: 'middle' }}>
-                            <strong>Dirección:</strong> Calle Falsa 123, Ciudad, País
+                            <strong>Dirección:</strong> Carrera 20 # 19-78 Parque Principal, La Ceja - Antioquia
                         </span>
                     </div>
 

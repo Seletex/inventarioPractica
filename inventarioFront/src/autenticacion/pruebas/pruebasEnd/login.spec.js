@@ -26,7 +26,7 @@ test.describe('Prueba de Login', () => {
     await page.locator('button[type="submit"]').click();
 
     // Espera a que la URL cambie o a que un elemento del dashboard aparezca
-    await expect(page).toHaveURL(/.*dashboard/, { timeout: 10000 }); // Espera más si la redirección tarda
+    await expect(page).toHaveURL(/dashboard/, { timeout: 10000 });  // Espera más si la redirección tarda
     // O espera por un elemento específico del dashboard
     // await page.locator('h1:has-text("Dashboard")').waitFor({ state: 'visible', timeout: 10000 });
     await expect(page.locator('h1')).toContainText('Dashboard');

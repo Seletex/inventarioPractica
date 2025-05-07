@@ -11,9 +11,15 @@ const equiposMock = [
     fechaRealizacion: null,
     tecnico: "Juan Pérez",
     ubicacion: "Alcaldía",
+    ultimoMantenimiento: {
+      fecha: "2023-10-15",
+      realizadoPor: "Juan Técnico",
+      descripcion: "Limpieza interna y actualización de software.",
+    },
     responsable: "Alejandro",
     fecha_compra: "2025-12-12",
     estado: "Activo",
+    observaciones: "Ninguna",
   },
   {
     placa: "456",
@@ -28,11 +34,16 @@ const equiposMock = [
     tecnico: "Juan Pérez",
     ubicacion: "Secretaría de Salud",
     responsable: "María",
+    ultimoMantenimiento: {
+      fecha: "2023-11-01",
+      realizadoPor: "Ana Soporte",
+      descripcion: "Cambio de tóner y revisión de rodillos.",
+    },
     fecha_compra: "2025-01-15",
     estado: "Mantenimiento",
+    observaciones: "Ninguna",
   },
   {
-    
     placa: "789",
     tipoEquipo: "Laptop",
     marca: "Dell",
@@ -40,18 +51,23 @@ const equiposMock = [
     equipo: function () {
       return `${this.marca}-${this.modelo}`;
     },
-    almacenamiento:512,
+    almacenamiento: 512,
     ram: "16GB",
     tipo: "Preventivo",
     fechaProgramada: "2025-05-15T00:00:00Z",
     fechaRealizacion: null,
     tecnico: "Juan Pérez",
+    ultimoMantenimiento: {
+      fecha: "2023-11-01",
+      realizadoPor: "Ana Soporte",
+      descripcion: "Cambio de tóner y revisión de rodillos.",
+    },
     ubicacion: "Secretaría de Finanzas",
     responsable: "Carlos",
     fecha_compra: "2025-03-20",
     estado: "Inactivo",
+    observaciones: "Equipo presenta fallas de conectividad.",
   },
-  
 ];
 
 export const mockEquiposService = {
@@ -150,16 +166,58 @@ export const mockEquiposService = {
 
       setTimeout(() => resolve(resultados), 500);
     }),
-  getById: async (placa) =>{
-  
-      // Buscar el equipo por placa
-      const equipo = equiposMock.find(e => e.placa === placa);
-      
-      // Si no encuentra el equipo, debería manejar este caso
-      if (!equipo) {
-        throw new Error(`No se encontró equipo con placa ${placa}`);
-      }
-      
-      return equipo;
-    },
+  getById: async (placa) => {
+    // Buscar el equipo por placa
+    const equipo = equiposMock.find((e) => e.placa === placa);
+
+    // Si no encuentra el equipo, debería manejar este caso
+    if (!equipo) {
+      throw new Error(`No se encontró equipo con placa ${placa}`);
+    }
+
+    return equipo;
+  },
+  registrarRealizacion: async (placa, fechaRealizacion, observacion) => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const equipoIndex = equiposMock.findIndex((e) => e.placa === placa);
+        if (equipoIndex !== -1) {
+          equiposMock[equipoIndex].fechaRealizacion =
+            fechaRealizacion.toISOString();
+          equiposMock[equipoIndex].observaciones = observacion || ""; // Guardar observación
+          // Podrías querer cambiar el estado también, ej: equiposMock[equipoIndex].estado = "Activo";
+          resolve(equiposMock[equipoIndex]);
+        } else {
+          reject(
+            new Error(
+              `No se encontró equipo con placa ${placa} para registrar mantenimiento.`
+            )
+          );
+        }
+      }, 300); // Simula delay
+    });
+  },
+  actualizarMantenimiento: async (placa, datosActualizados) => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const equipoIndex = equiposMock.findIndex(e => e.placa === placa);
+        if (equipoIndex !== -1) {
+          // Actualizar solo los campos proporcionados en datosActualizados
+          // y asegurarse de que la fechaRealizacion se maneje correctamente
+          const fechaRealizacionActualizada = datosActualizados.fechaRealizacion
+            ? new Date(datosActualizados.fechaRealizacion).toISOString()
+            : equiposMock[equipoIndex].fechaRealizacion; // Mantener la existente si no se provee una nueva válida
+
+          equiposMock[equipoIndex] = {
+            ...equiposMock[equipoIndex],
+            ...datosActualizados,
+            fechaRealizacion: fechaRealizacionActualizada,
+          };
+          resolve(equiposMock[equipoIndex]);
+        } else {
+          reject(new Error(`No se encontró equipo con placa ${placa} para actualizar.`));
+        }
+      }, 300);
+    });
+  },
 };

@@ -9,8 +9,8 @@ export default function PaginaAcercaDe (){
     const contenido = (
         <div>
             <p>
-                Esta aplicación fue desarrollada como parte de [Menciona el propósito, ej: una práctica, un proyecto final, etc.]
-                para gestionar eficientemente el inventario de equipos.
+                Esta aplicación fue desarrollada como parte de mejorar el inventario de equipos de la oficina de sistemas, permitiendo
+                gestionar eficientemente el inventario de equipos.
             </p>
             <p>
                 Permite registrar, actualizar, dar de baja equipos, programar mantenimientos
