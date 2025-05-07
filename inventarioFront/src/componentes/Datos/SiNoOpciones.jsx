@@ -3,7 +3,7 @@ const siNoBaseOpciones=[
     {value:"false", label:"No"},
 ]
 
-const crearSiNoOptionsConPlaceholder = (placeholderLabel) => {
+export const crearSiNoOptionsConPlaceholder = (placeholderLabel) => {
     return [
         {value: "", label: placeholderLabel }, // La opción por defecto con el label recibido
         ...siNoBaseOpciones, // Incluye todas las opciones base (Sí y No)

@@ -3,5 +3,5 @@ export const DatosTipoMantenimiento = [
   { value: "Preventivo", label: "Preventivo" },
 
   { value: "Correctivo", label: "Correctivo" },
-  { value: "Proactivo", label: "Proactivo" },
+  {value:"Ninguna", label:"Ninguna"}
 ];

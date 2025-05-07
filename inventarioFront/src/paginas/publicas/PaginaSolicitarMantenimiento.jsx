@@ -78,10 +78,11 @@ export default function PaginaSolicitarMantenimiento() {
 
           <div className="field mb-4">
             <label
+            style ={{ fontFamily: "'Times New Roman', Times, serif", marginTop :"15px"}}
               htmlFor="ubicacion"
               className="block text-900 font-medium mb-2"
             >
-              Ubicación del Problema
+              Ubicación donde se encuentra el problema
             </label>
             <Controller
               name="ubicacion"
@@ -89,6 +90,7 @@ export default function PaginaSolicitarMantenimiento() {
               rules={{ required: "La ubicación es requerida." }}
               render={({ field, fieldState }) => (
                 <Dropdown
+                style = {{marginTop:"15px"}}
                   id={field.name}
                   value={field.value}
                   optionLabel="label" // Muestra el 'label' en el dropdown
@@ -109,13 +111,9 @@ export default function PaginaSolicitarMantenimiento() {
           </div>
 
           <div className="field mb-4">
-            <label
-              htmlFor="descripcionProblema"
-              className="block text-900 font-medium mb-2"
-            >
-              Descripción del Problema
-            </label>
+            
             <InputTextarea
+            style={{ marginTop: "10px"}}
               id="descripcionProblema"
               {...register("descripcionProblema", {
                 required: "La descripción es requerida.",
@@ -123,7 +121,7 @@ export default function PaginaSolicitarMantenimiento() {
               rows={5}
               cols={30}
               autoResize
-              placeholder="Describe el inconveniente que encontraste..."
+              placeholder="Describe el inconveniente  o problema que encontraste..."
               className={classNames({
                 "p-invalid": errors.descripcionProblema,
               })}

@@ -7,32 +7,7 @@ import { Button } from "primereact/button";
 import { classNames } from "primereact/utils";
 import { Link } from "react-router-dom";
 import { Divider } from "primereact/divider";
-
-// Simulación de datos de equipo
-const mockEquipoData = {
-  ABC123X: {
-    placa: "ABC123X",
-    tipo: "Portátil",
-    marca: "Dell",
-    modelo: "Latitude 5400",
-    ultimoMantenimiento: {
-      fecha: "2023-10-15",
-      realizadoPor: "Juan Técnico",
-      descripcion: "Limpieza interna y actualización de software.",
-    },
-  },
-  XYZ789Y: {
-    placa: "XYZ789Y",
-    tipo: "Impresora",
-    marca: "HP",
-    modelo: "LaserJet Pro M404dn",
-    ultimoMantenimiento: {
-      fecha: "2023-11-01",
-      realizadoPor: "Ana Soporte",
-      descripcion: "Cambio de tóner y revisión de rodillos.",
-    },
-  },
-};
+import { mockEquiposService } from "../../servicios/mockEquipos.api.js";
 
 export default function PaginaConsultarEquipoPlaca() {
   const [equipoEncontrado, setEquipoEncontrado] = useState(null);
@@ -49,13 +24,20 @@ export default function PaginaConsultarEquipoPlaca() {
     },
   });
 
-  const onBuscar = (data) => {
+  const onBuscar = async (data) => {
+    // Convertir a async
     console.log("Buscando equipo con placa:", data.placa);
     setBusquedaRealizada(true);
-    // Simulación de búsqueda
     const placaBuscada = data.placa.toUpperCase(); // Normalizar a mayúsculas
-    const resultado = mockEquipoData[placaBuscada] || null;
-    setEquipoEncontrado(resultado);
+
+    try {
+      // Llamar al servicio mock (asíncrono)
+      const resultado = await mockEquiposService.getById(placaBuscada);
+      setEquipoEncontrado(resultado);
+    } catch (error) {
+      console.error("Error al buscar equipo:", error);
+      setEquipoEncontrado(null); // Asegurarse de que no haya equipo si hay error
+    }
     // reset(); // Opcional: limpiar el campo después de buscar
   };
 
@@ -125,7 +107,17 @@ export default function PaginaConsultarEquipoPlaca() {
                   <strong>Placa:</strong> {equipoEncontrado.placa}
                 </p>
                 <p>
-                  <strong>Tipo:</strong> {equipoEncontrado.tipo}
+                  {equipoEncontrado.tipo && (
+                    <p>
+                      <strong>Tipo:</strong> {equipoEncontrado.tipo}
+                    </p>
+                  )}
+                  {equipoEncontrado.tipoEquipo &&
+                    !equipoEncontrado.tipo && ( // Mostrar solo si 'tipo' no está ya mostrado
+                      <p>
+                        <strong>Tipo:</strong> {equipoEncontrado.tipoEquipo}
+                      </p>
+                    )}
                 </p>
                 <p>
                   <strong>Marca:</strong> {equipoEncontrado.marca}
@@ -133,25 +125,14 @@ export default function PaginaConsultarEquipoPlaca() {
                 <p>
                   <strong>Modelo:</strong> {equipoEncontrado.modelo}
                 </p>
+                <p>
+                  <strong>Ubicación:</strong> {equipoEncontrado.ubicacion}
+                </p>
+                <p>
+                  <strong>Responsable:</strong> {equipoEncontrado.responsable}
+                </p>
                 {equipoEncontrado.ultimoMantenimiento ? (
-                  <>
-                    <p className="mt-2">
-                      <strong>Último Mantenimiento:</strong>
-                    </p>
-                    <ul className="list-none p-0 m-0 ml-3">
-                      <li>
-                        Fecha: {equipoEncontrado.ultimoMantenimiento.fecha}
-                      </li>
-                      <li>
-                        Realizado por:{" "}
-                        {equipoEncontrado.ultimoMantenimiento.realizadoPor}
-                      </li>
-                      <li>
-                        Descripción:{" "}
-                        {equipoEncontrado.ultimoMantenimiento.descripcion}
-                      </li>
-                    </ul>
-                  </>
+                  <></>
                 ) : (
                   <p className="mt-2">
                     <em>

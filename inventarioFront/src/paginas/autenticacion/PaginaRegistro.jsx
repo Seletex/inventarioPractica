@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import Entrada from "../../componentes/InterfazUsuario/Entrada";
-import Boton from "../../componentes/InterfazUsuario/Boton";
+import Entrada from "../../componentes/InterfazUsuario/Entrada.jsx";
+import Boton from "../../componentes/InterfazUsuario/Boton.jsx";
 import { FiUser, FiMail, FiLock } from "react-icons/fi";
 import { Navigate } from "react-router-dom";
 import { ROLES, rolUsuarioArray } from "../../componentes/Datos/RolUsuario.jsx"; // Asegúrate que la extensión sea correcta si es necesario

@@ -8,6 +8,7 @@ import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { InputText } from "primereact/inputtext";
 import { Tag } from "primereact/tag"; // Importar Tag para roles
+import { Card } from "primereact/card"; // Importar Card
 // Importar funciones del hook personalizado (si las sigues usando)
 import {
   mostrarErrorFn,
@@ -30,23 +31,60 @@ export default function GestionarUsuarios() {
   const [busqueda, setBusqueda] = useState("");
   const toast = useRef(null);
 
+  // --- INICIO FUNCIONES AUXILIARES ---
+  const normalizarString = (str) => {
+    if (typeof str !== 'string') return '';
+    return str
+      .normalize("NFD") // Descomponer caracteres acentuados
+      .replace(/[\u0300-\u036f]/g, "") // Eliminar diacríticos
+      .toLowerCase();
+  };
+
+  // Hook para retrasar la ejecución de una función (debouncing)
+  function useDebounce(value, delay) {
+    const [debouncedValue, setDebouncedValue] = useState(value);
+    useEffect(() => {
+      const handler = setTimeout(() => {
+        setDebouncedValue(value);
+      }, delay);
+      return () => clearTimeout(handler);
+    }, [value, delay]);
+    return debouncedValue;
+  }
+
+  // Hook para detectar cambios en el tamaño de la pantalla (media query)
+  const useMediaQuery = (query) => {
+    const [matches, setMatches] = useState(window.matchMedia(query).matches);
+    useEffect(() => {
+      const media = window.matchMedia(query);
+      const listener = () => setMatches(media.matches);
+      media.addEventListener('change', listener);
+      return () => media.removeEventListener('change', listener);
+    }, [query]);
+    return matches;
+  };
+  // --- FIN FUNCIONES AUXILIARES ---
+
   // Funciones para mostrar mensajes (estables con useCallback)
-  const mostrarExito = useCallback((mensaje) => {
+  const mostrarMensajeExito = useCallback((mensaje) => {
     mostrarExitoFn(mensaje, toast);
   }, []);
 
-  const mostrarError = useCallback((mensaje) => {
+  const mostrarMensajeError = useCallback((mensaje) => {
     mostrarErrorFn(mensaje, toast);
   }, []);
 
-  // Función para cargar usuarios (estable con useCallback)
+  const busquedaDebounced = useDebounce(busqueda, 300);
+  const esMovilPequeno = useMediaQuery('(max-width: 575px)');
+
+  // Cargar lista de usuarios
   const cargarUsuarios = useCallback(async () => {
     await cargarEntidadesFn(
       asignarCarga,
       usuariosService,
       setUsuarios,
       setUsuariosFiltrados,
-      mostrarError,
+      mostrarMensajeError,
       "usuarios" // Nombre de la entidad
     );
   }, [mostrarError]); // Dependencia estable
@@ -63,9 +101,9 @@ export default function GestionarUsuarios() {
       await manejoEliminarEntidadFn(
         id,
         usuariosService,
-        mostrarExito,
+        mostrarMensajeExito,
         cargarUsuarios, // Recargar lista
-        mostrarError,
+        mostrarMensajeError,
         "usuario",
         toast // Pasar ref si la función lo necesita
       );
@@ -73,7 +111,7 @@ export default function GestionarUsuarios() {
       // );
     },
     [mostrarExito, cargarUsuarios, mostrarError]
-  ); // Dependencias estables
+  );
 
   // Función para abrir el modal de edición/creación
   const abrirModal = useCallback((usuario = null) => {
@@ -87,11 +125,11 @@ export default function GestionarUsuarios() {
     setUsuarioEditando(null); // Limpiar usuario en edición
   }, []);
 
-  // Función que se llama después de guardar en el modal
-  const handleGuardado = useCallback(() => {
+  // Manejador para después de guardar en el modal
+  const manejarGuardadoExitoso = useCallback(() => {
     cerrarModal();
     cargarUsuarios(); // Recargar la lista
-  }, [cerrarModal, cargarUsuarios]); // Dependencias estables
+  }, [cerrarModal, cargarUsuarios]);
 
   // Columnas para la tabla (optimizadas con useMemo)
   const columnas = useMemo(
@@ -145,22 +183,58 @@ export default function GestionarUsuarios() {
 
   // Filtrar usuarios (lógica ya corregida para null/undefined)
   useEffect(() => {
-    if (!busqueda) {
+    if (!busquedaDebounced) {
       setUsuariosFiltrados(usuarios || []);
       return;
     }
-    const searchTermLower = busqueda.toLowerCase();
-    const filtrados = (usuarios || []).filter((usuario) =>
-      Object.keys(usuario).some((key) => {
+    const terminoBusquedaNormalizado = normalizarString(busquedaDebounced);
+    const filtrados = (usuarios || []).filter((usuario) => {
+      return Object.keys(usuario).some((key) => {
         const valor = usuario[key];
         if (valor !== null && valor !== undefined) {
-          return String(valor).toLowerCase().includes(searchTermLower);
+          const valorNormalizado = normalizarString(String(valor));
+          return valorNormalizado.includes(terminoBusquedaNormalizado);
         }
         return false;
-      })
-    );
+      });
+    });
     setUsuariosFiltrados(filtrados);
-  }, [busqueda, usuarios]);
+  }, [busquedaDebounced, usuarios, normalizarString]);
+
+  // Componente para mostrar cada usuario como una Tarjeta en vista móvil
+  const TarjetaUsuarioItem = ({ usuario, alEditar, alEliminar }) => {
+    let rolSeverity = "info";
+    if (usuario.rol?.toLowerCase() === "administrador") rolSeverity = "danger";
+    if (usuario.rol?.toLowerCase() === "tecnico") rolSeverity = "warning";
+
+    return (
+      <Card className="mb-3 w-full shadow-1 hover:shadow-3 transition-shadow transition-duration-300">
+        <div className="flex flex-column sm:flex-row justify-content-between">
+          <div>
+            <div className="text-xl font-bold mb-2">{usuario.nombreCompleto}</div>
+            <p className="mt-0 mb-1"><strong>Correo:</strong> {usuario.correo}</p>
+            <p className="mt-0 mb-1">
+              <strong>Rol:</strong> <Tag severity={rolSeverity} value={usuario.rol || "N/A"} />
+            </p>
+          </div>
+          <div className="flex flex-column sm:flex-row sm:align-items-start gap-2 mt-3 sm:mt-0">
+            <Button
+              icon="pi pi-pencil"
+              className="p-button-sm p-button-primary w-full sm:w-auto"
+              tooltip="Editar Usuario"
+              onClick={() => alEditar(usuario)}
+            />
+            <Button
+              icon="pi pi-trash"
+              className="p-button-sm p-button-danger w-full sm:w-auto"
+              tooltip="Eliminar Usuario"
+              onClick={() => alEliminar(usuario.id)}
+            />
+          </div>
+        </div>
+      </Card>
+    );
+  };
 
   return (
     <div className="p-4">
@@ -189,15 +263,34 @@ export default function GestionarUsuarios() {
       </div>
 
       {/* Tabla */}
-      <div className="tabla-con-bordes">
-        {" "}
-        {/* Revisa si esta clase es necesaria */}
-        <TablaEquipos // Reutilizamos el componente de tabla
-          columns={columnas}
-          data={usuariosFiltrados}
-          loading={carga}
-        />
-      </div>
+      {esMovilPequeno && !busquedaDebounced && usuariosFiltrados.length === usuarios.length ? (
+         <div className="text-center p-3 my-3 border-1 surface-border border-round surface-ground">
+          <i className="pi pi-users text-3xl text-primary mb-3"></i>
+          <p className="text-lg">Usa la búsqueda para encontrar usuarios.</p>
+          <p className="text-sm text-color-secondary">
+            En pantallas pequeñas, los resultados se muestran como tarjetas individuales.
+          </p>
+        </div>
+      ) : esMovilPequeno && usuariosFiltrados.length > 0 ? (
+        <div className="mt-4">
+          {usuariosFiltrados.map((usuario) => (
+            <TarjetaUsuarioItem
+              key={usuario.id} // Asegúrate que usuario.id sea único y esté definido
+              usuario={usuario}
+              alEditar={abrirModal}
+              alEliminar={manejoEliminarUsuario}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="tabla-con-bordes overflow-x-auto"> {/* Añadido overflow-x-auto para la tabla */}
+          <TablaEquipos // Reutilizamos el componente de tabla
+            columns={columnas}
+            data={usuariosFiltrados}
+            loading={carga}
+          />
+        </div>
+      )}
 
       {/* Modal/Dialog para Crear/Editar Usuario */}
       {/* Reemplaza este placeholder con tu componente ModalFormularioUsuario real */}
@@ -208,8 +301,8 @@ export default function GestionarUsuarios() {
            usuario={usuarioEditando}
            visible={mostrarModal}
            onHide={cerrarModal} // Usar función estable
-           onSave={handleGuardado} // Usar función estable
-           mostrarExito={mostrarExito}
+           onSave={manejarGuardadoExitoso} // Usar función estable
+           mostrarExito={mostrarMensajeExito}
            mostrarError={mostrarError}
            usuariosService={usuariosService}
          />
@@ -236,7 +329,7 @@ export default function GestionarUsuarios() {
                 onClick={() => {
                   // Lógica temporal para simular guardado
                   console.log("Guardando:", usuarioEditando || "Nuevo Usuario");
-                  handleGuardado(); // Llama a la función de guardado
+                  manejarGuardadoExitoso(); // Llama a la función de guardado
                 }}
               />
             </div>

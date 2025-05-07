@@ -1,163 +1,266 @@
-import { DatosUbicacion } from "./DatosUbicaciones.jsx"; // Verifica la ruta
-import { DatosTipoEquipo } from "./DatosTipoEquipo.jsx"; // Verifica la ruta
-import { MarcaMonitor } from "./MarcaMonitor.jsx"; // Verifica la ruta
-import { RAM } from "./RAM.jsx"; // Verifica la ruta
-import { TipoAlmacenamiento } from "./TipoAlmacenamiento.jsx"; // Verifica la ruta
-import { SistemaOperativo } from "./SistemaOperativo.jsx"; // Verifica la ruta
-import { TiempoGarantia } from "./TiempoGarantia.jsx"; // Verifica la ruta
-import { VersionOffice } from "./VersionOffice.jsx"; // Verifica la ruta
+// Archivo: CodigosMensajes.js (O donde tengas las definiciones de datos y helpers)
 
+// Importa todos los arrays de datos que necesitas
+import { DatosUbicacion } from "./DatosUbicaciones.jsx";
+import { DatosTipoEquipo } from "./DatosTipoEquipo.jsx";
+import { MarcaMonitor } from "./MarcaMonitor.jsx";
+import { RAM } from "./RAM.jsx";
+import { TipoAlmacenamiento } from "./TipoAlmacenamiento.jsx";
+import { SistemaOperativo } from "./SistemaOperativo.jsx";
+import { TiempoGarantia } from "./TiempoGarantia.jsx";
+import { VersionOffice } from "./VersionOffice.jsx";
+import { MarcaComputador } from "./MarcaComputador.jsx";
+import { MarcaImpresora } from "./MarcaImpresora.jsx";
 import {
-  siNoOpcionesEntrega,
-  siNoOpcionesGarantia,
-  siNoOpcionesMouse,
-  siNoOpcionesTeclado,
+  crearSiNoOptionsConPlaceholder, 
 } from "./SiNoOpciones.jsx";
 
 import { obtenerFechaActual } from "../utiles/FechaActual.jsx";
 
-// Función auxiliar para generar opciones de select
+// Función auxiliar para generar opciones de select (la que ya creaste)
 const generarOpcionesSelect = (dataArray) => {
-  return dataArray.map((item) => ({ value: item.value, label: item.label }));
+  // Asegúrate de manejar el caso donde dataArray pueda ser null/undefined
+  if (!dataArray) return [];
+  // Si el primer elemento ya es { value: "", label: "Seleccionar..." }, no lo añadas de nuevo
+  if (dataArray.length > 0 && dataArray[0].value === "") {
+    return dataArray.map((item) => ({ value: item.value, label: item.label }));
+  }
+  // Si no, añade una opción por defecto genérica si es necesario
+  return [
+    { value: "", label: "Seleccionar..." },
+    ...dataArray.map((item) => ({ value: item.value, label: item.label })),
+  ];
 };
 
-// Definición de los campos del formulario
-const camposFormularioEquipo = [
-  {
-    type: "select",
-    name: "tipoEquipo",
-    placeHolder: "Tipo Equipo:",
-    required: true,
-    options: generarOpcionesSelect(DatosTipoEquipo), // Usar función auxiliar
-    icon: "FiMonitor",
-  },
-  
-  {
-    type: "select",
-    name: "ubicacion",
-    placeholder: "Ubicación:",
-    required: true,
-    options: generarOpcionesSelect(DatosUbicacion), // Usar función auxiliar
-    icon: "FiMapPin",
-    searchable: true,
-  }, // Añadido 'searchable'
 
-  {
-    type: "select",
-    name: "ram",
-    placeholder: "RAM:",
+export const marcasPorTipoEquipo = {
+  Portatil: MarcaComputador, // Usa los arrays importados
+  Escritorio: MarcaComputador,
+  Impresora: MarcaImpresora,
+  Monitor: MarcaMonitor, 
+};
+
+const createTextField = ({
+  name,
+  label,
+  placeHolder,
+  required = false,
+  icon,
+}) => ({
+  type: "text",
+  name,
+  label,
+  placeHolder,
+  required,
+  icon,
+});
+
+/*const createNumberField = ({ name, label, placeHolder, required = false, icon }) => ({
+  type: "number",
+  name,
+  label,
+  placeHolder,
+  required,
+  icon,
+});
+*/
+const createDateField = ({
+  name,
+  label,
+  placeHolder,
+  required = false,
+  icon,
+  defaultValue,
+}) => ({
+  type: "date",
+  name,
+  label,
+  placeHolder,
+  required,
+  icon,
+  defaultValue,
+});
+
+// Para selects con opciones predefinidas (como ubicacion, ram, so, etc.)
+const createSelectField = ({
+  name,
+  label,
+  placeholder,
+  required = false,
+  icon,
+  options,
+}) => ({
+  type: "select",
+  name,
+  label,
+  placeholder, // Usar placeholder para el texto de la opción por defecto
+  required,
+  icon,
+  options: generarOpcionesSelect(options), // Usar la función auxiliar para mapear y añadir placeholder si no está
+});
+
+// Para selects Sí/No (usando la función generadora de SiNoOpciones)
+const createSiNoSelectField = ({
+  name,
+  label,
+  required = false,
+  icon,
+  placeholderLabel,
+}) => ({
+  type: "select",
+  name,
+  label,
+  required,
+  icon,
+  options: crearSiNoOptionsConPlaceholder(placeholderLabel || label), // Generar las opciones Sí/No con placeholder
+});
+
+export const camposFormularioEquipo = [
+  // Campos de texto
+  createTextField({
+    name: "placa",
+    label: "Placa:",
+    placeHolder: "Placa 11111",
+    required: true,
+    icon: "FiTag",
+  }),
+  createTextField({
+    name: "modelo",
+    label: "Modelo:",
+    placeHolder: "Modelo",
     required: false,
-    options: generarOpcionesSelect(RAM), // Usar función auxiliar
-    icon: "FiCpu",
-  },
-  {
-    type: "select",
-    name: "tipo_almacenamiento",
-    placeholder: "Tipo de Almacenamiento:",
+    icon: "FiMonitor",
+  }),
+  createTextField({
+    name: "serial",
+    label: "Número de Serie:",
+    placeHolder: "Número de serie",
     required: false,
-    options: generarOpcionesSelect(TipoAlmacenamiento), // Usar función auxiliar
-    icon: "FiHardDrive",
-  },
-  {
-    type: "number",
+    icon: "FiTag",
+  }),
+  createTextField({
     name: "almacenamiento",
-    placeHolder: "Ej: 500",
+    label: "Capacidad Almacenamiento:",
+    placeHolder: "Capacidad de Almacenamiento (GB)",
     required: false,
     icon: "FiHardDrive",
-  },
-
-  {
-    type: "select",
-    name: "sistema_operativo",
-    placeHolder: "Sistema Operativo: ",
-    required: false,
-    options: generarOpcionesSelect(SistemaOperativo), // Usar función auxiliar
-    icon: "FiCpu",
-  },
-  {
-    type: "select",
-    name: "office",
-    required: false,
-    options: generarOpcionesSelect(VersionOffice), // Usar función auxiliar
-    icon: "FiMonitor",
-  },
-
-  {
-    type: "select",
-    name: "garantia",
-    options: siNoOpcionesGarantia,
-    required: false,
-  },
-  {
-    type: "select",
-    name: "tiempo_garantia",
-    placeHolder: "Tiempo de Garantía:",
-    required: false,
-    options: generarOpcionesSelect(TiempoGarantia), // Usar función auxiliar
-    icon: "FiCalendar",
-  },
-
-  {
-    type: "select",
-    name: "teclado",
-    options: siNoOpcionesTeclado,
-    required: false,
-  },
-  {
-    type: "select",
-    name: "mouse",
-    options: siNoOpcionesMouse,
-    required: false,
-  },
-
-  {
-    type: "select",
-    name: "monitor",
-    required: false,
-    options: generarOpcionesSelect(MarcaMonitor), // Usar función auxiliar
-    icon: "FiMonitor",
-    searchable: true, // Puede ser searchable
-  },
-  {
-    type: "text",
+  }), // Campo de almacenamiento como texto/número
+  createTextField({
     name: "modelo_monitor",
-    required: false,
+    label: "Modelo Monitor:",
     placeHolder: "Modelo del Monitor",
+    required: false,
     icon: "FiMonitor",
-  },
-
-  {
-    type: "text",
+  }),
+  createTextField({
     name: "responsable",
+    label: "Responsable:",
     placeHolder: "Nombre del responsable",
     required: false,
     icon: "FiUser",
-  },
-  {
-    type: "text",
+  }),
+  createTextField({
     name: "usaurioAsignado",
+    label: "Usuario Asignado:",
     placeHolder: "Usuario asignado",
     required: false,
     icon: "FiUser",
-  },
+  }),
 
-  {
-    type: "select",
-    name: "entregado",
-    options: siNoOpcionesEntrega,
-    required: false,
-  },
-  {
-    type: "date",
+  createDateField({
     name: "fecha_adquisicion",
-    label: "Fecha de Entrega:",
+    label: "Fecha de Adquisición:",
+    placeholder: "Fecha de Adquisición",
     required: true,
-    placeholder: "Fecha de Entrega",
     defaultValue: obtenerFechaActual(),
     icon: "FiCalendar",
-  },
+  }),
+
+  createSelectField({
+    name: "tipoEquipo",
+    label: "Tipo Equipo:",
+    placeholder: "Seleccionar Tipo",
+    required: true,
+    options: DatosTipoEquipo,
+    icon: "FiMonitor",
+  }),
+  createSelectField({
+    name: "ubicacion",
+    label: "Ubicación:",
+    placeholder: "Seleccionar Ubicación",
+    required: true,
+    options: DatosUbicacion,
+    icon: "FiMapPin",
+  }),
+  createSelectField({
+    name: "ram",
+    label: "RAM:",
+    placeholder: "Seleccionar RAM",
+    required: false,
+    options: RAM,
+    icon: "FiCpu",
+  }),
+  createSelectField({
+    name: "tipo_almacenamiento",
+    label: "Tipo Almacenamiento:",
+    placeholder: "Seleccionar Tipo Almacenamiento",
+    required: false,
+    options: TipoAlmacenamiento,
+    icon: "FiHardDrive",
+  }),
+  createSelectField({
+    name: "sistema_operativo",
+    label: "Sistema Operativo:",
+    placeholder: "Seleccionar SO",
+    required: false,
+    options: SistemaOperativo,
+    icon: "FiCpu",
+  }),
+  createSelectField({
+    name: "office",
+    label: "Versión Office:",
+    placeholder: "Seleccionar Office",
+    required: false,
+    options: VersionOffice,
+    icon: "FiMonitor",
+  }),
+  createSelectField({
+    name: "tiempo_garantia",
+    label: "Tiempo de Garantía:",
+    placeholder: "Seleccionar Tiempo Garantía",
+    required: false,
+    options: TiempoGarantia,
+    icon: "FiCalendar",
+  }),
+  createSelectField({
+    name: "monitor",
+    label: "Marca Monitor:",
+    placeholder: "Seleccionar Marca Monitor",
+    required: false,
+    options: MarcaMonitor,
+    icon: "FiMonitor",
+  }),
+  createSiNoSelectField({
+    name: "garantia",
+    label: "¿Tiene Garantía?",
+    required: false,
+  }),
+  createSiNoSelectField({
+    name: "teclado",
+    label: "¿Tiene Teclado?",
+    required: false,
+  }),
+  createSiNoSelectField({
+    name: "mouse",
+    label: "¿Tiene Mouse?",
+    required: false,
+  }),
+  createSiNoSelectField({
+    name: "entregado",
+    label: "¿Ha sido Entregado?",
+    required: false,
+  }),
 ];
 
-export { camposFormularioEquipo};
-
-// Revisa rutas y nombres de exportación
+// Exportamos las definiciones
+export { obtenerFechaActual };
