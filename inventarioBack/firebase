@@ -19,3 +19,26 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+
+/*
+const compression = require('compression');
+const express = require('express');
+const path = require('path');
+const app = express();
+
+// Habilita la compresión Gzip para todas las respuestas
+app.use(compression());
+
+// Sirve los archivos estáticos de tu build de React
+app.use(express.static(path.join(__dirname, 'dist'))); // Ajusta 'dist' si tu carpeta de build es otra
+
+// Todas las demás rutas devuelven el index.html para el enrutamiento del lado del cliente
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
+const port = process.env.PORT || 3001;
+app.listen(port, () => {
+  console.log(`Servidor escuchando en el puerto ${port}`);
+});
+*/

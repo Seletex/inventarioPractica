@@ -19,9 +19,9 @@ import {
   mostrarErrorFn,
 } from "../../autenticacion/anzuelos/usoGestionFuncionesEquipo.js"; // Revisa si este hook sigue siendo la mejor aproximación
 import { normalizarString } from "../../componentes/utiles/UtilidadesTexto.jsx";
-import {
-  useDebounce,
-  useMediaQuery,
+import { 
+  utilizarConsultaMedios,
+  utilizarRebote,
 } from "../../componentes/utiles/GanchosAMedida.jsx";
 
 export default function GestionarEquipos() {
@@ -50,8 +50,8 @@ export default function GestionarEquipos() {
     mostrarErrorFn(mensaje, toast);
   }, []);
 
-  const busquedaDebounced = useDebounce(busqueda, 300);
-  const esMovilPequeno = useMediaQuery("(max-width: 575px)");
+  const busquedaDebounced = utilizarRebote(busqueda, 300);
+  const esMovilPequeno = utilizarConsultaMedios("(max-width: 575px)");
 
   // Función para cargar equipos (usando useCallback)
   const cargarEquipos = useCallback(async () => {

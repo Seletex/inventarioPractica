@@ -1,16 +1,8 @@
-@import "primereact/resources/themes/lara-light-indigo/theme.css";
-@import "primereact/resources/primereact.min.css";
-@import "primeicons/primeicons.css";
-
 :root {
   max-width: 100%; /* O el ancho que necesites */
   margin: 2px auto; /* Centra horizontalmente el contenedor de la aplicación */
   padding: 10px; /* O el padding que necesites */
   text-align: center; /* Centra el texto dentro de la aplicación */
-  display: flex; /* Convierte #root en un contenedor Flexbox */
-  justify-content: center; /* Centra horizontalmente los hijos de #root */
-  align-items: center; /* Centra verticalmente los hijos de #root */
-  min-height: 100vh; /* Asegura que ocupe toda la altura de la pantalla */
 }
 
 a {
@@ -23,12 +15,14 @@ a:hover {
 }
 
 body {
+  
   margin: 2px;
-  /*display: flex;
-  place-items: center;*/
   min-width: 320px;
   max-width: 100%;
   min-height: 100vh;
+  /* Usa el nombre de la fuente proporcionado por @fontsource/inter */
+  font-family: "Inter var", sans-serif;
+  text-align: center; /* Si quieres centrar el texto globalmente */
 }
 
 h1 {
@@ -36,178 +30,96 @@ h1 {
   line-height: 1.1;
 }
 input {
-  font-family: "Times New Roman", Times, serif;
-  font-size: 21px;
   width: 100%;
   min-width: 320px;
   max-width: 100%;
   border-radius: 1px;
   text-align: center;
-  border: 1px solid transparent;
-  border: solidrgb(150, 151, 160);
+  border: 1px solid rgb(150, 151, 160); /* Corregido y simplificado */
   padding: 1.2em 1.2em;
   margin: 1px;
   font-size: 1em;
   font-weight: 500;
-  font-family: inherit;
   background-color: rgb(255, 255, 255);
-  border-color: #535fff;
 }
 label {
-  font-family: "Times New Roman", Times, serif;
   width: 100%;
-  border-color: #535fff;
   border-radius: 1px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   margin: 2px;
   font-size: 16px;
   font-weight: 500;
-
   background-color: rgb(255, 255, 255);
 }
 select {
-  font-family: "Times New Roman", Times, serif;
   width: 100%;
-  border-color: #535fff;
   border-radius: 1px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   margin: 2px;
   font-size: 21px;
   font-weight: 500;
-  font-family: inherit;
   background-color: rgb(255, 255, 255);
 }
-.p-button {
-  border-radius: 4px;
-  border: 1px solid transparent;
-  padding: 1.2em 1.2em;
-  margin: 2px;
-  background: #fff;
-  text-align: center;
-  font-size: 16px;
-  font-weight: 500;
-}
-Button {
-  button {
-    text-align: center;
-    font-family: "Times New Roman", Times, serif;
-    width: 100%;
-    box-sizing: border-box;
-    max-width: 100%;
-    border-radius: 4px;
-    border: 1px solid transparent;
-    font-size: 20px;
-    padding: 0.6em 1.2em;
-    margin: 2px;
-    font-size: 1em;
-    font-weight: 500;
 
-    color: #000000;
-
-    cursor: pointer;
-    transition: border-color 0.25s;
-  }
-}
-Card {
-  border-color: #000000;
-  color: #000;
-  background-color: #fff;
-  text-align: center;
-  font-family: "Times New Roman", Times, serif;
-  width: 100%;
-  box-sizing: border-box;
-  max-width: 100%;
-  width: 350px;
-  border-radius: 4px;
-  border: 1px solid #e0e0e0;
-  box-shadow: 0 4px 8px #000;
-}
-Link {
-  text-decoration: none;
-  text-align: center;
-  font-family: "Times New Roman", Times, serif;
-  width: 100%;
-  box-sizing: border-box;
-  max-width: 100%;
-  border-radius: 4px;
-  border: 1px solid transparent;
-  font-size: 21px;
-}
+            /* Estilos para botones nativos y botones de PrimeReact */
+.p-button,
 button {
-  text-align: center;
-  font-family: "Times New Roman", Times, serif;
-  width: 100%;
-  box-sizing: border-box;
-  max-width: 100%;
-  border-radius: 4px;
-  border: 1px solid transparent;
-  font-size: 21px;
-  padding: 0.6em 1.2em;
-  margin: 2px;
-  
-  font-weight: 500;
-
-  color: #000000;
-
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-InputText {
-  width: 100%;
-}
-Button:hover {
-  border-color: #646cff;
-}
-Button:focus,
-Button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+              text-align: center;
+              /* Considera usar la fuente base 'InterVariable' o definirla específicamente si es necesario */
+              /* font-family: "Times New Roman", Times, serif; */
+              width: 100%; /* Esto puede ser demasiado agresivo para todos los botones. Usa clases para anchos específicos. */
+              box-sizing: border-box;
+              /* max-width: 100%; */
+              border-radius: 4px;
+              border: 1px solid transparent;
+              /* font-size: 20px; */ /* Usa 'em' o 'rem' para mejor escalabilidad */
+              padding: 0.6em 1.2em;
+              margin: 2px;
+              font-size: 1em;
+              font-weight: 500;
+              color: #000000;
+              cursor: pointer;
+              transition: border-color 0.25s;
 }
 
-Button:disabled {
-  pointer-events: none;
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-Button:disabled:hover {
-  border-color: transparent;
-}
-Button:disabled:focus,
-Button:disabled:focus-visible {
-  outline: none;
-}
-Button:disabled:active {
-  background-color: transparent;
-}
-
+Button:hover,
+.p-button:hover,
 button:hover {
   border-color: #646cff;
 }
 button:focus,
-button:focus-visible {
+button:focus-visible,
+.p-button:focus,
+.p-button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-button:disabled {
+button:disabled,
+.p-button:disabled {
   pointer-events: none;
   cursor: not-allowed;
   opacity: 0.5;
 }
-button:disabled:hover {
+button:disabled:hover,
+.p-button:disabled:hover {
   border-color: transparent;
 }
 button:disabled:focus,
-button:disabled:focus-visible {
+button:disabled:focus-visible,
+.p-button:disabled:focus,
+.p-button:disabled:focus-visible {
   outline: none;
 }
-button:disabled:active {
+button:disabled:active,
+.p-button:disabled:active {
   background-color: transparent;
 }
-/* Para asegurar que los botones se mantengan en línea */
+
 .p-button {
   text-align: center;
-  font-family: "Times New Roman", Times, serif;
+
   width: 100%;
   box-sizing: border-box;
   max-width: 100%;
@@ -219,7 +131,7 @@ button:disabled:active {
 
 .selectButton {
   text-align: center;
-  font-family: "Times New Roman", Times, serif;
+
   width: 100%;
   box-sizing: border-box;
   max-width: 100%;
@@ -230,32 +142,23 @@ button:disabled:active {
   font-size: 21px;
 }
 .entity-selector {
-  /*display: flex;  Asegura que los botones internos usen flexbox */
-  width: 100%;   /* Ocupa todo el ancho disponible */
+  width: 100%; /* Ocupa todo el ancho disponible */
   border-color: #000;
   border-radius: 4px; /* Bordes redondeados */
   border: 1px solid transparent; /* Borde del contenedor */
 }
-
-/* Estilo para cada botón dentro del SelectButton con la clase .entity-selector */
 .entity-selector .p-button {
-  flex: 1; /* Hace que cada botón ocupe el mismo espacio */
-  justify-content: center; /* Centra el texto del botón */
+  flex: 1;
+  justify-content: center;
 
-  /* --- AJUSTA ESTOS VALORES COMO PREFIERAS --- */
-  font-size: 21px;  /* Aumenta el tamaño de la fuente (ej: 16px, 1.2rem) */
-  padding: 0.8rem 1rem; /* Aumenta el padding (relleno) para hacerlo más grande */
-  /* --- --- */
-
-  /* Opcional: Puedes añadir más estilos si quieres */
-  /* border: 1px solid #ccc; */
-  /* margin: 0 2px; */ /* Pequeño espacio entre botones */
+  font-size: 21px;
+  padding: 0.8rem 1rem;
 }
 
 /* Opcional: Ajustar el estilo del botón seleccionado si es necesario */
 .entity-selector .p-button.p-highlight {
   /* background-color: #your-preferred-color; */
-  color: white; 
+  color: white;
 }
 /* Para la columna de acciones */
 .action-cell {
@@ -320,21 +223,18 @@ button:disabled:active {
   --grosor-borde: 1px;
 }
 
-.tabla-estilizada {
+.tabla-estilizada th,
+.tabla-estilizada td {
   --border-style: var(--grosor-borde) solid var(--color-borde);
 
-  & th,
-  & td {
-    border-right: var(--border-style);
-    padding: 0.75rem;
-  }
+  border-right: var(--border-style);
+  padding: 0.75rem;
+}
 
-  & th:last-child,
-  & td:last-child {
-    border-right: none;
-  }
-
-  & thead {
-    border-bottom: var(--border-style);
-  }
+.tabla-estilizada th:last-child,
+.tabla-estilizada td:last-child {
+  border-right: none;
+}
+.tabla-estilizada thead {
+  border-bottom: var(--border-style);
 }

@@ -88,4 +88,4 @@ const Navegacion = () => {
   );
 };
 
-export default Navegacion;
+export default React.memo(Navegacion);

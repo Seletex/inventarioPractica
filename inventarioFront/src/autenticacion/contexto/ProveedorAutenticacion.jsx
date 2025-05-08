@@ -1,9 +1,8 @@
-// Archivo: src/autenticacion/contexto/ContextoAutenticacion.jsx
-import { useState, useEffect} from 'react';
+// Archivo: src/autenticacion/contexto/ProveedorAutenticacion.jsx
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { loginUsuario, verificarSesion, logoutUsuario } from '../../servicios/Autenticacion.service';
 import { ContextoAutenticacion } from './ContextoAutenticacion';
-// --- CORRECCIÓN: Añadir 'export' aquí ---
- // <--- ¡Necesitas exportar esto!
+import HiladorDeCarga from '../../componentes/HiladorDeCarga'; // Para consistencia visual
 
 export function ProveedorAutenticacion({ children }) {
   const [usuario, setUsuario] = useState(null);
@@ -32,7 +31,7 @@ export function ProveedorAutenticacion({ children }) {
     verificarAutenticacion();
   }, []);
 
-  const login = async (correo, contraseña) => {
+  const login = useCallback(async (correo, contraseña) => {
     try {
       const { token, usuario: datosUsuario } = await loginUsuario(correo, contraseña); // Renombrar para claridad
       localStorage.setItem('token', token);
@@ -42,9 +41,9 @@ export function ProveedorAutenticacion({ children }) {
       // Considera no solo devolver el mensaje, sino quizás el objeto error completo o un código
       return { exito: false, error: error.message || "Error desconocido durante el login" };
     }
-  };
+  }, []); // Las funciones de seteo de estado de useState tienen identidades estables
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       // Considera si logoutUsuario realmente necesita ser async o si solo limpia localmente
       await logoutUsuario(); // Si esta llamada falla, igual quieres limpiar localmente
@@ -56,23 +55,27 @@ export function ProveedorAutenticacion({ children }) {
       localStorage.removeItem('token');
       setUsuario(null);
     }
-  };
+  }, []); // No hay dependencias que cambien
 
   // El valor que provee el contexto
-  const value = {
+  // Memoizar el objeto value para evitar re-renders innecesarios de los consumidores
+  const value = useMemo(() => ({
     usuario,
     cargando,
     login,
     logout,
     estaAutenticado: !!usuario // Derivado del estado 'usuario'
-  };
+  }), [usuario, cargando, login, logout]); // Dependencias del useMemo
 
   return (
     <ContextoAutenticacion.Provider value={value}>
-      {/* Es buena idea mostrar algo mientras carga, en lugar de nada */}
-      {cargando ? <p>Cargando...</p> : children}
+      {/* Usar HiladorDeCarga para consistencia visual durante la carga inicial */}
+      {cargando ? <HiladorDeCarga /> : children}
     </ContextoAutenticacion.Provider>
   );
 }
 
 // --- OPCIONAL PERO RECOMENDADO: Crear un hook personalizado ---
+// export const useAuth = () => useContext(ContextoAutenticacion);
+// Esto simplificaría el consumo del contexto en otros componentes:
+// const { usuario, login } = useAuth();

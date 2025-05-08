@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 // Hook para retrasar la ejecución de una función (debouncing)
-export function useDebounce(value, delay) {
+export function utilizarRebote(value, delay) {
   const [debouncedValue, setDebouncedValue] = useState(value);
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -13,7 +13,7 @@ export function useDebounce(value, delay) {
 }
 
 // Hook para detectar cambios en el tamaño de la pantalla (media query)
-export const useMediaQuery = (query) => {
+export const utilizarConsultaMedios = (query) => {
   const [matches, setMatches] = useState(window.matchMedia(query).matches);
   useEffect(() => {
     const media = window.matchMedia(query);

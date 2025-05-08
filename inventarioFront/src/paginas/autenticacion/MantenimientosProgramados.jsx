@@ -17,7 +17,7 @@ import {
   mostrarErrorFn,
 } from "../../autenticacion/anzuelos/usoGestionFuncionesEquipo.js";
 import { useNavigate } from "react-router-dom";
-import { useDebounce, useMediaQuery } from "../../componentes/utiles/GanchosAMedida.jsx";
+import { utilizarConsultaMedios, utilizarRebote } from "../../componentes/utiles/GanchosAMedida.jsx";
 
 export default function MantenimientosProgramados() {
   const [mantenimientosProgramados, setMantenimientosProgramados] = useState([]);
@@ -45,8 +45,8 @@ export default function MantenimientosProgramados() {
     observaciones: "",
     // Podrías añadir más campos si fueran editables, como 'tecnico'
   });
-  const isMobileSmall = useMediaQuery("(max-width: 575px)"); // Breakpoint similar a sm de PrimeFlex
-  const debouncedBusqueda = useDebounce(busqueda, 300); // 300ms de delay
+  const isMobileSmall = utilizarConsultaMedios("(max-width: 575px)"); // Breakpoint similar a sm de PrimeFlex
+  const debouncedBusqueda = utilizarRebote(busqueda, 300); // 300ms de delay
 
   const opcionesEstadoEquipo = [
     { label: "Activo", value: "Activo" },

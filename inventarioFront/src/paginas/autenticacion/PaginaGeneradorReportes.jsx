@@ -1,5 +1,3 @@
-// Archivo: src/paginas/autenticacion/PaginaGeneradorReportes.jsx
-
 import React, { useState, useCallback } from "react";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
@@ -10,14 +8,6 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-
-// Estilos (Asegúrate que estos se carguen globalmente, ej. en App.jsx o index.js)
-// import "primereact/resources/themes/lara-light-indigo/theme.css";
-// import "primereact/resources/primereact.min.css";
-// import "primeicons/primeicons.css";
-// import "react-toastify/dist/ReactToastify.css";
-
-// Importar servicios necesarios
 import { mockEquiposService as equiposService } from "../../servicios/mockEquipos.api.js";
 import { mockMantenimientoService as mantenimientosService } from "../../servicios/mockMantenimientos.api.js";
 
@@ -75,6 +65,7 @@ export default function PaginaGeneradorReportes() {
       return null;
     }
   };
+  
 
   // --- Función para manejar la generación del reporte ---
   const handleGenerarReporte = useCallback(async () => {

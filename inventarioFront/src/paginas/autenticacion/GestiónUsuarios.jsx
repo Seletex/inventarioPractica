@@ -285,12 +285,21 @@ export default function GestionarUsuarios() {
         </div>
       ) : esMovilPequeno && usuariosFiltrados.length > 0 ? (
         <div className="mt-4">
-            {/* Para depurar, puedes descomentar la siguiente línea para ver los IDs y nombres: */}
-           {console.log("Verificando IDs en usuariosFiltrados:", usuariosFiltrados.map(u => ({ id: u.id, nombre: u.nombreCompleto })))} 
+          {/* Para depurar, puedes descomentar la siguiente línea para ver los IDs y nombres: */}
+          {console.log(
+            "Verificando IDs en usuariosFiltrados:",
+            usuariosFiltrados.map((u) => ({
+              id: u.id,
+              nombre: u.nombreCompleto,
+            }))
+          )}
           {usuariosFiltrados.map((usuario, index) => {
             // Es crucial que la key sea única y estable para cada elemento.
             // Lo ideal es que usuario.id siempre sea único y esté definido.
-            const keyParaElemento = usuario.id !== undefined && usuario.id !== null ? usuario.id : `usuario-fallback-${index}`;
+            const keyParaElemento =
+              usuario.id !== undefined && usuario.id !== null
+                ? usuario.id
+                : `usuario-fallback-${index}`;
 
             if (usuario.id === undefined || usuario.id === null) {
               console.warn(
@@ -319,31 +328,13 @@ export default function GestionarUsuarios() {
           />
         </div>
       )}
-
-      {/* Modal/Dialog para Crear/Editar Usuario */}
-      {/* Reemplaza este placeholder con tu componente ModalFormularioUsuario real */}
       {mostrarModal && (
-        // Asumiendo que tienes un componente ModalFormularioUsuario
-        /*
-         <ModalFormularioUsuario
-           usuario={usuarioEditando}
-           visible={mostrarModal}
-           onHide={cerrarModal} // Usar función estable
-           onSave={manejarGuardadoExitoso} // Usar función estable
-           mostrarExito={mostrarMensajeExito}
-           mostrarError={mostrarError}
-           usuariosService={usuariosService}
-         />
-         */
-
-        // Placeholder si aún no tienes el modal:
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-xl w-11/12 md:w-1/2 lg:w-1/3">
             <h2 className="text-xl font-semibold mb-4">
               {usuarioEditando ? "Editar Usuario" : "Nuevo Usuario"}
             </h2>
             <p>Formulario de usuario (ID: {usuarioEditando?.id || "Nuevo"})</p>
-            {/* ... campos del formulario ... */}
             <div className="flex justify-end gap-2 mt-6">
               <Button
                 label="Cancelar"
@@ -355,7 +346,6 @@ export default function GestionarUsuarios() {
                 label={usuarioEditando ? "Guardar Cambios" : "Crear Usuario"}
                 icon="pi pi-check"
                 onClick={() => {
-                  // Lógica temporal para simular guardado
                   console.log("Guardando:", usuarioEditando || "Nuevo Usuario");
                   manejarGuardadoExitoso(); // Llama a la función de guardado
                 }}

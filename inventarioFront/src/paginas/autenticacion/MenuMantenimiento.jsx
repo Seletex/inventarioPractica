@@ -33,9 +33,7 @@ export default function MenuMantenimientos() {
         {" "}
         {/* Ancho máximo para la tarjeta */}
         <div className="flex flex-col gap-4 p-4">
-          {" "}
-          {/* Espacio entre botones */}
-          {/* 1. Botón para Ver Mantenimientos Programados */}
+         
           <Link to="/mantenimientos-programados" className="no-underline">
             <Button
               label="Ver Mantenimientos Programados"
@@ -86,10 +84,3 @@ export default function MenuMantenimientos() {
     </div>
   );
 }
-
-// --- CSS Adicional (opcional, puedes ponerlo en tu archivo CSS global) ---
-/*
-.no-underline {
-  text-decoration: none;
-}
-*/
