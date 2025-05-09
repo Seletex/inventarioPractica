@@ -50,9 +50,8 @@ const SelectRowCheckbox = ({ row, onRowSelect, isSelected }) => {
 SelectRowCheckbox.propTypes = {
   row: PropTypes.object.isRequired,
   onRowSelect: PropTypes.func.isRequired,
-  isSelected: PropTypes.bool.isRequired,
+  isSelected: PropTypes.bool.isRequired
 };
-
 
 export default function PaginaProgramarMantenimientos() {
   
@@ -63,7 +62,7 @@ export default function PaginaProgramarMantenimientos() {
   const [equiposFiltrados, setEquiposFiltrados] = useState([]);
   const [cargandoEquipos, setCargandoEquipos] = useState(false);
   const [errorCargandoEquipos, setErrorCargandoEquipos] = useState("");
-  const [equiposSeleccionados, setEquiposSeleccionados] = useState({});
+  const [equiposSeleccionados, setEquiposSeleccionados] = useState({}); // { [serial]: true }
   const [tipoMantenimiento, setTipoMantenimiento] = useState(null);
   const [fechaProgramada, setFechaProgramada] = useState(null);
   const [descripcion, setDescripcion] = useState("");
@@ -111,13 +110,13 @@ export default function PaginaProgramarMantenimientos() {
   ]);
 
  
-  const handleRowSelect = useCallback((placa) => {
+  const handleRowSelect = useCallback((serial) => { // Seleccionar por serial
   
-    if (!placa) return;
+    if (!serial) return;
     setEquiposSeleccionados((prev) => {
       const newState = { ...prev };
-      if (newState[placa]) delete newState[placa];
-      else newState[placa] = true;
+      if (newState[serial]) delete newState[serial];
+      else newState[serial] = true;
       return newState;
     });
   }, []);
@@ -128,7 +127,7 @@ export default function PaginaProgramarMantenimientos() {
       const newSeleccionados = {};
       if (isSelected) {
         equiposFiltrados.forEach((equipo) => {
-          if (equipo.placa) newSeleccionados[equipo.placa] = true;
+          if (equipo.serial) newSeleccionados[equipo.serial] = true; // Usar serial
         });
       }
       setEquiposSeleccionados(newSeleccionados);
@@ -140,14 +139,14 @@ export default function PaginaProgramarMantenimientos() {
 
     const numSelected = Object.keys(equiposSeleccionados).length;
     const numFiltradosConPlaca = equiposFiltrados.filter(
-      (eq) => eq.placa
+      (eq) => eq.serial // Contar por serial
     ).length;
     return numFiltradosConPlaca > 0 && numSelected === numFiltradosConPlaca;
   }, [equiposSeleccionados, equiposFiltrados]);
 
 
   const _programarMantenimientos = useCallback(
-    async (placasAProgramar) => {
+    async (serialesAProgramar) => { // Cambiar nombre de parámetro
      
       if (!tipoMantenimiento) {
         toast.warn("Seleccione un tipo de mantenimiento.");
@@ -162,7 +161,7 @@ export default function PaginaProgramarMantenimientos() {
         toast.error("Fecha programada inválida.");
         return false;
       }
-      if (placasAProgramar.length === 0) {
+      if (serialesAProgramar.length === 0) {
         toast.warn("No hay equipos válidos para programar.");
         return false;
       }
@@ -173,24 +172,25 @@ export default function PaginaProgramarMantenimientos() {
       try {
         const tecnicoAsignado = "Técnico Por Defecto"; 
 
-        const programacionPromises = placasAProgramar.map(async (placa) => {
-          const equipo = equiposFiltrados.find((e) => e.placa === placa);
+        const programacionPromises = serialesAProgramar.map(async (serial) => {
+          const equipo = equiposFiltrados.find((e) => e.serial === serial);
           if (!equipo) {
             console.warn(
-              `Equipo ${placa} no encontrado en la lista filtrada actual.`
+              `Equipo con serial ${serial} no encontrado en la lista filtrada actual.`
             );
             return null;
           }
 
           const datosParaMantenimiento = {
-            equipoPlaca: placa,
+            equipoSerial: serial, // Usar serial
+            equipoPlaca: equipo.placa, // Incluir placa si existe
             tipo: tipoMantenimiento.value,
             fechaProgramada: fechaProgramadaISO,
             tecnico: tecnicoAsignado,
             descripcion: descripcion,
             fechaRealizacion: null,
             estado: "Programado",
-            ubicacion: equipo.ubicacion,
+            ubicacionEquipo: equipo.ubicacion, // Nombre de campo consistente
           };
           return mantenimientosService.create(datosParaMantenimiento);
         });
@@ -235,7 +235,7 @@ export default function PaginaProgramarMantenimientos() {
       toast.warn("Seleccione al menos un equipo.");
       return;
     }
-    await _programarMantenimientos(placasSeleccionadas);
+    await _programarMantenimientos(placasSeleccionadas); // placasSeleccionadas ahora contiene seriales
   }, [
     equiposSeleccionados,
     _programarMantenimientos,
@@ -266,7 +266,7 @@ export default function PaginaProgramarMantenimientos() {
       acceptClassName: "p-button-warning", 
       accept: async () => {
         const placasFiltradas = equiposFiltrados
-          .map((eq) => eq.placa)
+          .map((eq) => eq.serial) // Usar seriales
           .filter(Boolean);
         await _programarMantenimientos(placasFiltradas);
       },
@@ -296,16 +296,19 @@ export default function PaginaProgramarMantenimientos() {
           <SelectRowCheckbox
             row={row}
             onRowSelect={handleRowSelect}
-            isSelected={!!equiposSeleccionados[row.original?.placa]}
+            isSelected={!!equiposSeleccionados[row.original?.serial]} // Usar serial
           />
         ),
         disableSortBy: true,
         width: 50,
       },
-      { Header: "Placa", accessor: "placa" },
+      { Header: "Serial", accessor: "serial" },
+      { Header: "Placa", accessor: "placa", Cell: ({ value }) => value || "-" },
+      { Header: "Nombre Equipo", accessor: "nombreDelEquipo" },
       { Header: "Tipo Equipo", accessor: "tipoEquipo" },
       { Header: "Marca", accessor: "marca" },
       { Header: "Modelo", accessor: "modelo" },
+      { Header: "IP", accessor: "ip", Cell: ({ value }) => value || "-" },
       { Header: "Ubicación", accessor: "ubicacion" },
       {
         Header: "Fecha Compra",

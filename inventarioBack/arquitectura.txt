@@ -1,28 +1,53 @@
-inventarioBack/
-├── src/
-│   ├── domain/                 # El Núcleo (Lógica de negocio pura)
-│   │   ├── entities/           # (Opcional) Clases/objetos de dominio (ej. User)
-│   │   ├── services/           # Lógica de negocio, orquestación (ej. AuthService)
-│   │   └── ports/              # Interfaces (Puertos)
-│   │       ├── input/          # Puertos de entrada (ej. ILoginUseCase.js)
-│   │       └── output/         # Puertos de salida (ej. IUserRepository.js)
-│   │
-│   ├── application/            # Casos de Uso (Implementación de Puertos de Entrada)
-│   │   └── usecases/           # (ej. LoginUseCase.js)
-│   │
-│   ├── infrastructure/         # Adaptadores y detalles externos
-│   │   ├── driving-adapters/   # Adaptadores de entrada
-│   │   │   └── http/           # Adaptadores para web (Express)
-│   │   │       ├── routes/     # Definición de rutas (ej. auth.routes.js)
-│   │   │       └── controllers/ # Controladores (ej. AuthController.js)
-│   │   │
-│   │   ├── driven-adapters/    # Adaptadores de salida
-│   │   │   ├── persistence/    # Adaptadores para base de datos (ej. MongoUserRepository.js)
-│   │   │   └── external-apis/  # Adaptadores para APIs externas
-│   │   │
-│   │   └── config/             # Configuración (ej. conexión a DB, variables entorno)
-│   │
-│   └── server.js               # Punto de entrada: Configura Express, middleware, rutas
+backend/
 │
-├── package.json
-└── ...
+├── src/
+│   │
+│   ├── core/                      # Capa de dominio (independiente de tecnología)
+│   │   ├── dominio/               # Entidades y objetos de valor
+│   │   │   ├── entidades/         # Ej: Usuario.ts, Equipo.ts
+│   │   │   ├── value-objects/     # Ej: Email.ts, Fecha.ts
+│   │   │   └── excepciones/       # Excepciones de dominio
+│   │   │
+│   │   ├── servicios/             # Lógica de negocio pura
+│   │   │   ├── interfaces/        # Puertos (interfaces abstractas)
+│   │   │   └── impl/              # Implementaciones de servicios
+│   │   │
+│   │   └── casos-uso/             # Casos de uso de la aplicación
+│   │
+│   ├── infraestructura/           # Capa externa (depende de tecnologías)
+│   │   ├── persistencia/          # Adaptadores de persistencia
+│   │   │   ├── entidades/         # Entidades de ORM/BD
+│   │   │   ├── repositorios/      # Implementaciones concretas
+│   │   │   └── mapeadores/        # Conversión dominio <-> persistencia
+│   │   │
+│   │   ├── api/                   # Adaptadores de entrada
+│   │   │   ├── controladores/     # REST/GraphQL controllers
+│   │   │   ├── dto/               # Objetos de transferencia
+│   │   │   ├── middlewares/       # Middlewares específicos
+│   │   │   └── validaciones/      # Validaciones de entrada
+│   │   │
+│   │   ├── config/                # Configuración de infraestructura
+│   │   │   ├── database.ts        # Config BD
+│   │   │   ├── server.ts          # Config servidor
+│   │   │   └── di/                # Inyección de dependencias
+│   │   │
+│   │   └── servicios-externos/    # Clients de APIs externas
+│   │
+│   ├── aplicacion/                # Capa de aplicación (orquesta flujos)
+│   │   ├── comandos/              # Para CQRS (opcional)
+│   │   ├── consultas/             # Para CQRS (opcional)
+│   │   └── eventos/               # Manejo de eventos de dominio
+│   │
+│   └── shared/                    # Utilidades compartidas
+│       ├── utils/                 # Herramientas genéricas
+│       ├── logger/                # Sistema de logging
+│       └── seguridad/             # Utilidades de seguridad
+│
+├── tests/                         # Pruebas automatizadas
+│   ├── unitarias/                 # Pruebas unitarias
+│   ├── integracion/               # Pruebas de integración
+│   └── aceptacion/                # Pruebas de aceptación
+│
+├── scripts/                       # Scripts de apoyo
+├── .env                           # Variables de entorno
+└── package.json                   # Dependencias y scripts

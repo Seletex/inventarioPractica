@@ -1,8 +1,8 @@
-import Usuario from "../../dominio/Usuario";
-import { Resultado } from "../../dominio/valueObjects/Resultado";
+import Usuario from "../../../aplicacion/dominio/Usuario";
+import { Resultado } from "../../../aplicacion/dominio/valueObjects/Resultado";
 import { ResultadoCreacionUsuarioDTO } from "../dtos/ResultadoCreacionUsuarioDTO";
-import { UsuarioRol } from "../../dominio/valueObjects/usuario/UsuarioRol";
-import { UsuarioEstatus } from "../../dominio/valueObjects/usuario/UsuarioEstatus";
+import { UsuarioRol } from "../../../aplicacion/dominio/valueObjects/usuario/UsuarioRol";
+import { UsuarioEstatus } from "../../../aplicacion/dominio/valueObjects/usuario/UsuarioEstatus";
 
 export default class CrearUsuarioAdminCasoUso {
     

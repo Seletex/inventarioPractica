@@ -60,20 +60,20 @@ export default function MantenimientosProgramados() {
   ];
 
   const columnas = [
-    { Header: "Placa", accessor: "placa" },
+    // El mantenimiento se asocia a un equipo, 'equipoPlaca' o 'equipoSerial' debería venir del backend
+    { Header: "Serial Equipo", accessor: "equipoSerial" }, 
+    { Header: "Placa Equipo", accessor: "equipoPlaca", Cell: ({ value }) => value || "-" },
     {
       Header: "Equipo Completo",
       Cell: ({ row }) => {
         const equipoItem = row.original;
-
-        if (equipoItem && typeof equipoItem.equipo === "function") {
-          return equipoItem.equipo();
+        // Necesitarías que el objeto mantenimiento tenga detalles del equipo o hacer una búsqueda
+        // Esto es un placeholder, idealmente el backend adjuntaría esta info o tendrías una forma de obtenerla
+        if (equipoItem && equipoItem.equipoInfo) { // Suponiendo que el backend adjunta equipoInfo
+          return `${equipoItem.equipoInfo.marca || ""} ${equipoItem.equipoInfo.modelo || ""} (${equipoItem.equipoInfo.nombreDelEquipo || ""})`;
         } else {
-          console.warn(
-            "El objeto de datos no tiene la función 'equipo':",
-            equipoItem
-          );
-          return "N/A o Error de datos";
+          // Si solo tienes la placa/serial, podrías mostrar eso
+          return equipoItem.equipoPlaca || equipoItem.equipoSerial || "N/A";
         }
       },
     },
@@ -87,7 +87,7 @@ export default function MantenimientosProgramados() {
         />
       ),
     },
-    { Header: "Ubicación", accessor: "ubicacion" },
+    { Header: "Ubicación Equipo", accessor: "ubicacionEquipo" }, // Asumiendo que esto viene con el mantenimiento
     {
       Header: "Fecha Programada",
       accessor: "fechaProgramada",
@@ -127,14 +127,14 @@ export default function MantenimientosProgramados() {
             <Button
               icon="pi pi-check"
               className="p-button-rounded p-button-sm p-button-success"
-              tooltip="Registrar realización"
+              tooltip="Registrar realización del mantenimiento"
               onClick={() => handleRegistrarRealizacion(row.original)}
             />
           )}
           <Button
             icon="pi pi-pencil"
             className="p-button-rounded p-button-sm p-button-primary"
-            tooltip="Editar"
+            tooltip="Editar Mantenimiento"
             onClick={() => handleAbrirDialogoEditar(row.original)}
           />
         </div>
@@ -159,7 +159,7 @@ export default function MantenimientosProgramados() {
             className="p-button-rounded p-button-text p-button-sm"
             tooltip="Ver Observación"
             onClick={() => {
-              setPlacaParaVerObservacion(row.original.placa);
+              setPlacaParaVerObservacion(row.original.equipoPlaca || row.original.equipoSerial);
               setObservacionParaVer(value);
               setVerObservacionVisible(true);
             }}
@@ -218,7 +218,7 @@ export default function MantenimientosProgramados() {
     if (!mantenimientoSeleccionado) return;
     try {
       await mantenimientosProgramadosService.registrarRealizacion(
-        mantenimientoSeleccionado.placa,
+        mantenimientoSeleccionado.id, // Usar el ID del mantenimiento
         new Date(),
         observacionActual
       );
@@ -239,12 +239,13 @@ export default function MantenimientosProgramados() {
   const handleAbrirDialogoEditar = (equipo) => {
     setEquipoEditando(equipo);
     setDatosFormEdicion({
-      placaOriginal: equipo.placa,
+      idMantenimiento: equipo.id, // ID del mantenimiento
+      equipoPlaca: equipo.equipoPlaca, // Placa del equipo asociado
       fechaRealizacion: equipo.fechaRealizacion
         ? new Date(equipo.fechaRealizacion)
         : null,
-      estadoEquipo: equipo.estado || "",
-      observaciones: equipo.observaciones || "",
+      estadoEquipo: equipo.estadoEquipoPostMantenimiento || "", // Estado del equipo después del mantenimiento
+      observaciones: equipo.observacionesMantenimiento || "", // Observaciones del mantenimiento
       tecnico: equipo.tecnico || "",
     });
     asignarMostrarDialogoEditar(true);
@@ -276,16 +277,16 @@ export default function MantenimientosProgramados() {
     </div>
   );
   const handleGuardarCambiosMantenimiento = async () => {
-    if (!datosFormEdicion.placaOriginal) return;
+    if (!datosFormEdicion.idMantenimiento) return;
     try {
       const datosParaActualizar = {
         fechaRealizacion: datosFormEdicion.fechaRealizacion,
-        estado: datosFormEdicion.estadoEquipo,
+        estadoEquipoPostMantenimiento: datosFormEdicion.estadoEquipo, // Asegúrate que el backend espera esto
         observaciones: datosFormEdicion.observaciones,
         tecnico: datosFormEdicion.tecnico,
       };
       await mantenimientosProgramadosService.actualizarMantenimiento(
-        datosFormEdicion.placaOriginal,
+        datosFormEdicion.idMantenimiento, // Enviar ID del mantenimiento
         datosParaActualizar
       );
       mostrarExito("Mantenimiento actualizado con éxito.");
@@ -336,14 +337,15 @@ export default function MantenimientosProgramados() {
     <Card className="mb-3 w-full shadow-1 hover:shadow-3 transition-shadow transition-duration-300">
       <div className="flex flex-column sm:flex-row justify-content-between">
         <div>
-          <div className="text-xl font-bold mb-2">
-            Placa: {mantenimiento.placa}
-          </div>
+          <div className="text-xl font-bold mb-2">Serial Equipo: {mantenimiento.equipoSerial}</div>
+          {mantenimiento.equipoPlaca && <p className="mt-0 mb-1"><strong>Placa Equipo:</strong> {mantenimiento.equipoPlaca}</p>}
           <p className="mt-0 mb-1">
             <strong>Equipo:</strong>{" "}
-            {typeof mantenimiento.equipo === "function"
-              ? mantenimiento.equipo()
-              : `${mantenimiento.marca} ${mantenimiento.modelo || ""}`}
+            {/* Asumiendo que el backend envía info del equipo */}
+            {mantenimiento.equipoInfo 
+              ? `${mantenimiento.equipoInfo.marca || ""} ${mantenimiento.equipoInfo.modelo || ""} (${mantenimiento.equipoInfo.nombreDelEquipo || ""})`
+              : mantenimiento.equipoPlaca || mantenimiento.equipoSerial || "N/A"
+            }
           </p>
           <p className="mt-0 mb-1">
             <strong>Tipo:</strong>{" "}
@@ -353,7 +355,7 @@ export default function MantenimientosProgramados() {
             />
           </p>
           <p className="mt-0 mb-1">
-            <strong>Ubicación:</strong> {mantenimiento.ubicacion}
+            <strong>Ubicación Equipo:</strong> {mantenimiento.ubicacionEquipo}
           </p>
           <p className="mt-0 mb-1">
             <strong>Técnico:</strong> {mantenimiento.tecnico}
@@ -386,7 +388,7 @@ export default function MantenimientosProgramados() {
           </p>
           <p className="mt-0 mb-1">
             <strong>Estado Equipo:</strong>{" "}
-            <Tag value={mantenimiento.estado || "N/A"} />{" "}
+            <Tag value={mantenimiento.estadoEquipoPostMantenimiento || "N/A"} />{" "}
           </p>
         </div>
         <div className="flex flex-column sm:flex-row sm:align-items-start gap-2 mt-3 sm:mt-0">
@@ -410,7 +412,7 @@ export default function MantenimientosProgramados() {
               className="p-button-rounded p-button-text p-button-sm w-full sm:w-auto"
               tooltip="Ver Observación"
               onClick={() => {
-                setPlacaParaVerObservacion(mantenimiento.placa);
+                setPlacaParaVerObservacion(mantenimiento.equipoPlaca || mantenimiento.equipoSerial);
                 setObservacionParaVer(mantenimiento.observaciones);
                 setVerObservacionVisible(true);
               }}
@@ -471,7 +473,7 @@ export default function MantenimientosProgramados() {
           <div className="mt-4">
             {mantenimientosFiltrados.map((mantenimiento) => (
               <MantenimientoCardItem
-                key={mantenimiento.placa}
+                key={mantenimiento.id} // Usar el ID del mantenimiento como key
                 mantenimiento={mantenimiento}
                 onRegistrar={handleRegistrarRealizacion}
                 onEditar={handleAbrirDialogoEditar}
@@ -502,7 +504,7 @@ export default function MantenimientosProgramados() {
             {mantenimientoSeleccionado && (
               <p className="mb-2">
                 Registrando para la placa:{" "}
-                <strong>{mantenimientoSeleccionado.placa}</strong>
+                <strong>{mantenimientoSeleccionado.equipoPlaca || mantenimientoSeleccionado.equipoSerial}</strong>
               </p>
             )}
             <div className="field">
@@ -541,7 +543,7 @@ export default function MantenimientosProgramados() {
         </Dialog>
 
         <Dialog
-          header={`Editar Mantenimiento - Placa: ${datosFormEdicion.placaOriginal}`}
+          header={`Editar Mantenimiento - Equipo: ${datosFormEdicion.equipoPlaca || datosFormEdicion.equipoSerial}`}
           visible={mostrarDialogoEditar}
           style={{ width: "90vw", maxWidth: "500px" }}
           footer={pieDialogoEdicion}

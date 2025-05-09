@@ -1,7 +1,7 @@
 // src/infraestructura/adaptadores-accionados/persistencia-firestore/AsignacionRepositorioFirestore.js
 
-import IAsignacionRepositorio from "../../../dominio/puertos/salida/IAsignacionRepositorio.js"; // Ajusta la ruta
-import { db } from "../configuracion/firebaseAdmin.js";
+import IAsignacionRepositorio from "../../../../core/dominio/puertos/salida/IAsignacionRepositorio.js"; // Ajusta la ruta
+import { db } from "../../configuracion/firebaseAdmin.js";
 
 const COLECCION_ASIGNACIONES = "asignaciones";
 

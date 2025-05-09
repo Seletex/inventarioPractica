@@ -1,6 +1,6 @@
 import IUsuarioRepositorio from "../../../aplicacion/puertos/IUsuarioRepositorio.js"; // Ajusta la ruta a tu interfaz
-import { db } from "../configuracion/firebaseAdmin.js"; // Importa la instancia de Firestore
-import Usuario from "../../../dominio/entidades/UsuarioEntidad.js";
+import { db } from "../../configuracion/firebaseAdmin.js"; // Importa la instancia de Firestore
+import Usuario from "../../../../dominio/entidades/UsuarioEntidad.js";
 
 const COLECCION_USUARIOS = "usuarios";
 

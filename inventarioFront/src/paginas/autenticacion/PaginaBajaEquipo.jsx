@@ -13,6 +13,7 @@ import { useUsuarioLogueado } from "../../autenticacion/contexto/UsuarioLogueado
 export default function PaginaDarDeBajaEquipo() {
   const [formulario, setFormulario] = useState({
     placa: "",
+    serial: "", // Añadir serial al formulario
     ubicacion: "",
     responsable: "",
   });
@@ -21,7 +22,7 @@ export default function PaginaDarDeBajaEquipo() {
   const [cargandoInicial, setCargandoInicial] = useState(true);
   const [cargandoEnvio, setCargandoEnvio] = useState(false);
 
-  const { placa } = useParams();
+  const { serial: serialParam } = useParams(); // Usar serial de la URL
   const navigate = useNavigate();
 
   const usuarioLogueado = useUsuarioLogueado();
@@ -31,27 +32,29 @@ export default function PaginaDarDeBajaEquipo() {
       setCargandoInicial(true);
       setError("");
 
-      let placaEnEstado = "";
+      let serialEnEstado = "";
+      let placaDelEquipo = ""; // Para mostrar si existe
       let responsableInicial = "";
 
-      if (placa) {
+      if (serialParam) {
         try {
-          const datosEquipo = await equiposService.getById(placa);
-          placaEnEstado = datosEquipo.placa;
+          const datosEquipo = await equiposService.getById(serialParam); // Cargar por serial
+          serialEnEstado = datosEquipo.serial;
+          placaDelEquipo = datosEquipo.placa || "";
         } catch (err) {
           const errorMessage =
             err.message || "Error desconocido al cargar equipo.";
           setError(
-            `Error cargando datos del equipo con placa ${placa}: ` +
+            `Error cargando datos del equipo con serial ${serialParam}: ` +
               errorMessage
           );
           console.error("Error cargando equipo:", err);
 
-          toast.error(`Equipo con placa ${placa} no encontrado.`);
+          toast.error(`Equipo con serial ${serialParam} no encontrado.`);
           navigate("/gestion-equipo");
         }
       } else {
-        setError("Placa de equipo no proporcionada en la URL.");
+        setError("Serial de equipo no proporcionado en la URL.");
         console.warn("Página de baja accedida sin placa en URL.");
       }
 
@@ -63,7 +66,8 @@ export default function PaginaDarDeBajaEquipo() {
 
       setFormulario((prevFormulario) => ({
         ...prevFormulario,
-        placa: placaEnEstado,
+        serial: serialEnEstado,
+        placa: placaDelEquipo, // Guardar la placa para mostrarla si existe
         ubicacion: "",
         responsable: responsableInicial,
       }));
@@ -72,7 +76,7 @@ export default function PaginaDarDeBajaEquipo() {
     };
 
     inicializarFormulario();
-  }, [placa, navigate, usuarioLogueado]);
+  }, [serialParam, navigate, usuarioLogueado]);
 
   const manejarCambio = (e) => {
     const { name, value } = e.target;
@@ -87,10 +91,10 @@ export default function PaginaDarDeBajaEquipo() {
     setError("");
     setCargandoEnvio(true);
 
-    if (!formulario.placa) {
-      setError("El campo Placa es requerido.");
+    if (!formulario.serial) {
+      setError("El campo Serial es requerido para identificar el equipo.");
       setCargandoEnvio(false);
-      toast.error("El campo Placa es requerido.");
+      toast.error("El campo Serial es requerido.");
       return;
     }
     if (!formulario.ubicacion) {
@@ -107,7 +111,7 @@ export default function PaginaDarDeBajaEquipo() {
     }
 
     const datosParaBaja = {
-      placa: formulario.placa,
+      // El backend debe identificar el equipo por serial para actualizarlo
       estado: "Baja",
       ubicacion_baja: formulario.ubicacion,
       responsable_baja: formulario.responsable,
@@ -115,10 +119,10 @@ export default function PaginaDarDeBajaEquipo() {
     };
 
     try {
-      await equiposService.update(formulario.placa, datosParaBaja);
+      await equiposService.update(formulario.serial, datosParaBaja); // Usar serial para la API de update
 
       toast.success(
-        `Equipo con placa ${formulario.placa} dado de baja exitosamente.`
+        `Equipo con serial ${formulario.serial} dado de baja exitosamente.`
       );
       navigate("/gestionar-equipos");
     } catch (err) {
@@ -135,12 +139,12 @@ export default function PaginaDarDeBajaEquipo() {
   if (cargandoInicial) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p>Cargando datos del equipo {placa ? `con placa ${placa}` : ""}...</p>
+        <p>Cargando datos del equipo {serialParam ? `con serial ${serialParam}` : ""}...</p>
       </div>
     );
   }
 
-  if (error && formulario?.placa === "") {
+  if (error && formulario?.serial === "") { // Verificar si el serial no se cargó
     return (
       <div className="min-h-screen flex items-center justify-center text-red-600">
         <p>{error}</p>
@@ -164,7 +168,9 @@ export default function PaginaDarDeBajaEquipo() {
           <Card
             title="Dar de Baja a un Equipo"
             subTitle={
-              <p className="text-gray-600 text-sm">Placa: {formulario.placa}</p>
+              <p className="text-gray-600 text-sm">Serial: {formulario.serial} 
+                {formulario.placa && ` / Placa: ${formulario.placa}`}
+              </p>
             }
             className="w-full md:w-30rem"
             style={{
@@ -175,7 +181,7 @@ export default function PaginaDarDeBajaEquipo() {
               fontFamily: "'Times New Roman', Times, serif",
             }}
           >
-            {error && formulario?.placa !== "" && (
+            {error && formulario?.serial !== "" && ( // Mostrar error si el serial se cargó pero hubo otro error
               <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm">
                 {error}
               </div>
@@ -185,14 +191,27 @@ export default function PaginaDarDeBajaEquipo() {
               <Entrada
                 placeHolder="Placa del Equipo"
                 tipo="text"
-                name="placa"
-                valor={formulario.placa}
-                required={true}
+                name="serial" // Cambiado a serial
+                valor={formulario.serial}
+                required={true} // Serial es el identificador
                 manejarCambio={manejarCambio}
                 icono={<FiTag className="text-gray-400" />}
-                label="Placa:"
+                label="Serial:"
                 disabled={true}
               />
+              {/* Mostrar Placa si existe, pero no es el campo principal para la baja */}
+              {formulario.placa && (
+                <Entrada
+                  placeHolder="Placa (Opcional)"
+                  tipo="text"
+                  name="placa"
+                  valor={formulario.placa}
+                  manejarCambio={manejarCambio} // Podría ser no editable aquí
+                  icono={<FiTag className="text-gray-400" />}
+                  label="Placa (informativo):"
+                  disabled={true} 
+                />
+              )}
 
               <div className="campo">
                 <select

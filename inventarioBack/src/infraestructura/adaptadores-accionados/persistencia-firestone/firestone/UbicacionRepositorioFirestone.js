@@ -1,7 +1,7 @@
 // src/infraestructura/adaptadores-accionados/persistencia-firestore/UbicacionRepositorioFirestore.js
 
 import IUbicacionRepositorio from "../../../dominio/puertos/salida/IUbicacionRepositorio.js"; // Ajusta la ruta
-import { db } from "../configuracion/firebaseAdmin.js";
+import { db } from "../../configuracion/firebaseAdmin.js";
 
 const COLECCION_UBICACIONES = "ubicaciones";
 

@@ -307,12 +307,29 @@ export default function PaginaGeneradorReportes() {
                   {reporteSeleccionado.value === "inventarioCompleto" && (
                     <>
                       <Column
+                        field="serial"
+                        header="Serial"
+                        sortable
+                        filter
+                        filterPlaceholder="Buscar..."
+                        style={{ minWidth: "150px" }}
+                      ></Column>
+                      <Column
                         field="placa"
                         header="Placa"
                         sortable
                         filter
                         filterPlaceholder="Buscar..."
-                        style={{ minWidth: "100px" }}
+                        body={(rowData) => rowData.placa || "-"}
+                        style={{ minWidth: "120px" }}
+                      ></Column>
+                      <Column
+                        field="nombreDelEquipo"
+                        header="Nombre Equipo"
+                        sortable
+                        filter
+                        filterPlaceholder="Buscar..."
+                        style={{ minWidth: "200px" }}
                       ></Column>
                       <Column
                         field="tipoEquipo"
@@ -349,6 +366,13 @@ export default function PaginaGeneradorReportes() {
                         filter
                         filterPlaceholder="Buscar..."
                         style={{ minWidth: "120px" }}
+                      ></Column>
+                      <Column
+                        field="ip"
+                        header="IP"
+                        sortable
+                        body={(rowData) => rowData.ip || "-"}
+                        style={{ minWidth: "130px" }}
                       ></Column>
                       {/* Añade más columnas relevantes del inventario */}
                     </>

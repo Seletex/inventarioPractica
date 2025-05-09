@@ -17,6 +17,7 @@ import { useUsuarioLogueado } from "../../autenticacion/contexto/UsuarioLogueado
 export default function PaginaNuevoMantenimiento() {
   const [formulario, setFormulario] = useState({
     placa: "",
+    serial: "", // Añadir serial
     tipoMantenimiento: "",
     fechaProgramada: "",
     tecnico: "",
@@ -28,7 +29,7 @@ export default function PaginaNuevoMantenimiento() {
 
   const [datosEquipoCargado, setDatosEquipoCargado] = useState(null);
 
-  const { placa } = useParams();
+  const { serial: serialParam } = useParams(); // Usar serial de la URL
   const navigate = useNavigate();
 
   const usuarioLogueado = useUsuarioLogueado();
@@ -38,30 +39,31 @@ export default function PaginaNuevoMantenimiento() {
       setCargandoInicial(true);
       setError("");
 
-      let placaCargada = "";
+      let serialCargado = "";
       let tecnicoInicial = "";
       let equipoData = null;
 
-      if (placa) {
+      if (serialParam) {
         try {
-          equipoData = await equiposService.getById(placa);
-          placaCargada = equipoData.placa;
+          equipoData = await equiposService.getById(serialParam); // Cargar por serial
+          serialCargado = equipoData.serial;
           setDatosEquipoCargado(equipoData);
         } catch (err) {
           const errorMessage =
             err.message || "Error desconocido al cargar equipo.";
           setError(
-            `Error cargando datos del equipo con placa ${placa}: ` +
+            `Error cargando datos del equipo con serial ${serialParam}: ` +
               errorMessage
           );
           console.error("Error cargando equipo:", err);
+          setDatosEquipoCargado(null);
 
           // setDatosEquipoCargado(null); En caso de que no haya datos, revisar, de que no haya datos de equipo si falla
         }
       } else {
-        setError("Placa de equipo no proporcionada en la URL.");
+        setError("Serial de equipo no proporcionado en la URL.");
         console.warn(
-          "Página de nuevo mantenimiento accedida sin placa en URL."
+          "Página de nuevo mantenimiento accedida sin serial en URL."
         );
 
         navigate("/gestion-equipos");
@@ -77,7 +79,8 @@ export default function PaginaNuevoMantenimiento() {
 
       setFormulario((prevFormulario) => ({
         ...prevFormulario,
-        placa: placaCargada,
+        serial: serialCargado, // Guardar serial
+        placa: equipoData?.placa || "", // Guardar placa si existe
         tecnico: tecnicoInicial,
         fechaProgramada: new Date().toISOString().split("T")[0],
       }));
@@ -86,7 +89,7 @@ export default function PaginaNuevoMantenimiento() {
     };
 
     inicializarFormulario();
-  }, [placa, navigate, usuarioLogueado]);
+  }, [serialParam, navigate, usuarioLogueado]);
 
   const manejarCambio = (e) => {
     const { name, value } = e.target;
@@ -102,10 +105,10 @@ export default function PaginaNuevoMantenimiento() {
     setCargandoEnvio(true);
 
 
-    if (!formulario.placa) {
-      setError("Error: Placa del equipo no cargada."); 
+    if (!formulario.serial) { // Validar serial
+      setError("Error: Serial del equipo no cargado."); 
       setCargandoEnvio(false);
-      toast.error("Error: Placa del equipo no disponible.");
+      toast.error("Error: Serial del equipo no disponible.");
       return;
     }
     if (!formulario.tipoMantenimiento) {
@@ -129,8 +132,8 @@ export default function PaginaNuevoMantenimiento() {
 
 
     const datosParaMantenimiento = {
-   
-      equipoPlaca: formulario.placa,
+      equipoSerial: formulario.serial, // Enviar serial del equipo
+      equipoPlaca: formulario.placa, // Enviar placa si existe
       tipo: formulario.tipoMantenimiento,
       fechaProgramada: formulario.fechaProgramada,
       tecnico: formulario.tecnico,
@@ -149,7 +152,7 @@ export default function PaginaNuevoMantenimiento() {
    
       toast.success(
         `Mantenimiento programado para placa ${formulario.placa} el ${formulario.fechaProgramada}.`
-      );
+      ); // El mensaje puede seguir usando placa si es más amigable
 
  
       navigate("/programados"); 
@@ -169,7 +172,7 @@ export default function PaginaNuevoMantenimiento() {
   if (cargandoInicial) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p>Cargando datos del equipo {placa ? `con placa ${placa}` : ""}...</p>
+        <p>Cargando datos del equipo {serialParam ? `con serial ${serialParam}` : ""}...</p>
       </div>
     );
   }
@@ -180,7 +183,7 @@ export default function PaginaNuevoMantenimiento() {
       <div className="min-h-screen flex items-center justify-center text-red-600">
         <p>
           {error ||
-            `No se encontraron datos para el equipo con placa ${placa}.`}
+            `No se encontraron datos para el equipo con serial ${serialParam}.`}
         </p>
     
         <div className="text-center text-sm text-gray-600 mt-4">
@@ -205,8 +208,9 @@ export default function PaginaNuevoMantenimiento() {
             title="Nuevo Mantenimiento"
             subTitle={
               <p className="text-gray-600 text-sm">
-                Placa: {datosEquipoCargado.placa} | Tipo:{" "}
-                {datosEquipoCargado.tipoEquipo}
+                Serial: {datosEquipoCargado.serial} 
+                {datosEquipoCargado.placa && ` / Placa: ${datosEquipoCargado.placa}`}
+                {datosEquipoCargado.nombreDelEquipo && ` / Nombre: ${datosEquipoCargado.nombreDelEquipo}`}
               </p>
             }
             className="w-full md:w-30rem"
@@ -228,14 +232,21 @@ export default function PaginaNuevoMantenimiento() {
             <form className="space-y-6" onSubmit={manejarEnvio}>
           
               <div className="campo">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Serial Equipo:
+                </label>
+                <p className="mt-1 p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-700">
+                  {datosEquipoCargado.serial}
+                </p>
+              </div>
+              {datosEquipoCargado.placa && <div className="campo">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Placa:
                 </label>
                 <p className="mt-1 p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-700">
                   {datosEquipoCargado.placa}
                 </p>
-              
-              </div>
+              </div>}
 
             
               <div className="campo">

@@ -9,7 +9,7 @@ import { camposFormularioEquipo } from "../../componentes/Datos/ActualizarEquipo
 import { mockEquiposService as equiposService } from "../../servicios/mockEquipos.api.js";
 
 export default function PaginaActualizarEquipos() {
-  const { placa } = useParams();
+  const { serial: serialParam } = useParams(); // Cambiar a serial si es el ID en la URL
   const navigate = useNavigate();
 
   const [formulario, setFormulario] = useState(null);
@@ -22,14 +22,15 @@ export default function PaginaActualizarEquipos() {
       setCargandoInicial(true);
       setError("");
       try {
-        const datosEquipo = await equiposService.getById(placa);
+        // Asumimos que getById ahora busca por serial
+        const datosEquipo = await equiposService.getById(serialParam); 
         console.log("Datos del equipo:", datosEquipo);
-        console.log("Placa en los parámetros:", placa);
+        console.log("Serial en los parámetros:", serialParam);
 
         setFormulario(datosEquipo);
       } catch (err) {
         setError(
-          `Error cargando datos del equipo con placa ${placa}: ` + err.message
+          `Error cargando datos del equipo con serial ${serialParam}: ` + err.message
         );
 
         console.error("Error cargando equipo:", err);
@@ -37,15 +38,14 @@ export default function PaginaActualizarEquipos() {
         setCargandoInicial(false);
       }
     };
-
-    if (placa) {
+    if (serialParam) {
       cargarEquipo();
-      console.log("Placa en los parámetros:", placa);
+      console.log("Serial en los parámetros:", serialParam);
     } else {
-      setError("Placa de equipo no proporcionada.");
+      setError("Serial de equipo no proporcionado.");
       setCargandoInicial(false);
     }
-  }, [placa, setError]);
+  }, [serialParam, setError]); // Depender de serialParam
 
   const manejarCambio = (e) => {
     const { name, value, type, checked } = e.target;
@@ -75,11 +75,12 @@ export default function PaginaActualizarEquipos() {
     let valid = true;
     const errores = [];
     camposFormularioEquipo.forEach((campo) => {
-      if (["placa"].includes(campo.name)) {
+      // Serial es el ID, no se valida aquí si es autogenerado o no editable
+      if (["serial"].includes(campo.name)) { 
         return;
       }
-
-      if (["marca"].includes(campo.name)) {
+      // Placa es opcional, no requiere validación de 'required' aquí
+      if (["placa"].includes(campo.name) && !campo.required) {
         return;
       }
 
@@ -107,7 +108,8 @@ export default function PaginaActualizarEquipos() {
     });
 
     try {
-      await equiposService.update(placa, datosParaEnviar);
+      // Enviar el serial del formulario o el serialParam como identificador
+      await equiposService.update(formulario.serial || serialParam, datosParaEnviar);
 
       alert("Equipo actualizado exitosamente!");
       navigate("/gestionar-equipos");
@@ -121,7 +123,7 @@ export default function PaginaActualizarEquipos() {
   if (cargandoInicial) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p>Cargando datos del equipo con placa {placa}...</p>{" "}
+        <p>Cargando datos del equipo con serial {serialParam}...</p>{" "}
       </div>
     );
   }
@@ -147,7 +149,8 @@ export default function PaginaActualizarEquipos() {
           <Card
             title="Actualizar Equipo"
             subTitle=<p className="text-gray-600 text-sm">
-              Placa: {formulario?.placa || placa}
+              Serial: {formulario?.serial || serialParam}
+              {formulario?.placa && ` / Placa: ${formulario.placa}`}
             </p>
             className="w-full md:w-30rem"
             style={{
@@ -160,7 +163,10 @@ export default function PaginaActualizarEquipos() {
           >
             <form className="space-y-6" onSubmit={manejarEnvio}>
               {camposFormularioEquipo
-                .filter((campo) => !["placa", "marca"].includes(campo.name))
+                // Serial podría ser no editable
+                // Placa es editable pero opcional
+                // Marca depende de tipoEquipo
+                .filter((campo) => !["serial"].includes(campo.name)) 
                 .map((campo) => {
                   if (!formulario) return null;
 
@@ -181,8 +187,7 @@ export default function PaginaActualizarEquipos() {
                         >
                           {campo.label}
 
-                          {campo.required &&
-                            !["placa", "marca"].includes(campo.name) && (
+                          {campo.required && ( // Mostrar asterisco si es requerido en la definición del campo
                               <span className="text-red-500"> *</span>
                             )}
                         </label>
@@ -218,7 +223,7 @@ export default function PaginaActualizarEquipos() {
                           case "select": {
                             let opcionesSelect = campo.options;
 
-                            // Si decides MOSTRAR la marca como un select deshabilitado, necesitarías cargar sus opciones aquí.
+                            // Lógica para marcas dependientes de tipoEquipo (si aplica aquí)
                             // if (campo.name === 'marca') { opcionesSelect = tusOpcionesDeMarcaCargadas; }
                             const finalOptions =
                               opcionesSelect?.length > 0 &&

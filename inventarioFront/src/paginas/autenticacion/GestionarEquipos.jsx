@@ -97,9 +97,12 @@ export default function GestionarEquipos() {
 
   const columnas = useMemo(
     () => [
-      { Header: "Placa", accessor: "placa" },
+      { Header: "Serial", accessor: "serial" },
+      { Header: "Placa", accessor: "placa", Cell: ({ value }) => value || "-" },
+      { Header: "Nombre Equipo", accessor: "nombreDelEquipo" },
       { Header: "Marca", accessor: "marca" },
       { Header: "Modelo", accessor: "modelo" },
+      { Header: "IP", accessor: "ip", Cell: ({ value }) => value || "-" },
       { Header: "Ubicación", accessor: "ubicacion" },
       {
         Header: "Estado",
@@ -124,7 +127,7 @@ export default function GestionarEquipos() {
               onClick={() => {
                 setEquipoEditando(row.original);
                 asignarMostrarModelo(true);
-                navigate("/actualizar-equipo/:placa");
+                navigate(`/actualizar-equipo/${row.original.serial}`); // Navegar por serial si es el ID principal
               }}
             />
             <Button
@@ -144,7 +147,7 @@ export default function GestionarEquipos() {
               tooltipOptions={{ position: "top" }}
               onClick={() =>
                 confirmarCambioEstadoFn(
-                  row.original.placa,
+                  row.original.serial, // Usar serial para identificar
                   row.original.estado === "Baja" ? "Activo" : "Baja",
                   cambiarEstadoEquipo
                 )
@@ -155,11 +158,11 @@ export default function GestionarEquipos() {
               className="p-button-rounded p-button-sm p-button-text p-button-info"
               tooltip="Nuevo Mantenimiento"
               tooltipOptions={{ position: "top" }}
-              onClick={() => manejarNuevoMantenimiento(row.original.placa)}
+              onClick={() => manejarNuevoMantenimiento(row.original.serial)} // Usar serial
             />
           </div>
         ),
-        disableSortBy: true,
+        disableSortBy: true, // Acciones no suelen ser ordenables
       },
     ],
     [cambiarEstadoEquipo, manejarNuevoMantenimiento]
@@ -202,14 +205,17 @@ export default function GestionarEquipos() {
     return (
       <Card className="mb-3 w-full shadow-1 hover:shadow-3 transition-shadow transition-duration-300">
         <div className="flex flex-column sm:flex-row justify-content-between">
-          <div>
-            <div className="text-xl font-bold mb-2">Placa: {equipo.placa}</div>
+          <div className="flex-grow">
+            <div className="text-xl font-bold mb-2">Serial: {equipo.serial}</div>
+            {equipo.nombreDelEquipo && <p className="mt-0 mb-1"><strong>Nombre:</strong> {equipo.nombreDelEquipo}</p>}
+            {equipo.placa && <p className="mt-0 mb-1"><strong>Placa:</strong> {equipo.placa}</p>}
             <p className="mt-0 mb-1">
               <strong>Marca:</strong> {equipo.marca}
             </p>
             <p className="mt-0 mb-1">
               <strong>Modelo:</strong> {equipo.modelo}
             </p>
+            {equipo.ip && <p className="mt-0 mb-1"><strong>IP:</strong> {equipo.ip}</p>}
             <p className="mt-0 mb-1">
               <strong>Ubicación:</strong> {equipo.ubicacion}
             </p>
@@ -218,7 +224,7 @@ export default function GestionarEquipos() {
               <Tag severity={estadoSeverity} value={equipo.estado || "N/A"} />
             </p>
           </div>
-          <div className="flex flex-column sm:flex-row sm:align-items-start gap-2 mt-3 sm:mt-0">
+          <div className="flex flex-column sm:flex-row sm:items-start gap-2 mt-3 sm:mt-0 flex-shrink-0">
             <Button
               icon="pi pi-pencil"
               className="p-button-sm p-button-primary w-full sm:w-auto"
@@ -235,7 +241,7 @@ export default function GestionarEquipos() {
               tooltip={equipo.estado === "Baja" ? "Reactivar" : "Dar de baja"}
               onClick={() =>
                 alAlternarEstado(
-                  equipo.placa,
+                  equipo.serial, // Usar serial
                   equipo.estado === "Baja" ? "Activo" : "Baja"
                 )
               }
@@ -244,7 +250,7 @@ export default function GestionarEquipos() {
               icon="pi pi-calendar-plus"
               className="p-button-sm p-button-info w-full sm:w-auto"
               tooltip="Nuevo Mantenimiento"
-              onClick={() => alNuevoMantenimiento(equipo.placa)}
+              onClick={() => alNuevoMantenimiento(equipo.serial)} // Usar serial
             />
           </div>
         </div>
@@ -252,9 +258,9 @@ export default function GestionarEquipos() {
     );
   };
 
-  const manejarAlternarEstadoTarjeta = (placa, estadoActual) => {
-    const nuevoEstado = estadoActual === "Baja" ? "Activo" : "Baja";
-    confirmarCambioEstadoFn(placa, nuevoEstado, cambiarEstadoEquipo);
+  const manejarAlternarEstadoTarjeta = (serial, estadoActual) => {
+    const nuevoEstado = estadoActual === "Baja" ? "Activo" : "Baja"; // El estado actual es del equipo, no el nuevo estado
+    confirmarCambioEstadoFn(serial, estadoActual === "Baja" ? "Activo" : "Baja", cambiarEstadoEquipo);
   };
 
   const manejarEditarEquipoTarjeta = (equipo) => {
@@ -305,7 +311,7 @@ export default function GestionarEquipos() {
         <div className="mt-4">
           {equiposFiltrados.map((equipo) => (
             <TarjetaEquipoItem
-              key={equipo.placa}
+              key={equipo.serial} // Usar serial como key
               equipo={equipo}
               alEditar={manejarEditarEquipoTarjeta}
               alAlternarEstado={manejarAlternarEstadoTarjeta}
@@ -328,8 +334,8 @@ export default function GestionarEquipos() {
             <h2 className="text-xl font-semibold mb-4">
               {equipoEditando ? "Editar Equipo" : "Nuevo Equipo"}
             </h2>
-            <p>
-              Formulario de equipo (Placa: {equipoEditando?.placa || "Nueva"})
+            <p> {/* Ajustar según los campos del formulario real */}
+              Formulario de equipo (Serial: {equipoEditando?.serial || "Nuevo"})
             </p>
             <div className="flex justify-end gap-2 mt-6">
               <Button

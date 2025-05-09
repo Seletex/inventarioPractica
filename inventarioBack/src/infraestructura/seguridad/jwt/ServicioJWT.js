@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { TOKEN_EXPIRATION_TIME_DEFAULT } = require("../jwt/Constantes");
+const { TOKEN_EXPIRATION_TIME_DEFAULT } = require("./Constantes");
 // Cargar la clave secreta desde las variables de entorno
 const JWT_SECRET = process.env.JWT_SECRET;
 

@@ -1,5 +1,5 @@
-import IRepositorioMantenimiento from "../../../dominio/puertos/salida/IRepositorioMantenimiento.js"; // Corregido el import de la interfaz
-import { db } from "../configuracion/firebaseAdmin.js";
+import IRepositorioMantenimiento from "../../../../dominio/puertos/salida/IRepositorioMantenimiento.js"; // Corregido el import de la interfaz
+import { db } from "../../configuracion/firebaseAdmin.js";
  
 const COLECCION_MANTENIMIENTOS = "mantenimientos";
 

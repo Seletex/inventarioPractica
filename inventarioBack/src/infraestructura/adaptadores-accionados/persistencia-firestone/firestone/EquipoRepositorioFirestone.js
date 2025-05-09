@@ -1,7 +1,7 @@
-import IEquipoRepositorio from "../../../dominio/puertos/salida/IRepositorioEquipo.js"; // Ajusta la ruta a tu interfaz
-import { db } from "../configuracion/firebaseAdmin.js"; // Importa la instancia de Firestore
+import IEquipoRepositorio from "../../../../dominio/puertos/salida/IRepositorioEquipo.js"; // Ajusta la ruta a tu interfaz
+import { db } from "../../configuracion/firebaseAdmin.js"; // Importa la instancia de Firestore
 // Opcional: Importa una clase/modelo de Equipo si la tienes
-import Equipo from "../../../dominio/entidades/EquipoEntidad.js";
+import Equipo from "../../../../dominio/entidades/EquipoEntidad.js";
 
 const COLECCION_EQUIPOS = "equipos";
 

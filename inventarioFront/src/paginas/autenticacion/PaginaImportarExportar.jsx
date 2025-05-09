@@ -3,14 +3,34 @@ import { Link } from "react-router-dom";
 import { toast as toastify } from "react-toastify";
 
 // Lazy loading para componentes de PrimeReact
-const Card = lazy(() => import('primereact/card').then(module => ({ default: module.Card })));
-const Button = lazy(() => import('primereact/button').then(module => ({ default: module.Button })));
-const SelectButton = lazy(() => import('primereact/selectbutton').then(module => ({ default: module.SelectButton })));
-const Dropdown = lazy(() => import('primereact/dropdown').then(module => ({ default: module.Dropdown })));
-const FileUpload = lazy(() => import('primereact/fileupload').then(module => ({ default: module.FileUpload })));
-const Calendar = lazy(() => import('primereact/calendar').then(module => ({ default: module.Calendar })));
-const Checkbox = lazy(() => import('primereact/checkbox').then(module => ({ default: module.Checkbox })));
-const Toast = lazy(() => import('primereact/toast').then(module => ({ default: module.Toast })));
+const Card = lazy(() =>
+  import("primereact/card").then((module) => ({ default: module.Card }))
+);
+const Button = lazy(() =>
+  import("primereact/button").then((module) => ({ default: module.Button }))
+);
+const SelectButton = lazy(() =>
+  import("primereact/selectbutton").then((module) => ({
+    default: module.SelectButton,
+  }))
+);
+const Dropdown = lazy(() =>
+  import("primereact/dropdown").then((module) => ({ default: module.Dropdown }))
+);
+const FileUpload = lazy(() =>
+  import("primereact/fileupload").then((module) => ({
+    default: module.FileUpload,
+  }))
+);
+const Calendar = lazy(() =>
+  import("primereact/calendar").then((module) => ({ default: module.Calendar }))
+);
+const Checkbox = lazy(() =>
+  import("primereact/checkbox").then((module) => ({ default: module.Checkbox }))
+);
+const Toast = lazy(() =>
+  import("primereact/toast").then((module) => ({ default: module.Toast }))
+);
 
 import { mockEquiposService as equiposService } from "../../servicios/mockEquipos.api.js";
 import { mockMantenimientoService as mantenimientosService } from "../../servicios/mockMantenimientos.api.js";
@@ -175,15 +195,17 @@ export default function PaginaImportarExportar() {
     let cabeceras = [];
     if (entidad === "equipos") {
       cabeceras = [
-        "placa",
+        "serial", // Identificador principal
+        "placa", // Sigue siendo un campo importante
+        "nombreDelEquipo", // Nuevo campo
         "tipoEquipo",
         "marca",
         "modelo",
-        "serial",
         "ubicacion",
         "responsable",
         "estado",
         "fechaCompra",
+        "ip", // Nuevo campo
         "observaciones",
       ];
     } else if (entidad === "mantenimientos") {
@@ -348,7 +370,9 @@ export default function PaginaImportarExportar() {
 
   return (
     <div className="p-4">
-      <Suspense fallback={<div className="p-4 text-center">Cargando interfaz...</div>}>
+      <Suspense
+        fallback={<div className="p-4 text-center">Cargando interfaz...</div>}
+      >
         <Toast ref={toast} />
         <Card title={cardTitle} className="w-full">
           {/* 1. Selección de Acción */}
@@ -428,7 +452,9 @@ export default function PaginaImportarExportar() {
               <div className="text-center mt-6">
                 <Button
                   label={
-                    cargandoImportacion ? "Importando..." : "Iniciar Importación"
+                    cargandoImportacion
+                      ? "Importando..."
+                      : "Iniciar Importación"
                   }
                   icon="pi pi-upload"
                   onClick={handleImportarDatos}
@@ -446,11 +472,12 @@ export default function PaginaImportarExportar() {
                 </p>
                 <ul className="list-disc list-inside ml-4">
                   <li>
-                    Asegúrese de que el archivo tenga las columnas correctas para
-                    el tipo de dato seleccionado.
+                    Asegúrese de que el archivo tenga las columnas correctas
+                    para el tipo de dato seleccionado.
                   </li>
                   <li>
-                    Formatos soportados: CSV (delimitado por comas, UTF-8), XLSX.
+                    Formatos soportados: CSV (delimitado por comas, UTF-8),
+                    XLSX.
                   </li>
                   <li>
                     Consulte la documentación para las plantillas de ejemplo.
@@ -535,7 +562,12 @@ export default function PaginaImportarExportar() {
                         />
                         <span className="hidden sm:inline">-</span>
                         {/* Add a visually hidden label for the "Hasta" date for accessibility */}
-                        <label htmlFor="fechaHastaExportarInput" className="sr-only">Fecha hasta</label>
+                        <label
+                          htmlFor="fechaHastaExportarInput"
+                          className="sr-only"
+                        >
+                          Fecha hasta
+                        </label>
                         <Calendar
                           inputId="fechaHastaExportarInput"
                           name="fechaHastaExportar"
@@ -600,7 +632,10 @@ export default function PaginaImportarExportar() {
                         </label>
                         <div className="flex gap-x-4 gap-y-2 flex-wrap">
                           {opcionesEstadoExportacion.map((estado) => (
-                            <div key={estado.value} className="flex items-center">
+                            <div
+                              key={estado.value}
+                              className="flex items-center"
+                            >
                               <Checkbox
                                 inputId={`estado-export-${estado.value}`}
                                 value={estado.value}
@@ -628,7 +663,9 @@ export default function PaginaImportarExportar() {
               <div className="text-center mt-6">
                 <Button
                   label={
-                    cargandoExportacion ? "Exportando..." : "Iniciar Exportación"
+                    cargandoExportacion
+                      ? "Exportando..."
+                      : "Iniciar Exportación"
                   }
                   icon="pi pi-download"
                   onClick={handleExportarDatos}

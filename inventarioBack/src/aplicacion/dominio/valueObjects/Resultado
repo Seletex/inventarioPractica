@@ -1,6 +1,0 @@
-package c:\Users\Admin\Documents\Github\inventarioPractica\inventarioBack\src\aplicacion\dominio\valueObjects;
-
-public enum Resultado {
-    EXITO,
-    ERROR
-}
