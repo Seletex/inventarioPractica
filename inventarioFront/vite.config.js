@@ -4,7 +4,6 @@ import { configDefaults } from 'vitest/config' // Ruta de importación más est�
 import tailwindcss from '@tailwindcss/vite'
 import { visualizer } from 'rollup-plugin-visualizer'; // Para analizar los bundles
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
@@ -38,22 +37,22 @@ export default defineConfig({
   build: {
     reportCompressedSize: true,
     chunkSizeWarningLimit: 1000, // Aumenta el límite de advertencia para chunks grandes si es intencional
-    // sourcemap: false, // Desactivar sourcemaps en producción puede reducir tamaño y tiempo de build.
+    // sourcemap: false // Desactivar sourcemaps en producción puede reducir tamaño y tiempo de build.
                        // Vite lo hace por defecto para producción a menos que sea modo librería.
     rollupOptions: {
       output: {
-        manualChunks(id, ) {
+        manualChunks(id ) {
           // Agrupa React, React DOM y React Router
           if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router-dom')) {
-            return 'vendor-react';
+            return 'reactVendor';
           }
           // Agrupa todos los módulos de PrimeReact
           if (id.includes('node_modules/primereact')) {
-            return 'vendor-primereact';
+            return 'primeReact';
           }
-          // Agrupa otras dependencias de node_modules en un chunk 'vendor-others'
-          // El visualizer te ayudará a ver si este chunk 'vendor-others' se vuelve muy grande
-          // y necesita ser dividido aún más.
+          if (id.includes('node_modules/chart.js')) {
+            return 'charts'; // Nombre del chunk para Chart.js
+          }
           if (id.includes('node_modules')) {
             return 'vendor-others';
           }
