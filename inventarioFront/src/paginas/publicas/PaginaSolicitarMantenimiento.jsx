@@ -21,20 +21,19 @@ export default function PaginaSolicitarMantenimiento() {
     mode: "onChange",
     defaultValues: {
       nombreSolicitante: "",
-      ubicacion: null, // El Dropdown de PrimeReact maneja mejor null o el objeto completo
+      ubicacion: null, 
       descripcionProblema: "",
     },
   });
 
   const onSubmit = (data) => {
     console.log("Solicitud de Mantenimiento Enviada:", data);
-    // Aquí iría la lógica para enviar los datos al backend
-    // Por ejemplo: api.post('/solicitudes-mantenimiento', data)
+ //api.post
     alert("Solicitud enviada con éxito (simulación).");
-    reset(); // Limpiar el formulario después de enviar
+    reset();
   };
 
-  // Preparamos las opciones para el Dropdown, excluyendo la primera opción "Seleccione" si se maneja con placeholder
+  
   const opcionesUbicacion = DatosUbicacion.filter(
     (opcion) => opcion.value !== ""
   );
@@ -93,8 +92,8 @@ export default function PaginaSolicitarMantenimiento() {
                 style = {{marginTop:"15px"}}
                   id={field.name}
                   value={field.value}
-                  optionLabel="label" // Muestra el 'label' en el dropdown
-                  optionValue="value" // El valor que se enviará será 'value'
+                  optionLabel="label" 
+                  optionValue="value" 
                   placeholder="Seleccione la Ubicación"
                   options={opcionesUbicacion}
                   focusInputRef={field.ref}

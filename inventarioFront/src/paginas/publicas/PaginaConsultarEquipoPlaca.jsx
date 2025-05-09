@@ -36,9 +36,9 @@ export default function PaginaConsultarEquipoPlaca() {
       setEquipoEncontrado(resultado);
     } catch (error) {
       console.error("Error al buscar equipo:", error);
-      setEquipoEncontrado(null); // Asegurarse de que no haya equipo si hay error
+      setEquipoEncontrado(null); 
     }
-    // reset(); // Opcional: limpiar el campo después de buscar
+    // reset(); 
   };
 
   return (
@@ -74,8 +74,8 @@ export default function PaginaConsultarEquipoPlaca() {
                 placeholder="Ej: ABC123X"
                 className={classNames("w-full", { "p-invalid": errors.placa })}
                 onInput={(e) => {
-                  e.target.value = e.target.value.toUpperCase(); // Convertir a mayúsculas mientras se escribe
-                  register("placa").onChange(e); // Asegurar que react-hook-form reciba el cambio
+                  e.target.value = e.target.value.toUpperCase(); 
+                  register("placa").onChange(e);
                 }}
               />
             </span>

@@ -4,24 +4,21 @@ import React, { useState, useCallback, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
-import { SelectButton } from "primereact/selectbutton"; // Para elegir Equipo/Mantenimiento
+import { SelectButton } from "primereact/selectbutton";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
 import { Toast } from "primereact/toast";
-import { Tag } from "primereact/tag"; // Para mostrar estado/tipo en tabla
+import { Tag } from "primereact/tag";
 
-// Importar Tabla y Servicios
 import { TablaEquipos } from "../../autenticacion/contexto/TablaDatos.jsx";
 import { mockEquiposService as equiposService } from "../../servicios/mockEquipos.api.js";
 import { mockMantenimientoService as mantenimientosService } from "../../servicios/mockMantenimientos.api.js";
 
-// Importar Datos para Dropdowns
 import { DatosUbicacion } from "../../componentes/Datos/DatosUbicaciones.jsx";
 import { DatosTipoEquipo } from "../../componentes/Datos/DatosTipoEquipo.jsx";
-import { DatosTipoMantenimiento } from "../../componentes/Datos/DatosTipoMantenimiento.jsx"; // Necesario para filtro tipo mant.
+import { DatosTipoMantenimiento } from "../../componentes/Datos/DatosTipoMantenimiento.jsx";
 
-// Helper para fechas
 const normalizeDateToISOString = (date) => {
   if (!date || !(date instanceof Date || typeof date === "string")) return null;
   try {
@@ -38,27 +35,23 @@ const normalizeDateToISOString = (date) => {
 };
 
 export default function PaginaConsultas() {
-  // --- Estado para Selección de Entidad ---
-  const [entidadSeleccionada, setEntidadSeleccionada] = useState("equipo"); // 'equipo' o 'mantenimiento'
+  const [entidadSeleccionada, setEntidadSeleccionada] = useState("equipo");
   const opcionesEntidad = [
     { label: "Consultar Equipos", value: "equipo" },
     { label: "Consultar Mantenimientos", value: "mantenimiento" },
   ];
 
-  // --- Estado para Filtros ---
   const [filtroPlaca, setFiltroPlaca] = useState("");
-  const [filtroUbicacion, setFiltroUbicacion] = useState(null); // { value, label }
+  const [filtroUbicacion, setFiltroUbicacion] = useState(null);
   const [filtroFechaDesde, setFiltroFechaDesde] = useState(null);
   const [filtroFechaHasta, setFiltroFechaHasta] = useState(null);
-  const [filtroTipo, setFiltroTipo] = useState(null); // { value, label } - Cambia según entidad
+  const [filtroTipo, setFiltroTipo] = useState(null);
 
-  // --- Estado para Resultados ---
   const [resultados, setResultados] = useState([]);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState("");
   const toast = useRef(null);
 
-  // --- Opciones dinámicas para Dropdowns ---
   const opcionesUbicacionDropdown = useMemo(
     () => [{ value: null, label: "Todas las Ubicaciones" }, ...DatosUbicacion],
     []
@@ -71,27 +64,25 @@ export default function PaginaConsultas() {
     } else if (entidadSeleccionada === "mantenimiento") {
       return [...opcionesBase, ...DatosTipoMantenimiento];
     }
-    return opcionesBase; // Por defecto o si no hay entidad
+    return opcionesBase;
   }, [entidadSeleccionada]);
 
-  // --- Lógica de Consulta ---
   const handleConsultar = useCallback(async () => {
     setCargando(true);
     setError("");
     setResultados([]);
 
     const filtros = {
-      placa: filtroPlaca.trim() !== "" ? filtroPlaca.trim() : null, // Convert empty string to null
+      placa: filtroPlaca.trim() !== "" ? filtroPlaca.trim() : null,
       ubicacion:
-        filtroUbicacion && filtroUbicacion.value ? filtroUbicacion.value : null, // Safely access value
+        filtroUbicacion && filtroUbicacion.value ? filtroUbicacion.value : null,
       fechaDesde: filtroFechaDesde
         ? normalizeDateToISOString(filtroFechaDesde)
-        : null, // Normalize date or set null
+        : null,
       fechaHasta: filtroFechaHasta
         ? normalizeDateToISOString(filtroFechaHasta)
         : null,
       tipo: filtroTipo?.value,
-      // Podrías añadir más filtros específicos si los servicios los soportan
     };
 
     console.log(`Consultando ${entidadSeleccionada} con filtros:`, filtros);
@@ -99,19 +90,16 @@ export default function PaginaConsultas() {
     try {
       let data = [];
       if (entidadSeleccionada === "equipo") {
-        // Asumimos que getEquiposByFilters puede filtrar por placa, ubicacion, fechaCompra, tipoEquipo
         data = await equiposService.getEquiposByFilters({
           ...filtros,
-          fechaCompraDesde: filtros.fechaDesde, // Renombrar para el servicio de equipos
+          fechaCompraDesde: filtros.fechaDesde,
           fechaCompraHasta: filtros.fechaHasta,
           tipoEquipo: filtros.tipo,
         });
       } else if (entidadSeleccionada === "mantenimiento") {
-        // Asumimos que getMantenimientosByFilters puede filtrar por equipoPlaca, ubicacion, fechaProgramada/Realizacion, tipo
         data = await mantenimientosService.getMantenimientosByFilters({
           ...filtros,
-          equipoPlaca: filtros.placa, // Renombrar si el servicio espera equipoPlaca
-          // El servicio debería manejar cómo filtrar por fecha (programada, realización o ambas)
+          equipoPlaca: filtros.placa,
         });
       }
       setResultados(data || []);
@@ -175,7 +163,7 @@ export default function PaginaConsultas() {
 
   const columnasMantenimientos = useMemo(
     () => [
-      { Header: "Placa Equipo", accessor: "equipoPlaca" }, // Asumiendo que el servicio devuelve equipoPlaca
+      { Header: "Placa Equipo", accessor: "equipoPlaca" },
       {
         Header: "Tipo Mant.",
         accessor: "tipo",
@@ -209,14 +197,14 @@ export default function PaginaConsultas() {
               value === "Programado"
                 ? "info"
                 : value === "Realizado"
-                  ? "success"
-                  : "secondary"
+                ? "success"
+                : "secondary"
             }
             value={value}
           />
         ),
       },
-      { Header: "Ubicación Eq.", accessor: "ubicacion" }, // Ubicación del equipo en el momento del mantenimiento
+      { Header: "Ubicación Eq.", accessor: "ubicacion" },
     ],
     []
   );
@@ -227,20 +215,18 @@ export default function PaginaConsultas() {
       : columnasMantenimientos;
   }, [entidadSeleccionada, columnasEquipos, columnasMantenimientos]);
 
-  // --- Resetear filtros al cambiar de entidad ---
   const handleEntidadChange = (e) => {
     setEntidadSeleccionada(e.value);
-    // Resetear filtros que dependen de la entidad o todos
+
     setFiltroPlaca("");
     setFiltroUbicacion(null);
     setFiltroFechaDesde(null);
     setFiltroFechaHasta(null);
     setFiltroTipo(null);
-    setResultados([]); // Limpiar resultados anteriores
+    setResultados([]);
     setError("");
   };
 
-  // --- Título del Card con botón para volver al menú principal ---
   const cardTitle = (
     <div className="flex items-center justify-between">
       <span>Consultas Generales</span>
@@ -259,11 +245,9 @@ export default function PaginaConsultas() {
     <div className="p-4">
       <Toast ref={toast} />
       <Card title={cardTitle} className="w-full">
-        {/* 1. Selección de Entidad */}
         <div className="mb-6 text-center">
           <SelectButton
             style={{ width: "100%", textAlign: "center" }}
-            // Add a custom class for styling
             className="entity-selector center"
             value={entidadSeleccionada}
             options={opcionesEntidad}
@@ -271,7 +255,7 @@ export default function PaginaConsultas() {
             optionLabel="label"
             itemTemplate={(option) => (
               <span className="px-2">{option.label}</span>
-            )} // Añadir padding
+            )}
           />
         </div>
 
@@ -281,21 +265,23 @@ export default function PaginaConsultas() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Filtro Placa */}
             <div>
-              
               <InputText
                 id="filtroPlaca"
                 value={filtroPlaca}
                 onChange={(e) => setFiltroPlaca(e.target.value)}
                 placeholder="Placa del Equipo 12234"
                 className="p-inputtext-sm w-full"
-                style={{ fontSize: "18px", minWidth: "300px", maxWidth: "400px" }} // Cambiar tamaño de fuente
+                style={{
+                  fontSize: "18px",
+                  minWidth: "300px",
+                  maxWidth: "400px",
+                }}
               />
             </div>
 
-            {/* Filtro Ubicación */}
-            <div style={{fontSize: "21px", marginTop: "10px"}}>
+            <div style={{ fontSize: "21px", marginTop: "10px" }}>
               <label
-              style={{fontSize: "21px"}}
+                style={{ fontSize: "21px" }}
                 htmlFor="filtroUbicacion"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
@@ -313,7 +299,6 @@ export default function PaginaConsultas() {
               />
             </div>
 
-            {/* Filtro Fecha */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 {entidadSeleccionada === "equipo"
@@ -348,10 +333,9 @@ export default function PaginaConsultas() {
               </div>
             </div>
 
-            {/* Filtro Tipo (Equipo o Mantenimiento) */}
             <div>
               <label
-              style={{fontSize: "21px"}}  
+                style={{ fontSize: "21px" }}
                 htmlFor="filtroTipo"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
@@ -360,7 +344,7 @@ export default function PaginaConsultas() {
                   : "Tipo Mantenimiento:"}
               </label>
               <Dropdown
-                style={{fontSize: "21px"}}
+                style={{ fontSize: "21px" }}
                 inputId="filtroTipo"
                 value={filtroTipo}
                 onChange={(e) => setFiltroTipo(e.value)}
@@ -372,10 +356,10 @@ export default function PaginaConsultas() {
               />
             </div>
           </div>
-          {/* Botón Consultar */}
+
           <div className="text-center mt-6">
             <Button
-            style={{fontSize: "21px"}}
+              style={{ fontSize: "21px" }}
               label="Consultar"
               icon="pi pi-search"
               onClick={handleConsultar}
@@ -385,7 +369,6 @@ export default function PaginaConsultas() {
           </div>
         </div>
 
-        {/* 3. Resultados */}
         <div className="mt-6">
           <h3 className="text-xl font-semibold mb-3">
             Resultados de la Consulta ({resultados.length})
@@ -395,7 +378,7 @@ export default function PaginaConsultas() {
               {error}
             </div>
           )}
-          <TablaEquipos // Reutilizamos TablaDatos
+          <TablaEquipos
             columns={columnasActuales}
             data={resultados}
             loading={cargando}

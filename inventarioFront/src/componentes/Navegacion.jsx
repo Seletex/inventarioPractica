@@ -1,27 +1,30 @@
-// Archivo: src/componentes/Navegacion.jsx
-
 import React, { useContext } from "react";
 import { Menubar } from "primereact/menubar";
 import { useNavigate } from "react-router-dom";
-// --- CORRECCIÓN DEFINITIVA: Importa el CONTEXTO ---
-import { ContextoAutenticacion } from "../autenticacion/contexto/ContextoAutenticacion"; // <--- ¡Importa esto!
+
+import { ContextoAutenticacion } from "../autenticacion/contexto/ContextoAutenticacion";
 
 const Navegacion = () => {
   const navigate = useNavigate();
-  // --- CORRECCIÓN DEFINITIVA: Usa el CONTEXTO importado ---
-  const authContext = useContext(ContextoAutenticacion); // <--- ¡Usa esto!
 
-  // La verificación ahora debería funcionar correctamente
+  const authContext = useContext(ContextoAutenticacion);
+
   if (!authContext) {
-     console.error("Contexto de Autenticación no encontrado. Asegúrate que Navegacion esté dentro de ProveedorAutenticacion.");
-     return null; // O un estado de carga/error
+    console.error(
+      "Contexto de Autenticación no encontrado. Asegúrate que Navegacion esté dentro de ProveedorAutenticacion."
+    );
+    return null;
   }
 
   const { usuario, logout, cargando } = authContext;
 
-   if (cargando) {
-     return <div className="card"><Menubar model={[{label: 'Cargando...'}]} /></div>;
-   }
+  if (cargando) {
+    return (
+      <div className="card">
+        <Menubar model={[{ label: "Cargando..." }]} />
+      </div>
+    );
+  }
 
   const estaLogueado = !!usuario;
 

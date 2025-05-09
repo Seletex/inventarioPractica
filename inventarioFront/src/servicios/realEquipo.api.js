@@ -1,17 +1,17 @@
 // src/servicios/realEquipos.api.js
 
-import api from './api'; // Importar la instancia configurada de Axios
+import api from './api'; 
 
-// Funciones para interactuar con la API real de equipos
+
 
 const getAll = async () => {
   try {
-    console.log("Llamando a API REAL: GET /equipos"); // Log para depuración
+    console.log("Llamando a API REAL: GET /equipos");
     const response = await api.get('/equipos');
     return response.data;
   } catch (error) {
     console.error("Error en realEquiposService.getAll:", error);
-    // Re-lanzar el error para que el llamador lo maneje o lanzar uno más específico
+ 
     throw new Error(error.response?.data?.message || 'Error al obtener equipos');
   }
 };
@@ -49,15 +49,13 @@ const update = async (id, datosEquipo) => {
   }
 };
 
-// Nota: Tu código actual usa PUT para dar de baja, podrías considerar usar DELETE
+
 const deleteEquipo = async (id) => {
   try {
     console.log(`Llamando a API REAL: DELETE /equipos/${id}`);
-    // Si usaras DELETE:
-    // await api.delete(`/equipos/${id}`);
-    // Si mantienes PUT para dar de baja (como en Api.js):
-    await api.put(`/equipos/${id}`); // Asumiendo que PUT sin body significa dar de baja
-    return true; // Indicar éxito
+
+    await api.put(`/equipos/${id}`); 
+    return true; 
   } catch (error) {
     console.error(`Error en realEquiposService.deleteEquipo(${id}):`, error);
     throw new Error(error.response?.data?.message || `Error al eliminar/dar de baja el equipo ${id}`);
@@ -65,12 +63,12 @@ const deleteEquipo = async (id) => {
 };
 
 
-// Exportar las funciones dentro de un objeto, como se espera en equipos.api.js
+
 export const realEquiposService = {
-  type: 'real', // Para diferenciarlo en las pruebas
+  type: 'real', 
   getAll,
-  getById, // Asegúrate de exportar todas las funciones que uses
+  getById, 
   create,
   update,
-  delete: deleteEquipo, // Exportar la función de eliminar/dar de baja
+  delete: deleteEquipo, 
 };

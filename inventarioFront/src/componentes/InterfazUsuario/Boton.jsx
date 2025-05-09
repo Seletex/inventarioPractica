@@ -1,5 +1,4 @@
-import 'primeicons/primeicons.css';
-
+import "primeicons/primeicons.css";
 
 export default function Boton({
   tipo = "button",
@@ -10,9 +9,7 @@ export default function Boton({
 }) {
   return (
     <button
-      style={{width: "100%", textAlign: "center", fontSize: "1.2rem",}}
-
-   
+      style={{ width: "100%", textAlign: "center", fontSize: "1.2rem" }}
       type={tipo}
       disabled={loading}
       className={`
@@ -20,7 +17,7 @@ export default function Boton({
         font-medium rounded-lg transition duration-200
         shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500
         focus:ring-offset-2
-        ${loading ? 'opacity-70 cursor-not-allowed' : ''}
+        ${loading ? "opacity-70 cursor-not-allowed" : ""}
         ${className}
       `}
       {...props}

@@ -1,6 +1,3 @@
-// Archivo: CodigosMensajes.js (O donde tengas las definiciones de datos y helpers)
-
-// Importa todos los arrays de datos que necesitas
 import { DatosUbicacion } from "./DatosUbicaciones.jsx";
 import { DatosTipoEquipo } from "./DatosTipoEquipo.jsx";
 import { MarcaMonitor } from "./MarcaMonitor.jsx";
@@ -11,18 +8,16 @@ import { TiempoGarantia } from "./TiempoGarantia.jsx";
 import { VersionOffice } from "./VersionOffice.jsx";
 import { MarcaComputador } from "./MarcaComputador.jsx";
 import { MarcaImpresora } from "./MarcaImpresora.jsx";
-import {
-  crearSiNoOptionsConPlaceholder, 
-} from "./SiNoOpciones.jsx";
+import { crearSiNoOptionsConPlaceholder } from "./SiNoOpciones.jsx";
 
 import { obtenerFechaActual } from "../utiles/FechaActual.jsx";
 import { generarOpcionesSelect } from "../utiles/FormulariosAyuda.jsx";
 
 export const marcasPorTipoEquipo = {
-  Portatil: MarcaComputador, // Usa los arrays importados
+  Portatil: MarcaComputador,
   Escritorio: MarcaComputador,
   Impresora: MarcaImpresora,
-  Monitor: MarcaMonitor, 
+  Monitor: MarcaMonitor,
 };
 
 const createTextField = ({
@@ -40,15 +35,6 @@ const createTextField = ({
   icon,
 });
 
-/*const createNumberField = ({ name, label, placeHolder, required = false, icon }) => ({
-  type: "number",
-  name,
-  label,
-  placeHolder,
-  required,
-  icon,
-});
-*/
 const createDateField = ({
   name,
   label,
@@ -66,7 +52,6 @@ const createDateField = ({
   defaultValue,
 });
 
-// Para selects con opciones predefinidas (como ubicacion, ram, so, etc.)
 const createSelectField = ({
   name,
   label,
@@ -78,13 +63,12 @@ const createSelectField = ({
   type: "select",
   name,
   label,
-  placeholder, // Usar placeholder para el texto de la opción por defecto
+  placeholder,
   required,
   icon,
-  options: generarOpcionesSelect(options), // Usar la función auxiliar para mapear y añadir placeholder si no está
+  options: generarOpcionesSelect(options),
 });
 
-// Para selects Sí/No (usando la función generadora de SiNoOpciones)
 const createSiNoSelectField = ({
   name,
   label,
@@ -97,7 +81,7 @@ const createSiNoSelectField = ({
   label,
   required,
   icon,
-  options: crearSiNoOptionsConPlaceholder(placeholderLabel || label), // Generar las opciones Sí/No con placeholder
+  options: crearSiNoOptionsConPlaceholder(placeholderLabel || label),
 });
 
 export const camposFormularioEquipo = [

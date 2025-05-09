@@ -1,5 +1,4 @@
 export const mostrarExitoFn = (mensaje, toastRef) => {
-  // Cambiado a toastRef?.current?.show
   toastRef?.current?.show({
     severity: "success",
     summary: "Éxito",
@@ -9,7 +8,6 @@ export const mostrarExitoFn = (mensaje, toastRef) => {
 };
 
 export const mostrarErrorFn = (mensaje, toastRef) => {
-  // Cambiado a toastRef?.current?.show
   toastRef?.current?.show({
     severity: "error",
     summary: "Error",
@@ -24,13 +22,13 @@ export const cargarEntidadesFn = async (
   setEntities,
   setFilteredEntities,
   showError,
-  entityName = "entidades" // Valor por defecto
+  entityName = "entidades"
 ) => {
   setCarga(true);
   try {
     const data = await entityService.getAll();
     setEntities(data);
-    setFilteredEntities(data); // Inicialmente, los datos filtrados son todos los datos
+    setFilteredEntities(data);
   } catch (error) {
     showError(`Error cargando ${entityName}: ` + error.message);
   } finally {
@@ -44,12 +42,12 @@ export const manejoEliminarEntidadFn = async (
   showSuccess,
   reloadEntities,
   showError,
-  entityName = "entidad" // Valor por defecto
+  entityName = "entidad"
 ) => {
   try {
     await entityService.delete(id);
     showSuccess(`${entityName} eliminada correctamente`);
-    reloadEntities(); // Recarga la lista para mostrar el cambio
+    reloadEntities();
   } catch (error) {
     showError(`Error al eliminar ${entityName}: ${error.message}`);
   }

@@ -83,7 +83,6 @@ export const TablaMantenimientos = ({ columns, data }) => {
                     );
                   }
 
-                  // Renderizado estándar para otras columnas
                   return (
                     <td
                       {...cell.getCellProps()}
@@ -99,7 +98,6 @@ export const TablaMantenimientos = ({ columns, data }) => {
         </tbody>
       </table>
 
-      {/* Paginación */}
       <div className="flex justify-between items-center mt-4 p-2 bg-gray-50 rounded">
         <div className="flex items-center gap-2">
           <Button

@@ -1,5 +1,3 @@
-// Archivo: src/paginas/autenticacion/PaginaProgramarMantenimientos.jsx
-
 import React, { useState, useCallback, useMemo } from "react";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
@@ -11,21 +9,21 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
-import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog"; // <-- 1. Importar ConfirmDialog
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog"; 
 
-// Importar componentes de tabla y servicios
+
 import { TablaEquipos } from "../../autenticacion/contexto/TablaDatos.jsx";
 import { mockEquiposService as equiposService } from "../../servicios/mockEquipos.api.js";
 import { mockMantenimientoService as mantenimientosService } from "../../servicios/mockMantenimientos.api.js";
 
-// Importar datos para Dropdowns
+
 import { DatosUbicacion } from "../../componentes/Datos/DatosUbicaciones.jsx";
 import { DatosTipoEquipo } from "../../componentes/Datos/DatosTipoEquipo.jsx";
 import { DatosTipoMantenimiento } from "../../componentes/Datos/DatosTipoMantenimiento.jsx";
 
-// --- Helpers ---
+
 const normalizeDateToISOString = (date) => {
-  // ... (sin cambios)
+ 
   if (!date) return null;
   try {
     const dateObj = date instanceof Date ? date : new Date(date);
@@ -37,7 +35,7 @@ const normalizeDateToISOString = (date) => {
 };
 
 const SelectRowCheckbox = ({ row, onRowSelect, isSelected }) => {
-  // ... (sin cambios)
+  
   const id = row.original?.placa || `checkbox-${row.id}`;
   return (
     <Checkbox
@@ -54,10 +52,10 @@ SelectRowCheckbox.propTypes = {
   onRowSelect: PropTypes.func.isRequired,
   isSelected: PropTypes.bool.isRequired,
 };
-// --- Fin Helpers ---
+
 
 export default function PaginaProgramarMantenimientos() {
-  // --- Estados (sin cambios) ---
+  
   const [filtroFechaCompraDesde, setFiltroFechaCompraDesde] = useState(null);
   const [filtroFechaCompraHasta, setFiltroFechaCompraHasta] = useState(null);
   const [filtroTipoEquipo, setFiltroTipoEquipo] = useState(null);
@@ -74,9 +72,9 @@ export default function PaginaProgramarMantenimientos() {
 
   const navigate = useNavigate();
 
-  // --- Función cargarEquiposFiltrados (sin cambios) ---
+ 
   const cargarEquiposFiltrados = useCallback(async () => {
-    // ... (sin cambios)
+   
     setCargandoEquipos(true);
     setErrorCargandoEquipos("");
     setEquiposFiltrados([]);
@@ -112,9 +110,9 @@ export default function PaginaProgramarMantenimientos() {
     filtroUbicacion,
   ]);
 
-  // --- Lógica de Selección (sin cambios) ---
+ 
   const handleRowSelect = useCallback((placa) => {
-    // ... (sin cambios)
+  
     if (!placa) return;
     setEquiposSeleccionados((prev) => {
       const newState = { ...prev };
@@ -126,7 +124,7 @@ export default function PaginaProgramarMantenimientos() {
 
   const handleSelectAll = useCallback(
     (isSelected) => {
-      // ... (sin cambios)
+ 
       const newSeleccionados = {};
       if (isSelected) {
         equiposFiltrados.forEach((equipo) => {
@@ -139,7 +137,7 @@ export default function PaginaProgramarMantenimientos() {
   );
 
   const isAllSelected = useMemo(() => {
-    // ... (sin cambios)
+
     const numSelected = Object.keys(equiposSeleccionados).length;
     const numFiltradosConPlaca = equiposFiltrados.filter(
       (eq) => eq.placa
@@ -147,10 +145,10 @@ export default function PaginaProgramarMantenimientos() {
     return numFiltradosConPlaca > 0 && numSelected === numFiltradosConPlaca;
   }, [equiposSeleccionados, equiposFiltrados]);
 
-  // --- Función base para la lógica de programación ---
+
   const _programarMantenimientos = useCallback(
     async (placasAProgramar) => {
-      // Validaciones comunes
+     
       if (!tipoMantenimiento) {
         toast.warn("Seleccione un tipo de mantenimiento.");
         return false;
@@ -173,7 +171,7 @@ export default function PaginaProgramarMantenimientos() {
       setErrorProgramacion("");
 
       try {
-        const tecnicoAsignado = "Técnico Por Defecto"; // Placeholder
+        const tecnicoAsignado = "Técnico Por Defecto"; 
 
         const programacionPromises = placasAProgramar.map(async (placa) => {
           const equipo = equiposFiltrados.find((e) => e.placa === placa);
@@ -181,7 +179,7 @@ export default function PaginaProgramarMantenimientos() {
             console.warn(
               `Equipo ${placa} no encontrado en la lista filtrada actual.`
             );
-            return null; // O lanzar un error si se prefiere
+            return null;
           }
 
           const datosParaMantenimiento = {
@@ -198,25 +196,25 @@ export default function PaginaProgramarMantenimientos() {
         });
 
         const resultados = await Promise.all(programacionPromises);
-        const exitosos = resultados.filter((r) => r).length; // Contar solo los exitosos
+        const exitosos = resultados.filter((r) => r).length; 
 
         if (exitosos > 0) {
           toast.success(`${exitosos} mantenimiento(s) programado(s).`);
-          setEquiposSeleccionados({}); // Limpiar selección individual
-          navigate("/programados"); // Navegar a la lista de programados
-          return true; // Indicar éxito
+          setEquiposSeleccionados({}); 
+          navigate("/programados"); 
+          return true; 
         } else {
           toast.warn(
             "No se pudo programar ningún mantenimiento (equipos no encontrados o error)."
           );
-          return false; // Indicar fallo
+          return false;
         }
       } catch (err) {
         const errorMessage = err.message || "Error desconocido al programar.";
         setErrorProgramacion(`Error: ${errorMessage}`);
         console.error("Error programando:", err);
         toast.error(`Error al programar: ${errorMessage}`);
-        return false; // Indicar fallo
+        return false; 
       } finally {
         setCargandoProgramacion(false);
       }
@@ -230,7 +228,7 @@ export default function PaginaProgramarMantenimientos() {
     ]
   );
 
-  // --- Handler para Programar SELECCIONADOS ---
+ 
   const handleProgramarSeleccionados = useCallback(async () => {
     const placasSeleccionadas = Object.keys(equiposSeleccionados);
     if (placasSeleccionadas.length === 0) {
@@ -240,12 +238,12 @@ export default function PaginaProgramarMantenimientos() {
     await _programarMantenimientos(placasSeleccionadas);
   }, [
     equiposSeleccionados,
-    _programarMantenimientos, // Dependencias necesarias para _programarMantenimientos
+    _programarMantenimientos,
   ]);
 
-  // --- 4. NUEVO Handler para Programar TODOS LOS FILTRADOS ---
+
   const handleProgramarTodosFiltrados = useCallback(() => {
-    // Validaciones básicas antes de la confirmación
+
     if (!tipoMantenimiento) {
       toast.warn("Seleccione un tipo de mantenimiento.");
       return;
@@ -265,11 +263,11 @@ export default function PaginaProgramarMantenimientos() {
       icon: "pi pi-exclamation-triangle",
       acceptLabel: "Sí, programar todos",
       rejectLabel: "No",
-      acceptClassName: "p-button-warning", // Estilo para el botón de aceptar
+      acceptClassName: "p-button-warning", 
       accept: async () => {
         const placasFiltradas = equiposFiltrados
           .map((eq) => eq.placa)
-          .filter(Boolean); // Obtener placas válidas
+          .filter(Boolean);
         await _programarMantenimientos(placasFiltradas);
       },
       reject: () => {
@@ -280,10 +278,10 @@ export default function PaginaProgramarMantenimientos() {
     tipoMantenimiento,
     fechaProgramada,
     equiposFiltrados,
-    _programarMantenimientos, // Dependencias necesarias para _programarMantenimientos
+    _programarMantenimientos, 
   ]);
 
-  // --- Definición de Columnas (sin cambios) ---
+ 
   const columnasTablaEquipos = useMemo(
     () => [
       {
@@ -318,22 +316,22 @@ export default function PaginaProgramarMantenimientos() {
     [isAllSelected, equiposSeleccionados, handleRowSelect, handleSelectAll]
   );
 
-  // --- Renderizado JSX ---
+
   return (
     <div className="p-4">
-      {/* 5. Añadir componente ConfirmDialog */}
+    
       <ConfirmDialog />
 
       <Card
         title="Programar Mantenimientos"
         className="w-full lg:w-10/12 xl:w-8/12 mx-auto"
       >
-        {/* --- Sección de Filtros (sin cambios) --- */}
+   
         <div className="mb-6 p-4 border rounded-md">
-          {/* ... (contenido de filtros igual) ... */}
+      
           <h3 className="text-lg font-semibold mb-4">1. Filtrar Equipos</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-            {/* Filtro Fecha Compra */}
+          
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Fecha de Compra:
@@ -365,7 +363,7 @@ export default function PaginaProgramarMantenimientos() {
                 />
               </div>
             </div>
-            {/* Filtro Tipo Equipo */}
+      
             <div>
               
               <Dropdown
@@ -380,7 +378,7 @@ export default function PaginaProgramarMantenimientos() {
                 showClear
               />
             </div>
-            {/* Filtro Ubicación */}
+        
             <div>
               
               <Dropdown
@@ -396,7 +394,7 @@ export default function PaginaProgramarMantenimientos() {
               />
             </div>
           </div>
-          {/* Botón Aplicar Filtros */}
+    
           <div className="text-right mt-2">
             <Button
             style={{ width: "50%" }}
@@ -409,9 +407,9 @@ export default function PaginaProgramarMantenimientos() {
           </div>
         </div>
 
-        {/* --- Sección Lista de Equipos (sin cambios) --- */}
+   
         <div className="mb-6">
-          {/* ... (contenido lista equipos igual) ... */}
+    
           <h3 className="text-lg font-semibold mb-2">
             Equipos Encontrados ({equiposFiltrados.length})
           </h3>
@@ -427,8 +425,7 @@ export default function PaginaProgramarMantenimientos() {
           />
         </div>
 
-        {/* --- Sección Detalles del Mantenimiento (MODIFICADA) --- */}
-        {/* Mostrar sección si hay equipos filtrados (para poder programar todos) */}
+     
         {equiposFiltrados.length > 0 && (
           <div className="mb-6 p-4 border rounded-md bg-gray-50">
             <h3 className="text-lg font-semibold mb-4">
@@ -437,7 +434,7 @@ export default function PaginaProgramarMantenimientos() {
                 : `2. Definir Mantenimiento a Programar`}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Tipo Mantenimiento */}
+           
               <div>
                 <label
                   htmlFor="tm"
@@ -455,7 +452,7 @@ export default function PaginaProgramarMantenimientos() {
                   className="p-inputtext-sm w-full"
                 />
               </div>
-              {/* Fecha Programada */}
+        
               <div>
                 <label
                   htmlFor="fp"
@@ -472,10 +469,10 @@ export default function PaginaProgramarMantenimientos() {
                   showIcon
                   className="p-inputtext-sm w-full"
                   readOnlyInput
-                  // minDate={new Date()} // <-- 2. ELIMINADO minDate
+               
                 />
               </div>
-              {/* Descripción */}
+           
               <div className="col-span-full">
                 <label
                   htmlFor="desc"
@@ -494,9 +491,9 @@ export default function PaginaProgramarMantenimientos() {
               </div>
             </div>
 
-            {/* Botones de Programación */}
+       
             <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {/* Botón Programar SELECCIONADOS */}
+            
               <button
                 label={
                   cargandoProgramacion
@@ -513,7 +510,7 @@ export default function PaginaProgramarMantenimientos() {
                 }
                 className="w-full p-button-success"
               />
-              {/* 3. NUEVO Botón Programar TODOS LOS FILTRADOS */}
+        
               <button
                 label={
                   cargandoProgramacion
@@ -541,9 +538,9 @@ export default function PaginaProgramarMantenimientos() {
           </div>
         )}
 
-        {/* --- Enlace Volver (sin cambios) --- */}
+       
         <div className="text-center mt-6 border-t pt-4">
-          {/* ... (enlace igual) ... */}
+        
           <Link
             to="/programados"
             className="text-blue-600 hover:underline text-sm"

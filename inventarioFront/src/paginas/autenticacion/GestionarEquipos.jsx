@@ -1,38 +1,35 @@
-// Archivo: src/paginas/autenticacion/GestionarEquipos.jsx
-
-import { useState, useEffect, useRef, useCallback, useMemo } from "react"; // Añadir useCallback
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { mockEquiposService as equiposService } from "../../servicios/mockEquipos.api.js";
 import { TablaEquipos } from "../../autenticacion/contexto/TablaDatos.jsx";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { InputText } from "primereact/inputtext";
-import { Card } from "primereact/card"; // Importar Card
-import { Tag } from "primereact/tag"; // Importar Tag
-import { useNavigate } from "react-router-dom"; // Importar useNavigate
-// Importar funciones del hook personalizado (si aún las usas)
+import { Card } from "primereact/card";
+import { Tag } from "primereact/tag";
+import { useNavigate } from "react-router-dom";
+
 import {
   confirmarCambioEstadoFn,
   cambiarEstadoEquipoFn,
   cargarEquiposFn,
-  //manejoEliminarFn,
   mostrarExitoFn,
   mostrarErrorFn,
-} from "../../autenticacion/anzuelos/usoGestionFuncionesEquipo.js"; // Revisa si este hook sigue siendo la mejor aproximación
+} from "../../autenticacion/anzuelos/usoGestionFuncionesEquipo.js";
 import { normalizarString } from "../../componentes/utiles/UtilidadesTexto.jsx";
-import { 
+import {
   utilizarConsultaMedios,
   utilizarRebote,
 } from "../../componentes/utiles/GanchosAMedida.jsx";
 
 export default function GestionarEquipos() {
-  const [equipos, setEquipos] = useState([]); // Lista completa de equipos
-  const [equiposFiltrados, setEquiposFiltrados] = useState([]); // Equipos mostrados en tabla
-  const [carga, asignarCarga] = useState(true); // Estado de carga
-  const [mostrarModelo, asignarMostrarModelo] = useState(false); // Visibilidad del modal (a implementar)
-  const [equipoEditando, setEquipoEditando] = useState(null); // Equipo seleccionado para editar
-  const [busqueda, setBusqueda] = useState(""); // Término de búsqueda
-  const toast = useRef(null); // Referencia para notificaciones
-  const navigate = useNavigate(); // Hook para navegación
+  const [equipos, setEquipos] = useState([]);
+  const [equiposFiltrados, setEquiposFiltrados] = useState([]);
+  const [carga, asignarCarga] = useState(true);
+  const [mostrarModelo, asignarMostrarModelo] = useState(false);
+  const [equipoEditando, setEquipoEditando] = useState(null);
+  const [busqueda, setBusqueda] = useState("");
+  const toast = useRef(null);
+  const navigate = useNavigate();
 
   const getEstadoSeverity = (estado) => {
     const lowerEstado = estado?.toLowerCase();
@@ -40,7 +37,7 @@ export default function GestionarEquipos() {
     if (lowerEstado === "inactivo") return "warning";
     if (lowerEstado === "baja") return "danger";
     if (lowerEstado === "mantenimiento") return "info";
-    return "info"; // Default
+    return "info";
   };
   const mostrarMensajeExito = useCallback((mensaje) => {
     mostrarExitoFn(mensaje, toast);
@@ -53,9 +50,7 @@ export default function GestionarEquipos() {
   const busquedaDebounced = utilizarRebote(busqueda, 300);
   const esMovilPequeno = utilizarConsultaMedios("(max-width: 575px)");
 
-  // Función para cargar equipos (usando useCallback)
   const cargarEquipos = useCallback(async () => {
-    // Usar la función importada o definir la lógica aquí
     await cargarEquiposFn(
       asignarCarga,
       equiposService,
@@ -68,7 +63,7 @@ export default function GestionarEquipos() {
     // try {
     //   const data = await equiposService.getAll();
     //   setEquipos(data || []);
-    //   setEquiposFiltrados(data || []); // Inicialmente mostrar todos
+    //   setEquiposFiltrados(data || []);
     // } catch (error) {
     //   mostrarError(error.message || "Error al cargar equipos");
     //   setEquipos([]);
@@ -76,25 +71,23 @@ export default function GestionarEquipos() {
     // } finally {
     //   asignarCarga(false);
     // }
-  }, [mostrarMensajeError]); // Depende de mostrarError (que es estable por useCallback)
+  }, [mostrarMensajeError]);
 
-  // Función para cambiar estado (usando useCallback)
   const cambiarEstadoEquipo = useCallback(
     async (id, nuevoEstado) => {
       await cambiarEstadoEquipoFn(
         id,
         nuevoEstado,
-        equipos, // Pasa la lista actual si la función la necesita
+        equipos,
         equiposService,
         mostrarMensajeExito,
-        cargarEquipos, // Pasa la función para recargar
+        cargarEquipos,
         mostrarMensajeError
       );
     },
     [equipos, mostrarMensajeExito, cargarEquipos, mostrarMensajeError]
-  ); // Dependencias
+  );
 
-  // Navegar a nuevo mantenimiento
   const manejarNuevoMantenimiento = useCallback(
     (placa) => {
       navigate(`/nuevo-mantenimiento/${placa}`);
@@ -102,7 +95,6 @@ export default function GestionarEquipos() {
     [navigate]
   );
 
-  // Columnas para la tabla (usando useMemo para optimización)
   const columnas = useMemo(
     () => [
       { Header: "Placa", accessor: "placa" },
@@ -112,20 +104,18 @@ export default function GestionarEquipos() {
       {
         Header: "Estado",
         accessor: "estado",
-        // Usar Tag de PrimeReact para mjeorar
-        Cell: ({ value }) => {          const severity = getEstadoSeverity(value);
-        
+
+        Cell: ({ value }) => {
+          const severity = getEstadoSeverity(value);
+
           return <Tag severity={severity} value={value || "N/A"} />;
         },
       },
       {
         Header: "Acciones",
-        accessor: "acciones", // No es un accessor real, solo para la columna
+        accessor: "acciones",
         Cell: ({ row }) => (
-          <div
-            className="flex flex-row gap-1" // flex-nowrap es el comportamiento por defecto de flex
-            style={{ display: "flex" }}
-          >
+          <div className="flex flex-row gap-1" style={{ display: "flex" }}>
             <Button
               icon="pi pi-pencil"
               className="p-button-rounded p-button-sm p-button-text p-button-primary"
@@ -133,7 +123,7 @@ export default function GestionarEquipos() {
               tooltipOptions={{ position: "top" }}
               onClick={() => {
                 setEquipoEditando(row.original);
-                asignarMostrarModelo(true); // Abrir modal de edición
+                asignarMostrarModelo(true);
                 navigate("/actualizar-equipo/:placa");
               }}
             />
@@ -142,7 +132,7 @@ export default function GestionarEquipos() {
                 row.original.estado === "Baja"
                   ? "pi pi-undo"
                   : "pi pi-power-off"
-              } // Cambiar icono si está de baja
+              }
               className={`p-button-rounded p-button-sm p-button-text ${
                 row.original.estado === "Baja"
                   ? "p-button-success"
@@ -154,26 +144,22 @@ export default function GestionarEquipos() {
               tooltipOptions={{ position: "top" }}
               onClick={() =>
                 confirmarCambioEstadoFn(
-                  // Usar la función importada para confirmación
-                  row.original.placa, // Usar placa como ID si es único
-                  row.original.estado === "Baja" ? "Activo" : "Baja", // Estado a cambiar
-                  cambiarEstadoEquipo // Función a ejecutar si confirma
+                  row.original.placa,
+                  row.original.estado === "Baja" ? "Activo" : "Baja",
+                  cambiarEstadoEquipo
                 )
               }
-              // No deshabilitar, permitir reactivar
-              // disabled={row.original.estado === "Baja"}
             />
             <Button
-              icon="pi pi-calendar-plus" // Icono para nuevo mantenimiento
-              className="p-button-rounded p-button-sm p-button-text p-button-info" // Estilo info o el que prefieras
+              icon="pi pi-calendar-plus"
+              className="p-button-rounded p-button-sm p-button-text p-button-info"
               tooltip="Nuevo Mantenimiento"
               tooltipOptions={{ position: "top" }}
               onClick={() => manejarNuevoMantenimiento(row.original.placa)}
-            />            
+            />
           </div>
         ),
         disableSortBy: true,
-
       },
     ],
     [cambiarEstadoEquipo, manejarNuevoMantenimiento]
@@ -182,19 +168,15 @@ export default function GestionarEquipos() {
     cargarEquipos();
   }, [cargarEquipos]);
 
-  // Filtrar equipos cuando cambia la búsqueda o la lista completa de equipos
   useEffect(() => {
     if (!busquedaDebounced) {
-      // Usar debouncedBusqueda
-      setEquiposFiltrados(equipos || []); // Mostrar todos si no hay búsqueda
+      setEquiposFiltrados(equipos || []);
       return;
     }
 
     const terminoBusquedaNormalizado = normalizarString(busquedaDebounced);
 
-    // Asegurarse que equipos sea un array antes de filtrar
     const filtrados = (equipos || []).filter((equipo) => {
-      // Iterar sobre las claves del objeto equipo
       return Object.keys(equipo).some((key) => {
         const valor = equipo[key];
 
@@ -210,7 +192,6 @@ export default function GestionarEquipos() {
     setEquiposFiltrados(filtrados);
   }, [busquedaDebounced, equipos]);
 
-  // Componente para mostrar cada equipo como una Card en móvil
   const TarjetaEquipoItem = ({
     equipo,
     alEditar,
@@ -278,39 +259,37 @@ export default function GestionarEquipos() {
 
   const manejarEditarEquipoTarjeta = (equipo) => {
     setEquipoEditando(equipo);
-    asignarMostrarModelo(true); // Abrir modal de edición
+    asignarMostrarModelo(true);
   };
 
   return (
     <div className="p-4">
-      <Toast ref={toast} /> {/* Para mostrar notificaciones */}
+      <Toast ref={toast} />
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-3">
         <h1 className="text-2xl font-bold m-0">Gestión de Equipos</h1>{" "}
-        {/* Quitar margen default */}
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-          {/* Input de Búsqueda */}
           <span className="p-input-icon-left w-full sm:w-auto">
             <i className="pi pi-search" />
             <InputText
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
               placeholder="Buscar..."
-              className="w-full" // Ocupar ancho disponible
+              className="w-full"
             />
           </span>
           {/* Botón Nuevo Equipo */}
           <Button
             label="Nuevo Equipo"
             icon="pi pi-plus"
-            className="p-button-primary" // Estilo primario
+            className="p-button-primary"
             onClick={() => {
-              setEquipoEditando(null); // Indicar que es nuevo
-              asignarMostrarModelo(true); // Abrir modal de creación/edición
+              setEquipoEditando(null);
+              asignarMostrarModelo(true);
             }}
           />
         </div>
       </div>
-      {/* Tabla de Equipos */}
+
       {esMovilPequeno &&
       !busquedaDebounced &&
       equiposFiltrados.length === equipos.length ? (

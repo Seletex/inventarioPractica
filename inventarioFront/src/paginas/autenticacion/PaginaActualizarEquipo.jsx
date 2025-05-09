@@ -5,12 +5,11 @@ import Entrada from "../../componentes/InterfazUsuario/Entrada.jsx";
 import { Card } from "primereact/card";
 import { Icono } from "../../componentes/utiles/Icono.jsx";
 import { camposFormularioEquipo } from "../../componentes/Datos/ActualizarEquipo.jsx";
-// import { marcasPorTipoEquipo } from "../../componentes/Datos/MarcasTipoEquipo.jsx";
+
 import { mockEquiposService as equiposService } from "../../servicios/mockEquipos.api.js";
 
 export default function PaginaActualizarEquipos() {
-  // *** CAMBIO AQUÍ: Obtener la PLACA de los parámetros de la URL ***
-  const { placa } = useParams(); // <-- Desestructurar 'placa'
+  const { placa } = useParams();
   const navigate = useNavigate();
 
   const [formulario, setFormulario] = useState(null);
@@ -18,7 +17,6 @@ export default function PaginaActualizarEquipos() {
   const [error, setError] = useState("");
   const [cargandoEnvio, setCargandoEnvio] = useState(false);
 
-  // --- Efecto para cargar los datos del equipo al montar el componente o cambiar la PLACA ---
   useEffect(() => {
     const cargarEquipo = async () => {
       setCargandoInicial(true);
@@ -44,12 +42,10 @@ export default function PaginaActualizarEquipos() {
       cargarEquipo();
       console.log("Placa en los parámetros:", placa);
     } else {
-      // Manejar el caso si no hay PLACA en la URL
       setError("Placa de equipo no proporcionada.");
       setCargandoInicial(false);
     }
-  }, [placa, setError]); // *** CAMBIO AQUÍ: Dependencia es PLACA ***
-  //}, [placa, setError, equiposService]);
+  }, [placa, setError]);
 
   const manejarCambio = (e) => {
     const { name, value, type, checked } = e.target;
@@ -65,7 +61,6 @@ export default function PaginaActualizarEquipos() {
     });
   };
 
-  // --- Manejar envío del formulario para ACTUALIZAR ---
   const manejarEnvio = async (e) => {
     e.preventDefault();
     setError("");
@@ -81,10 +76,9 @@ export default function PaginaActualizarEquipos() {
     const errores = [];
     camposFormularioEquipo.forEach((campo) => {
       if (["placa"].includes(campo.name)) {
-        // Omitir validación de 'placa' si no es editable
         return;
       }
-      // Asumiendo que la marca no es editable y por lo tanto no se valida su 'required' aquí
+
       if (["marca"].includes(campo.name)) {
         return;
       }
@@ -104,7 +98,6 @@ export default function PaginaActualizarEquipos() {
       return;
     }
 
-    // --- Preparar datos antes de enviar (conversión de strings "true"/"false") ---
     const datosParaEnviar = { ...formulario };
     ["garantia", "teclado", "mouse", "entregado"].forEach((fieldName) => {
       const valorString = formulario[fieldName];
@@ -113,16 +106,12 @@ export default function PaginaActualizarEquipos() {
       }
     });
 
-    // Si el 'formulario' ya tiene la placa cargada, esto está bien.
-    // Si no,  añadirla explícitamente: datosParaEnviar.placa = placa;
-
     try {
-      await equiposService.update(placa, datosParaEnviar); // <-- Pasar PLACA y datos
-      // Mostrar mensaje de éxito y NAVEGAR de vuelta
-      alert("Equipo actualizado exitosamente!"); // Considera Toast
-      navigate("/gestionar-equipos"); // Redirigir a la lista
+      await equiposService.update(placa, datosParaEnviar);
+
+      alert("Equipo actualizado exitosamente!");
+      navigate("/gestionar-equipos");
     } catch (err) {
-      // Mostrar mensaje de error
       setError("Error al actualizar el equipo: " + err.message);
       console.error("Error al actualizar equipo:", err);
     } finally {
@@ -133,7 +122,6 @@ export default function PaginaActualizarEquipos() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p>Cargando datos del equipo con placa {placa}...</p>{" "}
-        {/* Mostrar la placa en el mensaje */}
       </div>
     );
   }
@@ -145,7 +133,7 @@ export default function PaginaActualizarEquipos() {
       </div>
     );
   }
-  // Si no está cargando inicialmente y hay datos en el formulario, renderiza el formulario
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -163,7 +151,7 @@ export default function PaginaActualizarEquipos() {
             </p>
             className="w-full md:w-30rem"
             style={{
-              width: "350px", // Ajusta el ancho de la tarjeta según necesites
+              width: "350px",
               borderRadius: "5px",
               border: "1px solid #e0e0e0",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
@@ -172,15 +160,14 @@ export default function PaginaActualizarEquipos() {
           >
             <form className="space-y-6" onSubmit={manejarEnvio}>
               {camposFormularioEquipo
-                .filter((campo) => !["placa", "marca"].includes(campo.name)) // Filtrar placa y marca
+                .filter((campo) => !["placa", "marca"].includes(campo.name))
                 .map((campo) => {
-                  if (!formulario) return null; // Seguridad
+                  if (!formulario) return null;
 
                   const valorCampo = formulario[campo.name];
 
-                  if (!campo) return null; // Seguridad
+                  if (!campo) return null;
 
-                  // Contenedor para cada campo
                   return (
                     <div className="campo" key={campo.name}>
                       {campo.label && (
@@ -193,7 +180,7 @@ export default function PaginaActualizarEquipos() {
                           }`}
                         >
                           {campo.label}
-                          {/* Mostrar * solo si el campo es requerido Y ES EDITABLE */}
+
                           {campo.required &&
                             !["placa", "marca"].includes(campo.name) && (
                               <span className="text-red-500"> *</span>
@@ -211,7 +198,6 @@ export default function PaginaActualizarEquipos() {
                                 placeHolder={campo.placeHolder || campo.label}
                                 tipo={campo.type}
                                 nombre={campo.name}
-                                // Usar valorCampo del estado, asegurar string vacío si es null/undefined
                                 valor={
                                   valorCampo === null ||
                                   valorCampo === undefined
@@ -252,7 +238,6 @@ export default function PaginaActualizarEquipos() {
                               <select
                                 id={campo.name}
                                 name={campo.name}
-                                // Usar valorCampo del estado, asegurar string vacío si es null/undefined
                                 value={
                                   valorCampo === null ||
                                   valorCampo === undefined
@@ -262,11 +247,8 @@ export default function PaginaActualizarEquipos() {
                                 onChange={manejarCambio}
                                 required={campo.required}
                                 className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                                // *** Deshabilitar el selector si no es editable ***
-                                // disabled={campo.name === 'tipoEquipo'} // Ejemplo: hacer tipo no editable
                               >
                                 {finalOptions.map((opcion) => (
-                                  // Asegúrate de que los value sean únicos
                                   <option
                                     key={opcion.value}
                                     value={opcion.value}

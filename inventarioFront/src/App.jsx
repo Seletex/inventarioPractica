@@ -65,30 +65,30 @@ const PaginaConsultarEquipoPlaca = lazy(() =>
 const PaginaImportarExportar = lazy(() =>
   import("./paginas/autenticacion/PaginaImportarExportar")
 );
+const PaginaHistorialResponsable = lazy(() =>
+  import("./paginas/autenticacion/PaginaHistorialResponsable")
+);
 
 import NavegacionPrivada from "./componentes/NavegacionPrivada";
-//import { ContextoAutenticacion } from "./autenticacion/contexto/ContextoAutenticacion";
 
-// Componente Layout para rutas que necesitan Navegacion
 const AppLayout = () => {
   const authContext = useContext(ContextoAutenticacion);
-  // estaLogueado será true solo si hay contexto, un usuario y no está cargando.
-  const estaLogueado = authContext && authContext.usuario && !authContext.cargando;
+
+  const estaLogueado =
+    authContext && authContext.usuario && !authContext.cargando;
 
   return (
     <>
       <div className="flex flex-col min-h-screen">
         <header className="sticky top-0 z-50 bg-white shadow-sm">
-          {/* Navegacion principal/pública siempre visible en este layout */}
           <Navegacion />
-          {/* NavegacionPrivada solo se renderiza si el usuario está logueado */}
+
           {estaLogueado && <NavegacionPrivada />}
         </header>
-        {/* El contenido de la página con un padding y centrado */}
         <main className="flex-grow container mx-auto p-4">
-          <Outlet /> {/* Las rutas anidadas se renderizarán aquí */}
+          <Outlet />
         </main>
-        {/* <Footer /> */} {/* Descomenta si tienes un componente Footer */}
+        {/* <Footer /> */} {/* Descomentar si hay un componente Footer */}
       </div>
     </>
   );
@@ -99,10 +99,7 @@ function App() {
     <div className="App">
       <ProveedorAutenticacion>
         <Router>
-          {/* El Router generalmente va dentro del Provider si el Provider necesita hooks del router o viceversa */}
           <Routes>
-            {/* Rutas públicas (sin NavegacionPrivada, pero pueden estar dentro de AppLayout si usan Navegacion) */}
-            {/* O pueden estar fuera de AppLayout si no usan ninguna navegación común */}
             <Route
               path="/"
               element={
@@ -135,11 +132,16 @@ function App() {
                 </Suspense>
               }
             />
-
-            {/* Rutas que usan AppLayout (con Navegacion y NavegacionPrivada) */}
+            <Route
+              path="/historial-responsable"
+              element={
+                <Suspense fallback={<HiladorDeCarga />}>
+                  <PaginaHistorialResponsable />
+                </Suspense>
+              }
+            />
             <Route element={<AppLayout />}>
               {" "}
-              {/* AppLayout ya tiene Navegacion y NavegacionPrivada */}
               <Route
                 path="/importar-exportar"
                 element={
@@ -212,7 +214,6 @@ function App() {
                   </Suspense>
                 }
               />
-           
               <Route
                 path="/actualizar-equipo/:placa"
                 element={

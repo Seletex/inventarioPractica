@@ -1,6 +1,3 @@
-// src/autenticacion/permisos.js
-
-// Definición de permisos por rol
 export const permisosPorRol = {
   Administrador: {
     gestionEquipo: true,
@@ -26,7 +23,7 @@ export const permisosPorRol = {
     reportes: true,
     consultas: true,
   },
-  // Rol por defecto para usuarios sin un rol específico o para invitados con acceso limitado
+  
   Default: {
     gestionEquipo: false,
     gestionMantenimientos: false,

@@ -1,6 +1,6 @@
-import {MarcaComputador} from "./MarcaComputador.jsx"; // Verificada la ruta
-import { MarcaMonitor } from "./MarcaMonitor.jsx"; // Verificada la ruta
-import { MarcaImpresora } from "./MarcaImpresora.jsx"; // Verificada la ruta
+import {MarcaComputador} from "./MarcaComputador.jsx";
+import { MarcaMonitor } from "./MarcaMonitor.jsx"; 
+import { MarcaImpresora } from "./MarcaImpresora.jsx"; 
 export const marcasPorTipoEquipo = {
   'Laptop': MarcaComputador,
   'Computador': MarcaComputador,

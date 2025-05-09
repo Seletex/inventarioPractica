@@ -6,8 +6,8 @@ import { Toast } from "primereact/toast";
 import { InputText } from "primereact/inputtext";
 import { Dialog } from "primereact/dialog";
 import { InputTextarea } from "primereact/inputtextarea";
-import { Card } from "primereact/card"; // Importar Card
-import { Tag } from "primereact/tag"; // Añadida importación del componente Tag
+import { Card } from "primereact/card";
+import { Tag } from "primereact/tag";
 import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
 import {
@@ -17,14 +17,19 @@ import {
   mostrarErrorFn,
 } from "../../autenticacion/anzuelos/usoGestionFuncionesEquipo.js";
 import { useNavigate } from "react-router-dom";
-import { utilizarConsultaMedios, utilizarRebote } from "../../componentes/utiles/GanchosAMedida.jsx";
+import {
+  utilizarConsultaMedios,
+  utilizarRebote,
+} from "../../componentes/utiles/GanchosAMedida.jsx";
 
 export default function MantenimientosProgramados() {
-  const [mantenimientosProgramados, setMantenimientosProgramados] = useState([]);
+  const [mantenimientosProgramados, setMantenimientosProgramados] = useState(
+    []
+  );
   const [mantenimientosFiltrados, setMantenimientosFiltrados] = useState([]);
   const [carga, asignarCarga] = useState(true);
   const [mostrarDialogoEditar, asignarMostrarDialogoEditar] = useState(false);
-  const [ setEquipoEditando] = useState(null);
+  const [setEquipoEditando] = useState(null);
   const [busqueda, setBusqueda] = useState("");
   const toast = useRef(null);
   const navigate = useNavigate();
@@ -39,22 +44,21 @@ export default function MantenimientosProgramados() {
   const [placaParaVerObservacion, setPlacaParaVerObservacion] = useState("");
 
   const [datosFormEdicion, setDatosFormEdicion] = useState({
-    placaOriginal: "", // Para identificar el equipo a actualizar
+    placaOriginal: "",
     fechaRealizacion: null,
     estadoEquipo: "",
     observaciones: "",
-    // Podrías añadir más campos si fueran editables, como 'tecnico'
   });
-  const isMobileSmall = utilizarConsultaMedios("(max-width: 575px)"); // Breakpoint similar a sm de PrimeFlex
-  const debouncedBusqueda = utilizarRebote(busqueda, 300); // 300ms de delay
+  const isMobileSmall = utilizarConsultaMedios("(max-width: 575px)");
+  const debouncedBusqueda = utilizarRebote(busqueda, 300);
 
   const opcionesEstadoEquipo = [
     { label: "Activo", value: "Activo" },
     { label: "En Mantenimiento", value: "En Mantenimiento" },
     { label: "Inactivo", value: "Inactivo" },
-    { label: "De Baja", value: "De Baja" }, // Asegúrate que estos valores coincidan con los de tu mock/API
+    { label: "De Baja", value: "De Baja" },
   ];
-  // Columnas para la tabla
+
   const columnas = [
     { Header: "Placa", accessor: "placa" },
     {
@@ -63,15 +67,13 @@ export default function MantenimientosProgramados() {
         const equipoItem = row.original;
 
         if (equipoItem && typeof equipoItem.equipo === "function") {
-          // Si existe el objeto y 'equipo' es una función, llámala
           return equipoItem.equipo();
         } else {
-          // Si no, muestra un mensaje de error o un valor por defecto
           console.warn(
             "El objeto de datos no tiene la función 'equipo':",
             equipoItem
           );
-          return "N/A o Error de datos"; // O algún otro valor por defecto
+          return "N/A o Error de datos";
         }
       },
     },
@@ -126,7 +128,7 @@ export default function MantenimientosProgramados() {
               icon="pi pi-check"
               className="p-button-rounded p-button-sm p-button-success"
               tooltip="Registrar realización"
-              onClick={() => handleRegistrarRealizacion(row.original)} // CORREGIDO: Pasar el objeto completo
+              onClick={() => handleRegistrarRealizacion(row.original)}
             />
           )}
           <Button
@@ -143,8 +145,8 @@ export default function MantenimientosProgramados() {
         paddingLeft: "0.5rem",
         paddingRight: "0.5rem",
       },
-      width: 100, // Ajustado
-      minWidth: 90, // Añadido
+      width: 100,
+      minWidth: 90,
     },
     {
       Header: "Observaciones",
@@ -164,18 +166,16 @@ export default function MantenimientosProgramados() {
           />
         );
       },
-      width: 100, // Ajustado
-      minWidth: 80, // Añadido
+      width: 100,
+      minWidth: 80,
       style: { paddingLeft: "0.5rem", paddingRight: "0.5rem" },
     },
   ];
 
-  // Función para mostrar mensajes de éxito
   const mostrarExito = (mensaje) => {
     mostrarExitoFn(mensaje, toast);
   };
 
-  // Función para mostrar mensajes de error
   const mostrarError = useCallback(
     (mensaje) => {
       mostrarErrorFn(mensaje, toast);
@@ -183,7 +183,6 @@ export default function MantenimientosProgramados() {
     [toast]
   );
 
-  // Cargar equipos al iniciar el componente
   const cargarEquipos = useCallback(async () => {
     await cargarEquiposFn(
       asignarCarga,
@@ -192,22 +191,26 @@ export default function MantenimientosProgramados() {
       setMantenimientosFiltrados,
       mostrarError
     );
-  }, [asignarCarga, setMantenimientosProgramados, setMantenimientosFiltrados, mostrarError]);
+  }, [
+    asignarCarga,
+    setMantenimientosProgramados,
+    setMantenimientosFiltrados,
+    mostrarError,
+  ]);
 
-  // Manejar eliminar un equipo
   const manejoEliminar = async (id) => {
     await manejoEliminarFn(
       id,
-      mantenimientosProgramadosService, // Asumiendo que manejoEliminarFn usa este servicio para eliminar
+      mantenimientosProgramadosService,
       mostrarExito,
       cargarEquipos,
       mostrarError
     );
   };
-  // Manejar registro de realización de mantenimiento
+
   const handleRegistrarRealizacion = (mantenimiento) => {
     setMantenimientoSeleccionado(mantenimiento);
-    setObservacionActual(mantenimiento.observaciones || ""); // Pre-llenar si ya existe
+    setObservacionActual(mantenimiento.observaciones || "");
     setMostrarDialogoObservacion(true);
   };
 
@@ -215,7 +218,7 @@ export default function MantenimientosProgramados() {
     if (!mantenimientoSeleccionado) return;
     try {
       await mantenimientosProgramadosService.registrarRealizacion(
-        mantenimientoSeleccionado.placa, // Usar placa como identificador
+        mantenimientoSeleccionado.placa,
         new Date(),
         observacionActual
       );
@@ -233,17 +236,16 @@ export default function MantenimientosProgramados() {
     }
   };
 
-  // Manejar edición de mantenimiento
   const handleAbrirDialogoEditar = (equipo) => {
     setEquipoEditando(equipo);
     setDatosFormEdicion({
-      placaOriginal: equipo.placa, // Usaremos la placa original para la actualización
+      placaOriginal: equipo.placa,
       fechaRealizacion: equipo.fechaRealizacion
         ? new Date(equipo.fechaRealizacion)
         : null,
-      estadoEquipo: equipo.estado || "", // El estado general del equipo
+      estadoEquipo: equipo.estado || "",
       observaciones: equipo.observaciones || "",
-      // tecnico: equipo.tecnico || '', // Si el técnico también fuera editable
+      tecnico: equipo.tecnico || "",
     });
     asignarMostrarDialogoEditar(true);
   };
@@ -253,7 +255,6 @@ export default function MantenimientosProgramados() {
     setDatosFormEdicion((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Cargar equipos al iniciar el componente
   useEffect(() => {
     cargarEquipos();
   }, [cargarEquipos]);
@@ -279,9 +280,9 @@ export default function MantenimientosProgramados() {
     try {
       const datosParaActualizar = {
         fechaRealizacion: datosFormEdicion.fechaRealizacion,
-        estado: datosFormEdicion.estadoEquipo, // Asegúrate que el backend espera 'estado'
+        estado: datosFormEdicion.estadoEquipo,
         observaciones: datosFormEdicion.observaciones,
-        // tecnico: datosFormEdicion.tecnico, // Si es editable
+        tecnico: datosFormEdicion.tecnico,
       };
       await mantenimientosProgramadosService.actualizarMantenimiento(
         datosFormEdicion.placaOriginal,
@@ -313,14 +314,17 @@ export default function MantenimientosProgramados() {
     </div>
   );
 
-  // Filtrar equipos cuando cambia la búsqueda
   useEffect(() => {
     if (debouncedBusqueda) {
       const filtrados = mantenimientosProgramados.filter((mantenimiento) =>
         Object.values(mantenimiento).some((val) =>
           val && typeof val === "object"
-            ? JSON.stringify(val).toLowerCase().includes(debouncedBusqueda.toLowerCase())
-            : String(val).toLowerCase().includes(debouncedBusqueda.toLowerCase())
+            ? JSON.stringify(val)
+                .toLowerCase()
+                .includes(debouncedBusqueda.toLowerCase())
+            : String(val)
+                .toLowerCase()
+                .includes(debouncedBusqueda.toLowerCase())
         )
       );
       setMantenimientosFiltrados(filtrados);
@@ -424,11 +428,7 @@ export default function MantenimientosProgramados() {
         title="Gestión de Mantenimientos Programados"
         className="m-2 md:m-4 shadow-2 border-round w-full"
       >
-        {/* Controles de Búsqueda y Nuevo Mantenimiento */}
         <div className="flex flex-column sm:flex-row justify-content-between align-items-center mb-4 gap-3">
-          {/* Espacio para el título ya está manejado por Card, podemos poner aquí un subtítulo o nada */}
-          {/* <span className="text-xl font-semibold">Programados</span> */}
-
           <div className="flex flex-column sm:flex-row gap-2 w-full sm:w-auto justify-content-end">
             <span className="p-input-icon-left w-full sm:w-auto">
               <i className="pi pi-search" />
@@ -454,10 +454,9 @@ export default function MantenimientosProgramados() {
           </div>
         </div>
 
-        {/* Table Section */}
         {isMobileSmall &&
         !busqueda &&
-        mantenimientosFiltrados.length === mantenimientosProgramados.length ? ( // Mostrar mensaje solo si no hay búsqueda y no se han filtrado
+        mantenimientosFiltrados.length === mantenimientosProgramados.length ? (
           <div className="text-center p-3 my-3 border-1 surface-border border-round surface-ground">
             <i className="pi pi-search text-3xl text-primary mb-3"></i>
             <p className="text-lg">
@@ -490,7 +489,7 @@ export default function MantenimientosProgramados() {
             />
           </div>
         )}
-        {/* Dialogo para observaciones al registrar realización */}
+
         <Dialog
           header="Registrar Realización de Mantenimiento"
           visible={mostrarDialogoObservacion}
@@ -541,7 +540,6 @@ export default function MantenimientosProgramados() {
           </p>
         </Dialog>
 
-        {/* Dialogo para Editar Mantenimiento */}
         <Dialog
           header={`Editar Mantenimiento - Placa: ${datosFormEdicion.placaOriginal}`}
           visible={mostrarDialogoEditar}

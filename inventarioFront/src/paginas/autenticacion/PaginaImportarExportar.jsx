@@ -1,25 +1,23 @@
-// Archivo: src/paginas/autenticacion/PaginaImportarExportar.jsx
-
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState, useRef, useMemo, lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
-import { Card } from "primereact/card";
-import { Button } from "primereact/button";
-import { SelectButton } from "primereact/selectbutton";
-import { Dropdown } from "primereact/dropdown";
-import { FileUpload } from "primereact/fileupload";
-import { Calendar } from "primereact/calendar";
-import { Checkbox } from "primereact/checkbox"; // Para filtros de estado en exportación
-import { Toast } from "primereact/toast";
-import { toast as toastify } from "react-toastify"; // Usaremos el toast global para algunos mensajes
+import { toast as toastify } from "react-toastify";
 
-// Servicios Mock (para simular obtención de datos para exportar)
+// Lazy loading para componentes de PrimeReact
+const Card = lazy(() => import('primereact/card').then(module => ({ default: module.Card })));
+const Button = lazy(() => import('primereact/button').then(module => ({ default: module.Button })));
+const SelectButton = lazy(() => import('primereact/selectbutton').then(module => ({ default: module.SelectButton })));
+const Dropdown = lazy(() => import('primereact/dropdown').then(module => ({ default: module.Dropdown })));
+const FileUpload = lazy(() => import('primereact/fileupload').then(module => ({ default: module.FileUpload })));
+const Calendar = lazy(() => import('primereact/calendar').then(module => ({ default: module.Calendar })));
+const Checkbox = lazy(() => import('primereact/checkbox').then(module => ({ default: module.Checkbox })));
+const Toast = lazy(() => import('primereact/toast').then(module => ({ default: module.Toast })));
+
 import { mockEquiposService as equiposService } from "../../servicios/mockEquipos.api.js";
 import { mockMantenimientoService as mantenimientosService } from "../../servicios/mockMantenimientos.api.js";
 
-// Datos para Dropdowns (similar a PaginaGeneradorReportes)
-import { DatosUbicacion } from "../../componentes/Datos/DatosUbicaciones.jsx";
-import { DatosTipoEquipo } from "../../componentes/Datos/DatosTipoEquipo.jsx";
-import { DatosTipoMantenimiento } from "../../componentes/Datos/DatosTipoMantenimiento.jsx";
+import DatosUbicacion from "../../componentes/Datos/DatosUbicaciones.jsx";
+import DatosTipoEquipo from "../../componentes/Datos/DatosTipoEquipo.jsx";
+import DatosTipoMantenimiento from "../../componentes/Datos/DatosTipoMantenimiento.jsx";
 
 const opcionesAccion = [
   { label: "Importar Datos", value: "importar" },
@@ -29,7 +27,6 @@ const opcionesAccion = [
 const entidadesDisponibles = [
   { label: "Equipos", value: "equipos" },
   { label: "Mantenimientos", value: "mantenimientos" },
-  // Podrías añadir 'Usuarios' si tienes un servicio mock para ellos
 ];
 
 const formatosExportacion = [
@@ -38,13 +35,11 @@ const formatosExportacion = [
 ];
 
 const opcionesEstadoExportacion = [
-  // Similar a PaginaGeneradorReportes
   { value: "Activo", label: "Activos" },
   { value: "En mantenimiento", label: "En mantenimiento" },
   { value: "De baja", label: "De baja" },
 ];
 
-// Helper para normalizar fechas
 const normalizeDateToISOString = (date) => {
   if (!date) return null;
   try {
@@ -61,25 +56,22 @@ export default function PaginaImportarExportar() {
   const [accionSeleccionada, setAccionSeleccionada] = useState("importar");
   const toast = useRef(null);
 
-  // --- Estados para IMPORTACIÓN ---
   const [entidadImportar, setEntidadImportar] = useState(null);
   const [archivoParaImportar, setArchivoParaImportar] = useState(null);
   const [cargandoImportacion, setCargandoImportacion] = useState(false);
-  const fileUploadRef = useRef(null); // Para limpiar el FileUpload
+  const fileUploadRef = useRef(null);
 
-  // --- Estados para EXPORTACIÓN ---
   const [entidadExportar, setEntidadExportar] = useState(null);
   const [formatoExportar, setFormatoExportar] = useState(
     formatosExportacion[0]
-  ); // Default CSV
+  );
   const [fechaDesdeExportar, setFechaDesdeExportar] = useState(null);
   const [fechaHastaExportar, setFechaHastaExportar] = useState(null);
   const [ubicacionExportar, setUbicacionExportar] = useState(null);
-  const [estadosExportar, setEstadosExportar] = useState([]); // Para filtro de estado de equipos
-  const [tipoExportar, setTipoExportar] = useState(null); // Para tipo de equipo o mantenimiento
+  const [estadosExportar, setEstadosExportar] = useState([]);
+  const [tipoExportar, setTipoExportar] = useState(null);
   const [cargandoExportacion, setCargandoExportacion] = useState(false);
 
-  // --- Opciones dinámicas para Dropdowns de Exportación ---
   const opcionesUbicacionDropdown = useMemo(
     () => [{ value: null, label: "Todas las Ubicaciones" }, ...DatosUbicacion],
     []
@@ -94,9 +86,7 @@ export default function PaginaImportarExportar() {
     return opcionesBase;
   }, [entidadExportar]);
 
-  // --- Lógica de IMPORTACIÓN ---
   const handleSeleccionarArchivo = (event) => {
-    // event.files es un array, tomamos el primero
     if (event.files && event.files.length > 0) {
       setArchivoParaImportar(event.files[0]);
       toast.current.show({
@@ -136,9 +126,6 @@ export default function PaginaImportarExportar() {
       sticky: true,
     });
 
-    // --- SIMULACIÓN DE IMPORTACIÓN ---
-    // Aquí iría la lógica real para leer el archivo (usando librerías como PapaParse para CSV o SheetJS para Excel)
-    // y luego enviar los datos al backend o procesarlos.
     console.log(
       "Simulando importación de:",
       entidadImportar.value,
@@ -150,8 +137,8 @@ export default function PaginaImportarExportar() {
 
     setTimeout(() => {
       setCargandoImportacion(false);
-      toast.current.clear(); // Limpiar el mensaje "Procesando"
-      const exito = Math.random() > 0.3; // 70% de éxito simulado
+      toast.current.clear();
+      const exito = Math.random() > 0.3;
       if (exito) {
         toast.current.show({
           severity: "success",
@@ -161,7 +148,7 @@ export default function PaginaImportarExportar() {
         });
         setArchivoParaImportar(null);
         if (fileUploadRef.current) {
-          fileUploadRef.current.clear(); // Limpiar el componente FileUpload
+          fileUploadRef.current.clear();
         }
       } else {
         toast.current.show({
@@ -174,9 +161,7 @@ export default function PaginaImportarExportar() {
     }, 2500);
   };
 
-  // --- Lógica de EXPORTACIÓN ---
   const handleEstadoChangeExportar = (estadoValue) => {
-    // Para filtro de estado de equipos
     setEstadosExportar((prevEstados) =>
       prevEstados.includes(estadoValue)
         ? prevEstados.filter((e) => e !== estadoValue)
@@ -216,7 +201,7 @@ export default function PaginaImportarExportar() {
         "ubicacion",
       ];
     } else {
-      cabeceras = Object.keys(datos[0]); // Genérico
+      cabeceras = Object.keys(datos[0]);
     }
 
     const filas = datos.map((fila) =>
@@ -228,7 +213,7 @@ export default function PaginaImportarExportar() {
             typeof valor === "string" &&
             (valor.includes(",") || valor.includes("\n") || valor.includes('"'))
           ) {
-            valor = `"${valor.replace(/"/g, '""')}"`; // Escapar comillas y envolver
+            valor = `"${valor.replace(/"/g, '""')}"`;
           }
           return valor;
         })
@@ -272,20 +257,16 @@ export default function PaginaImportarExportar() {
       fechaHasta: normalizeDateToISOString(fechaHastaExportar),
       ubicacion: ubicacionExportar?.value,
       estados:
-        entidadExportar.value === "equipos" ? estadosExportar : undefined, // Solo para equipos
+        entidadExportar.value === "equipos" ? estadosExportar : undefined,
       tipo: tipoExportar?.value,
-      // Para mantenimientos, el servicio podría necesitar 'equipoPlaca' o filtrar por tipo de mantenimiento
-      // Para equipos, el servicio podría necesitar 'tipoEquipo'
     };
 
     if (entidadExportar.value === "equipos") {
       filtros.tipoEquipo = filtros.tipo;
       filtros.fechaCompraDesde = filtros.fechaDesde;
       filtros.fechaCompraHasta = filtros.fechaHasta;
-    } else if (entidadExportar.value === "mantenimientos") {
-      // El servicio de mantenimientos podría usar 'fechaProgramadaDesde/Hasta' o 'fechaRealizacionDesde/Hasta'
-      // Aquí asumimos que el servicio es flexible o que 'fechaDesde/Hasta' se aplica a la fecha relevante.
-    }
+    } /*else if (entidadExportar.value === "mantenimientos") {
+    }*/
 
     console.log(
       "Exportando:",
@@ -304,7 +285,6 @@ export default function PaginaImportarExportar() {
         datosParaExportar =
           await mantenimientosService.getMantenimientosByFilters(filtros);
       }
-      // Añadir más casos para otras entidades
 
       if (datosParaExportar.length === 0) {
         toastify.dismiss("export-process");
@@ -315,7 +295,6 @@ export default function PaginaImportarExportar() {
         return;
       }
 
-      // --- SIMULACIÓN DE GENERACIÓN Y DESCARGA DE ARCHIVO ---
       const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
       const nombreArchivoBase = `${entidadExportar.value}_export_${timestamp}`;
 
@@ -331,9 +310,6 @@ export default function PaginaImportarExportar() {
         );
         toastify.success("Datos exportados a CSV con éxito.");
       } else if (formatoExportar.value === "xlsx") {
-        // La generación de XLSX en el cliente es más compleja.
-        // Se necesitaría una librería como SheetJS (js-xlsx).
-        // Por ahora, simulamos y mostramos un mensaje.
         console.log("Simulando exportación a XLSX con SheetJS...");
         // Ejemplo con SheetJS:
         // const ws = XLSX.utils.json_to_sheet(datosParaExportar);
@@ -356,7 +332,6 @@ export default function PaginaImportarExportar() {
     }
   };
 
-  // --- Título del Card ---
   const cardTitle = (
     <div className="flex items-center justify-between">
       <span>Importar / Exportar Datos</span>
@@ -373,289 +348,300 @@ export default function PaginaImportarExportar() {
 
   return (
     <div className="p-4">
-      <Toast ref={toast} />
-      <Card title={cardTitle} className="w-full">
-        {/* 1. Selección de Acción */}
-        <div className="mb-6 text-center">
-          <SelectButton
-            value={accionSeleccionada}
-            options={opcionesAccion}
-            onChange={(e) => setAccionSeleccionada(e.value)}
-            optionLabel="label"
-            itemTemplate={(option) => (
-              <span className="px-2 py-1">{option.label}</span>
-            )}
-            className="entity-selector"
-          />
-        </div>
-
-        {/* --- SECCIÓN DE IMPORTACIÓN --- */}
-        {accionSeleccionada === "importar" && (
-          <div className="p-4 border rounded-md bg-gray-50">
-            <h3 className="text-xl font-semibold mb-4">Importar Datos</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-              <div>
-                <label
-                  htmlFor="entidadImportar"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Tipo de Datos a Importar:
-                </label>
-                <Dropdown
-                  inputId="entidadImportar"
-                  value={entidadImportar}
-                  options={entidadesDisponibles}
-                  onChange={(e) => setEntidadImportar(e.value)}
-                  optionLabel="label"
-                  placeholder="Seleccione tipo de datos"
-                  className="w-full p-inputtext-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Archivo (CSV, XLSX):
-                </label>
-                <FileUpload
-                  ref={fileUploadRef}
-                  name="archivoImportar"
-                  onSelect={handleSeleccionarArchivo}
-                  onClear={() => setArchivoParaImportar(null)}
-                  onRemove={() => setArchivoParaImportar(null)} // Cuando se quita un archivo ya seleccionado
-                  multiple={false}
-                  accept=".csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
-                  maxFileSize={10000000} // 10MB
-                  chooseLabel="Seleccionar Archivo"
-                  uploadLabel="Importar" // No usaremos el upload automático, así que este botón no se mostrará si customUpload es true
-                  cancelLabel="Cancelar"
-                  customUpload // Para manejar la subida manualmente
-                  uploadHandler={handleImportarDatos} // Se llama si no es customUpload o si se usa el botón de upload del componente
-                  emptyTemplate={
-                    <p className="m-0 p-4 text-center text-gray-500">
-                      Arrastre y suelte el archivo aquí, o haga clic en
-                      "Seleccionar Archivo".
-                    </p>
-                  }
-                  className="p-fileupload-sm"
-                />
-                {archivoParaImportar && (
-                  <p className="text-xs text-gray-600 mt-1">
-                    Archivo seleccionado: {archivoParaImportar.name}
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="text-center mt-6">
-              <Button
-                label={
-                  cargandoImportacion ? "Importando..." : "Iniciar Importación"
-                }
-                icon="pi pi-upload"
-                onClick={handleImportarDatos}
-                disabled={
-                  cargandoImportacion ||
-                  !archivoParaImportar ||
-                  !entidadImportar
-                }
-                className="p-button-primary px-6"
-              />
-            </div>
-            <div className="mt-4 text-sm text-gray-600">
-              <p>
-                <strong>Instrucciones:</strong>
-              </p>
-              <ul className="list-disc list-inside ml-4">
-                <li>
-                  Asegúrese de que el archivo tenga las columnas correctas para
-                  el tipo de dato seleccionado.
-                </li>
-                <li>
-                  Formatos soportados: CSV (delimitado por comas, UTF-8), XLSX.
-                </li>
-                <li>
-                  Consulte la documentación para las plantillas de ejemplo.
-                </li>
-              </ul>
-            </div>
+      <Suspense fallback={<div className="p-4 text-center">Cargando interfaz...</div>}>
+        <Toast ref={toast} />
+        <Card title={cardTitle} className="w-full">
+          {/* 1. Selección de Acción */}
+          <div className="mb-6 text-center">
+            <SelectButton
+              value={accionSeleccionada}
+              options={opcionesAccion}
+              onChange={(e) => setAccionSeleccionada(e.value)}
+              optionLabel="label"
+              itemTemplate={(option) => (
+                <span className="px-2 py-1">{option.label}</span>
+              )}
+              className="entity-selector"
+            />
           </div>
-        )}
 
-        {/* --- SECCIÓN DE EXPORTACIÓN --- */}
-        {accionSeleccionada === "exportar" && (
-          <div className="p-4 border rounded-md bg-gray-50">
-            <h3 className="text-xl font-semibold mb-4">Exportar Datos</h3>
-            {/* Fila 1: Entidad y Formato */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-              <div>
-                <label
-                  htmlFor="entidadExportar"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Tipo de Datos a Exportar:
-                </label>
-                <Dropdown
-                  inputId="entidadExportar"
-                  value={entidadExportar}
-                  options={entidadesDisponibles}
-                  onChange={(e) => {
-                    setEntidadExportar(e.value);
-                    // Resetear filtros específicos de entidad si es necesario
-                    setEstadosExportar([]);
-                    setTipoExportar(null);
-                  }}
-                  optionLabel="label"
-                  placeholder="Seleccione tipo de datos"
-                  className="w-full p-inputtext-sm"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="formatoExportar"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Formato de Exportación:
-                </label>
-                <Dropdown
-                  inputId="formatoExportar"
-                  value={formatoExportar}
-                  options={formatosExportacion}
-                  onChange={(e) => setFormatoExportar(e.value)}
-                  optionLabel="label"
-                  className="w-full p-inputtext-sm"
-                />
-              </div>
-            </div>
-
-            {/* Filtros (solo si se ha seleccionado una entidad para exportar) */}
-            {entidadExportar && (
-              <>
-                <h4 className="text-lg font-semibold mb-3 mt-6">
-                  Aplicar Filtros (Opcional)
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mb-4">
-                  {/* Filtro de Rango Temporal */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      {entidadExportar.value === "equipos"
-                        ? "Fecha de Compra:"
-                        : "Fecha (Programada/Realización):"}
-                    </label>
-                    <div className="flex flex-col sm:flex-row items-center gap-2">
-                      <Calendar
-                        value={fechaDesdeExportar}
-                        onChange={(e) => setFechaDesdeExportar(e.value)}
-                        dateFormat="dd/mm/yy"
-                        placeholder="Desde"
-                        showIcon
-                        className="p-inputtext-sm w-full"
-                        maxDate={fechaHastaExportar || new Date()}
-                      />
-                      <span className="hidden sm:inline">-</span>
-                      <Calendar
-                        value={fechaHastaExportar}
-                        onChange={(e) => setFechaHastaExportar(e.value)}
-                        dateFormat="dd/mm/yy"
-                        placeholder="Hasta"
-                        showIcon
-                        className="p-inputtext-sm w-full"
-                        minDate={fechaDesdeExportar}
-                        maxDate={new Date()}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Filtro de Ubicación */}
-                  <div>
-                    <label
-                      htmlFor="ubicacionExportar"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Ubicación:
-                    </label>
-                    <Dropdown
-                      inputId="ubicacionExportar"
-                      value={ubicacionExportar}
-                      options={opcionesUbicacionDropdown}
-                      onChange={(e) => setUbicacionExportar(e.value)}
-                      optionLabel="label"
-                      placeholder="Todas"
-                      showClear
-                      className="w-full p-inputtext-sm"
-                    />
-                  </div>
-
-                  {/* Filtro de Tipo (Equipo o Mantenimiento) */}
-                  <div>
-                    <label
-                      htmlFor="tipoExportar"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      {entidadExportar.value === "equipos"
-                        ? "Tipo de Equipo:"
-                        : "Tipo de Mantenimiento:"}
-                    </label>
-                    <Dropdown
-                      inputId="tipoExportar"
-                      value={tipoExportar}
-                      options={opcionesTipoDropdownExportar}
-                      onChange={(e) => setTipoExportar(e.value)}
-                      optionLabel="label"
-                      placeholder="Todos"
-                      showClear
-                      className="w-full p-inputtext-sm"
-                    />
-                  </div>
-
-                  {/* Filtro de Estado (Solo para Equipos) */}
-                  {entidadExportar.value === "equipos" && (
-                    <div className="md:col-span-2">
-                      {" "}
-                      {/* Ocupa más espacio si es necesario */}
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Estado del Equipo:
-                      </label>
-                      <div className="flex gap-x-4 gap-y-2 flex-wrap">
-                        {opcionesEstadoExportacion.map((estado) => (
-                          <div key={estado.value} className="flex items-center">
-                            <Checkbox
-                              inputId={`estado-export-${estado.value}`}
-                              value={estado.value}
-                              onChange={() =>
-                                handleEstadoChangeExportar(estado.value)
-                              }
-                              checked={estadosExportar.includes(estado.value)}
-                              className="mr-2"
-                            />
-                            <label
-                              htmlFor={`estado-export-${estado.value}`}
-                              className="text-sm font-medium text-gray-700 cursor-pointer"
-                            >
-                              {estado.label}
-                            </label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+          {/* --- SECCIÓN DE IMPORTACIÓN --- */}
+          {accionSeleccionada === "importar" && (
+            <div className="p-4 border rounded-md bg-gray-50">
+              <h3 className="text-xl font-semibold mb-4">Importar Datos</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                <div>
+                  <label
+                    htmlFor="entidadImportar"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Tipo de Datos a Importar:
+                  </label>
+                  <Dropdown
+                    inputId="entidadImportar"
+                    name="entidadImportar"
+                    value={entidadImportar}
+                    options={entidadesDisponibles}
+                    onChange={(e) => setEntidadImportar(e.value)}
+                    optionLabel="label"
+                    placeholder="Seleccione tipo de datos"
+                    className="w-full p-inputtext-sm"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="archivoImportar"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Archivo (CSV, XLSX):
+                  </label>
+                  <FileUpload
+                    ref={fileUploadRef}
+                    id="archivoImportar" // Changed from id to inputId for better label association
+                    name="archivoImportar"
+                    onSelect={handleSeleccionarArchivo}
+                    onClear={() => setArchivoParaImportar(null)}
+                    onRemove={() => setArchivoParaImportar(null)}
+                    multiple={false}
+                    accept=".csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+                    maxFileSize={10000000}
+                    chooseLabel="Seleccionar Archivo"
+                    uploadLabel="Importar"
+                    cancelLabel="Cancelar"
+                    customUpload
+                    uploadHandler={handleImportarDatos}
+                    emptyTemplate={
+                      <p className="m-0 p-4 text-center text-gray-500">
+                        Arrastre y suelte el archivo aquí, o haga clic en
+                        "Seleccionar Archivo".
+                      </p>
+                    }
+                    className="p-fileupload-sm"
+                  />
+                  {archivoParaImportar && (
+                    <p className="text-xs text-gray-600 mt-1">
+                      Archivo seleccionado: {archivoParaImportar.name}
+                    </p>
                   )}
                 </div>
-              </>
-            )}
-
-            <div className="text-center mt-6">
-              <Button
-                label={
-                  cargandoExportacion ? "Exportando..." : "Iniciar Exportación"
-                }
-                icon="pi pi-download"
-                onClick={handleExportarDatos}
-                disabled={
-                  cargandoExportacion || !entidadExportar || !formatoExportar
-                }
-                className="p-button-success px-6"
-              />
+              </div>
+              <div className="text-center mt-6">
+                <Button
+                  label={
+                    cargandoImportacion ? "Importando..." : "Iniciar Importación"
+                  }
+                  icon="pi pi-upload"
+                  onClick={handleImportarDatos}
+                  disabled={
+                    cargandoImportacion ||
+                    !archivoParaImportar ||
+                    !entidadImportar
+                  }
+                  className="p-button-primary px-6"
+                />
+              </div>
+              <div className="mt-4 text-sm text-gray-600">
+                <p>
+                  <strong>Instrucciones:</strong>
+                </p>
+                <ul className="list-disc list-inside ml-4">
+                  <li>
+                    Asegúrese de que el archivo tenga las columnas correctas para
+                    el tipo de dato seleccionado.
+                  </li>
+                  <li>
+                    Formatos soportados: CSV (delimitado por comas, UTF-8), XLSX.
+                  </li>
+                  <li>
+                    Consulte la documentación para las plantillas de ejemplo.
+                  </li>
+                </ul>
+              </div>
             </div>
-          </div>
-        )}
-      </Card>
+          )}
+
+          {accionSeleccionada === "exportar" && (
+            <div className="p-4 border rounded-md bg-gray-50">
+              <h3 className="text-xl font-semibold mb-4">Exportar Datos</h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                <div>
+                  <label
+                    htmlFor="entidadExportar"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Tipo de Datos a Exportar:
+                  </label>
+                  <Dropdown
+                    id="entidadExportar"
+                    name="entidadExportar"
+                    value={entidadExportar}
+                    options={entidadesDisponibles}
+                    onChange={(e) => {
+                      setEntidadExportar(e.value);
+                      setEstadosExportar([]);
+                      setTipoExportar(null);
+                    }}
+                    optionLabel="label"
+                    placeholder="Seleccione tipo de datos"
+                    className="w-full p-inputtext-sm"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="formatoExportar"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Formato de Exportación:
+                  </label>
+                  <Dropdown
+                    id="formatoExportar"
+                    name="formatoExportar"
+                    value={formatoExportar}
+                    options={formatosExportacion}
+                    onChange={(e) => setFormatoExportar(e.value)}
+                    optionLabel="label"
+                    className="w-full p-inputtext-sm"
+                  />
+                </div>
+              </div>
+
+              {entidadExportar && (
+                <>
+                  <h4 className="text-lg font-semibold mb-3 mt-6">
+                    Aplicar Filtros (Opcional)
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mb-4">
+                    <div>
+                      <label
+                        htmlFor="fechaDesdeExportarInput" // Points to the first calendar
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        {entidadExportar.value === "equipos"
+                          ? "Fecha de Compra:"
+                          : "Fecha (Programada/Realización):"}
+                      </label>
+                      <div className="flex flex-col sm:flex-row items-center gap-2">
+                        <Calendar
+                          inputId="fechaDesdeExportarInput"
+                          name="fechaDesdeExportar"
+                          value={fechaDesdeExportar}
+                          onChange={(e) => setFechaDesdeExportar(e.value)}
+                          dateFormat="dd/mm/yy"
+                          placeholder="Desde"
+                          showIcon
+                          className="p-inputtext-sm w-full"
+                          maxDate={fechaHastaExportar || new Date()}
+                        />
+                        <span className="hidden sm:inline">-</span>
+                        {/* Add a visually hidden label for the "Hasta" date for accessibility */}
+                        <label htmlFor="fechaHastaExportarInput" className="sr-only">Fecha hasta</label>
+                        <Calendar
+                          inputId="fechaHastaExportarInput"
+                          name="fechaHastaExportar"
+                          value={fechaHastaExportar}
+                          onChange={(e) => setFechaHastaExportar(e.value)}
+                          dateFormat="dd/mm/yy"
+                          placeholder="Hasta"
+                          showIcon
+                          className="p-inputtext-sm w-full"
+                          minDate={fechaDesdeExportar}
+                          maxDate={new Date()}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="ubicacionExportar"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        Ubicación:
+                      </label>
+                      <Dropdown
+                        id="ubicacionExportar"
+                        name="ubicacionExportar"
+                        value={ubicacionExportar}
+                        options={opcionesUbicacionDropdown}
+                        onChange={(e) => setUbicacionExportar(e.value)}
+                        optionLabel="label"
+                        placeholder="Todas"
+                        showClear
+                        className="w-full p-inputtext-sm"
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="tipoExportar"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        {entidadExportar.value === "equipos"
+                          ? "Tipo de Equipo:"
+                          : "Tipo de Mantenimiento:"}
+                      </label>
+                      <Dropdown
+                        id="tipoExportar"
+                        name="tipoExportar"
+                        value={tipoExportar}
+                        options={opcionesTipoDropdownExportar}
+                        onChange={(e) => setTipoExportar(e.value)}
+                        optionLabel="label"
+                        placeholder="Todos"
+                        showClear
+                        className="w-full p-inputtext-sm"
+                      />
+                    </div>
+
+                    {entidadExportar.value === "equipos" && (
+                      <div className="md:col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Estado del Equipo:
+                        </label>
+                        <div className="flex gap-x-4 gap-y-2 flex-wrap">
+                          {opcionesEstadoExportacion.map((estado) => (
+                            <div key={estado.value} className="flex items-center">
+                              <Checkbox
+                                inputId={`estado-export-${estado.value}`}
+                                value={estado.value}
+                                onChange={() =>
+                                  handleEstadoChangeExportar(estado.value)
+                                }
+                                checked={estadosExportar.includes(estado.value)}
+                                className="mr-2"
+                              />
+                              <label
+                                htmlFor={`estado-export-${estado.value}`}
+                                className="text-sm font-medium text-gray-700 cursor-pointer"
+                              >
+                                {estado.label}
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+
+              <div className="text-center mt-6">
+                <Button
+                  label={
+                    cargandoExportacion ? "Exportando..." : "Iniciar Exportación"
+                  }
+                  icon="pi pi-download"
+                  onClick={handleExportarDatos}
+                  disabled={
+                    cargandoExportacion || !entidadExportar || !formatoExportar
+                  }
+                  className="p-button-success px-6"
+                />
+              </div>
+            </div>
+          )}
+        </Card>
+      </Suspense>
     </div>
   );
 }

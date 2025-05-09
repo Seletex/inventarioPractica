@@ -1,4 +1,4 @@
-export const DatosTipoEquipo = [
+const DatosTipoEquipo = [
     {value: "",label:"Seleccione tipo de equipo"},
     {value: "Computador",label:"Computador"},
     {value: "Laptop",label:"Laptop"},
@@ -8,4 +8,6 @@ export const DatosTipoEquipo = [
     {value: "Escáner",label:"Escáner"},
     {value: "MiniPC",label:"Mini PC"},
     {value: "Computadores",label:"Computadores"},
-]
+];
+
+export default DatosTipoEquipo;

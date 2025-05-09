@@ -110,11 +110,11 @@ export const mockEquiposService = {
           cumpleFiltro = cumpleFiltro && equipo.estado === filtros.estado;
         }
 
-        // Filtro por Fecha Compra
+
         if (filtros.fecha_compra) {
           const filtroFecha = normalizeDateString(filtros.fecha_compra);
           const equipoFecha = normalizeDateString(equipo.fecha_compra);
-          // Solo comparamos si ambas fechas (filtro y dato) son válidas y coincidentes
+
           cumpleFiltro =
             cumpleFiltro &&
             filtroFecha &&
@@ -167,10 +167,10 @@ export const mockEquiposService = {
       setTimeout(() => resolve(resultados), 500);
     }),
   getById: async (placa) => {
-    // Buscar el equipo por placa
+  
     const equipo = equiposMock.find((e) => e.placa === placa);
 
-    // Si no encuentra el equipo, debería manejar este caso
+
     if (!equipo) {
       throw new Error(`No se encontró equipo con placa ${placa}`);
     }
@@ -194,7 +194,7 @@ export const mockEquiposService = {
             )
           );
         }
-      }, 300); // Simula delay
+      }, 300);
     });
   },
   actualizarMantenimiento: async (placa, datosActualizados) => {
@@ -202,11 +202,10 @@ export const mockEquiposService = {
       setTimeout(() => {
         const equipoIndex = equiposMock.findIndex(e => e.placa === placa);
         if (equipoIndex !== -1) {
-          // Actualizar solo los campos proporcionados en datosActualizados
-          // y asegurarse de que la fechaRealizacion se maneje correctamente
+
           const fechaRealizacionActualizada = datosActualizados.fechaRealizacion
             ? new Date(datosActualizados.fechaRealizacion).toISOString()
-            : equiposMock[equipoIndex].fechaRealizacion; // Mantener la existente si no se provee una nueva válida
+            : equiposMock[equipoIndex].fechaRealizacion; 
 
           equiposMock[equipoIndex] = {
             ...equiposMock[equipoIndex],

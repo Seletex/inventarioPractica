@@ -1,14 +1,14 @@
-import { DatosUbicacion } from "./DatosUbicaciones.jsx"; // Verifica la ruta
+import { DatosUbicacion } from "./DatosUbicaciones.jsx";
 
-import { DatosTipoEquipo } from "./DatosTipoEquipo.jsx"; // Verifica la ruta
-import { MarcaComputador } from "./MarcaComputador.jsx"; // Verifica la ruta
-import { MarcaMonitor } from "./MarcaMonitor.jsx"; // Verifica la ruta
-import { MarcaImpresora } from "./MarcaImpresora.jsx"; // Verifica la ruta
-import { RAM } from "./RAM.jsx"; // Verifica la ruta
-import { TipoAlmacenamiento } from "./TipoAlmacenamiento.jsx"; // Verifica la ruta
-import { SistemaOperativo } from "./SistemaOperativo.jsx"; // Verifica la ruta
-import { TiempoGarantia } from "./TiempoGarantia.jsx"; // Verifica la ruta
-import { VersionOffice } from "./VersionOffice.jsx"; // Verifica la ruta
+import { DatosTipoEquipo } from "./DatosTipoEquipo.jsx";
+
+import { MarcaMonitor } from "./MarcaMonitor.jsx";
+
+import { RAM } from "./RAM.jsx";
+import { TipoAlmacenamiento } from "./TipoAlmacenamiento.jsx";
+import { SistemaOperativo } from "./SistemaOperativo.jsx";
+import { TiempoGarantia } from "./TiempoGarantia.jsx";
+import { VersionOffice } from "./VersionOffice.jsx";
 
 import {
   siNoOpcionesEntrega,
@@ -19,12 +19,10 @@ import {
 
 import { obtenerFechaActual } from "../utiles/FechaActual.jsx";
 
-// Función auxiliar para generar opciones de select
 const generarOpcionesSelect = (dataArray) => {
   return dataArray.map((item) => ({ value: item.value, label: item.label }));
 };
 
-// Definición de los campos del formulario
 const camposFormularioEquipo = [
   {
     type: "text",
@@ -38,17 +36,17 @@ const camposFormularioEquipo = [
     name: "tipoEquipo",
     placeHolder: "Tipo Equipo:",
     required: true,
-    options: generarOpcionesSelect(DatosTipoEquipo), // Usar función auxiliar
+    options: generarOpcionesSelect(DatosTipoEquipo),
     icon: "FiMonitor",
   },
-  // Marca depende del tipo, se maneja dinámicamente, puede ser searchable
+
   {
     type: "select",
     name: "marca",
     required: true,
     icon: "FiTag",
     searchable: true,
-  }, // Añadido 'searchable'
+  },
 
   {
     type: "text",
@@ -79,24 +77,22 @@ const camposFormularioEquipo = [
     icon: "FiMonitor",
   },
 
-
-  // --- CAMBIO AQUÍ: Añadimos searchable a Ubicación ---
   {
     type: "select",
     name: "ubicacion",
     placeholder: "Ubicación:",
     required: true,
-    options: generarOpcionesSelect(DatosUbicacion), // Usar función auxiliar
+    options: generarOpcionesSelect(DatosUbicacion),
     icon: "FiMapPin",
     searchable: true,
-  }, // Añadido 'searchable'
+  },
 
   {
     type: "select",
     name: "ram",
     placeholder: "RAM:",
     required: false,
-    options: generarOpcionesSelect(RAM), // Usar función auxiliar
+    options: generarOpcionesSelect(RAM),
     icon: "FiCpu",
   },
   {
@@ -104,7 +100,7 @@ const camposFormularioEquipo = [
     name: "tipo_almacenamiento",
     placeholder: "Tipo de Almacenamiento:",
     required: false,
-    options: generarOpcionesSelect(TipoAlmacenamiento), // Usar función auxiliar
+    options: generarOpcionesSelect(TipoAlmacenamiento),
     icon: "FiHardDrive",
   },
   {
@@ -120,14 +116,14 @@ const camposFormularioEquipo = [
     name: "sistema_operativo",
     placeHolder: "Sistema Operativo: ",
     required: false,
-    options: generarOpcionesSelect(SistemaOperativo), // Usar función auxiliar
+    options: generarOpcionesSelect(SistemaOperativo),
     icon: "FiCpu",
   },
   {
     type: "select",
     name: "office",
     required: false,
-    options: generarOpcionesSelect(VersionOffice), // Usar función auxiliar
+    options: generarOpcionesSelect(VersionOffice),
     icon: "FiMonitor",
   },
   {
@@ -151,7 +147,7 @@ const camposFormularioEquipo = [
     name: "tiempo_garantia",
     placeHolder: "Tiempo de Garantía:",
     required: false,
-    options: generarOpcionesSelect(TiempoGarantia), // Usar función auxiliar
+    options: generarOpcionesSelect(TiempoGarantia),
     icon: "FiCalendar",
   },
 
@@ -172,9 +168,9 @@ const camposFormularioEquipo = [
     type: "select",
     name: "monitor",
     required: false,
-    options: generarOpcionesSelect(MarcaMonitor), // Usar función auxiliar
+    options: generarOpcionesSelect(MarcaMonitor),
     icon: "FiMonitor",
-    searchable: true, // Puede ser searchable
+    searchable: true,
   },
   {
     type: "text",
@@ -208,5 +204,3 @@ const camposFormularioEquipo = [
 ];
 
 export { camposFormularioEquipo };
-
-// Revisa rutas y nombres de exportación

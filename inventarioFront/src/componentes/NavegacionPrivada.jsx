@@ -77,15 +77,15 @@ const NavegacionPrivada = () => {
   }
 
   if (itemsPrivados.length === 0) {
-    return null; // No mostrar la barra si no hay items permitidos
+    return null; 
   }
 
   const menubarStyles = {
     width: "100%",
     fontFamily: "'Times New Roman', Times, serif",
-    fontSize: "15px", // Puede ser igual o ligeramente diferente a la pública
-    marginBottom: "1rem", // Opcional, depende de cómo se integre en el layout
-    borderTop: "1px solid #e9ecef", // Un separador visual ligero
+    fontSize: "15px",
+    marginBottom: "1rem", 
+    borderTop: "1px solid #e9ecef", 
   };
 
   return <Menubar style={menubarStyles} model={itemsPrivados} />;

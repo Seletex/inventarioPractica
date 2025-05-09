@@ -9,7 +9,7 @@ export const manipuladoras = [
           id: 1,
           placa: '122',
           marca: 'Lenovo',
-          // ... resto de campos
+        
         }
       ])
     );

@@ -1,124 +1,109 @@
-import { useState, useEffect } from "react"; // Importamos useEffect
-import { useNavigate, Link, useParams } from "react-router-dom"; // Importamos useParams
+import { useState, useEffect } from "react";
+import { useNavigate, Link, useParams } from "react-router-dom";
 import Entrada from "../../componentes/InterfazUsuario/Entrada.jsx";
-import Boton from "../../componentes/InterfazUsuario/Boton.jsx"; // Importamos Boton
+import Boton from "../../componentes/InterfazUsuario/Boton.jsx";
 import { Card } from "primereact/card";
-import { FiTag, FiUser, FiCalendar, FiSettings } from "react-icons/fi"; 
-import { DatosTipoMantenimiento } from "../../componentes/Datos/DatosTipoMantenimiento.jsx"; 
-import { mockEquiposService as equiposService } from "../../servicios/mockEquipos.api.js"; // Servicio
-// Importar el servicio de mantenimientos (NECESITAS CREAR ESTE SERVICIO)
-import { mockMantenimientoService as mantenimientosService } from "../../servicios/mockMantenimientos.api.js" // Servicio
+import { FiTag, FiUser, FiCalendar } from "react-icons/fi";
+import { DatosTipoMantenimiento } from "../../componentes/Datos/DatosTipoMantenimiento.jsx";
+import { mockEquiposService as equiposService } from "../../servicios/mockEquipos.api.js";
 
-// Importar toastify
+import { mockMantenimientoService as mantenimientosService } from "../../servicios/mockMantenimientos.api.js";
+
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Estilos de toast
+import "react-toastify/dist/ReactToastify.css";
 
-// Importar el hook para obtener el usuario logueado (asegúrate de la ruta)
 import { useUsuarioLogueado } from "../../autenticacion/contexto/UsuarioLogueado.jsx";
 
-
 export default function PaginaNuevoMantenimiento() {
-  // --- Estado del formulario para el mantenimiento ---
   const [formulario, setFormulario] = useState({
-    placa: "", // Se pre-llenará desde la URL/equipo
-    tipoMantenimiento: "", // Select para el tipo de mantenimiento
-    fechaProgramada: "", // Input de fecha para la fecha programada
-    tecnico: "", // Campo para el técnico (pre-llenado con responsable/usuario logueado)
-    // Puedes añadir otros campos si tu mantenimiento los requiere (ej: observaciones, estado inicial)
+    placa: "",
+    tipoMantenimiento: "",
+    fechaProgramada: "",
+    tecnico: "",
   });
 
   const [error, setError] = useState("");
-  const [cargandoInicial, setCargandoInicial] = useState(true); // Para mostrar "Cargando..."
-  const [cargandoEnvio, setCargandoEnvio] = useState(false); // Para el botón de envío
+  const [cargandoInicial, setCargandoInicial] = useState(true);
+  const [cargandoEnvio, setCargandoEnvio] = useState(false);
 
-  // Estado para guardar los datos completos del equipo cargado (para mostrar tipoEquipo)
   const [datosEquipoCargado, setDatosEquipoCargado] = useState(null);
 
-
-  const { placa } = useParams(); // Obtener la placa de la URL
+  const { placa } = useParams();
   const navigate = useNavigate();
 
-  // Obtener el usuario logueado
   const usuarioLogueado = useUsuarioLogueado();
 
-
-  // --- Efecto para cargar datos del equipo y pre-llenar Placa y Técnico ---
   useEffect(() => {
     const inicializarFormulario = async () => {
       setCargandoInicial(true);
       setError("");
 
-      let placaCargada = ""; // Para guardar la placa obtenida del servicio
-      let tecnicoInicial = ""; // Para guardar el nombre del técnico inicial
-      let equipoData = null; // Para guardar los datos completos del equipo
+      let placaCargada = "";
+      let tecnicoInicial = "";
+      let equipoData = null;
 
-      // 1. Si la placa viene en la URL, intentar cargar el equipo
       if (placa) {
         try {
           equipoData = await equiposService.getById(placa);
-          placaCargada = equipoData.placa; // Usar la placa del objeto cargado para el estado
-          setDatosEquipoCargado(equipoData); // Guardar datos completos del equipo
-
+          placaCargada = equipoData.placa;
+          setDatosEquipoCargado(equipoData);
         } catch (err) {
-          const errorMessage = err.message || "Error desconocido al cargar equipo.";
-          setError(`Error cargando datos del equipo con placa ${placa}: ` + errorMessage);
+          const errorMessage =
+            err.message || "Error desconocido al cargar equipo.";
+          setError(
+            `Error cargando datos del equipo con placa ${placa}: ` +
+              errorMessage
+          );
           console.error("Error cargando equipo:", err);
-          // Opcional: Si el equipo no existe o falla, mostrar error y quizás no mostrar formulario
-          // setDatosEquipoCargado(null); // Asegurarse de que no haya datos de equipo si falla
+
+          // setDatosEquipoCargado(null); En caso de que no haya datos, revisar, de que no haya datos de equipo si falla
         }
       } else {
         setError("Placa de equipo no proporcionada en la URL.");
-        console.warn("Página de nuevo mantenimiento accedida sin placa en URL.");
-        // Opcional: Redirigir si no hay placa
-        // navigate('/gestionar-equipos');
+        console.warn(
+          "Página de nuevo mantenimiento accedida sin placa en URL."
+        );
+
+        navigate("/gestion-equipos");
       }
 
-      // 2. Determinar el técnico inicial desde el usuario logueado
-      if (usuarioLogueado && usuarioLogueado.nombreCompleto) { // Asumiendo que el objeto usuario tiene 'nombreCompleto'
-          tecnicoInicial = usuarioLogueado.nombreCompleto;
+      if (usuarioLogueado && usuarioLogueado.nombreCompleto) {
+        tecnicoInicial = usuarioLogueado.nombreCompleto;
       } else {
-           tecnicoInicial = "Desconocido"; // O "". Si el usuario NO está logueado, quizás no se permite crear mantenimiento?
-           // toast.warn("Debes iniciar sesión para programar mantenimiento.");
-           // navigate('/login'); // Redirigir al login si es mandatorio
+        tecnicoInicial = "Desconocido";
+        toast.warn("Debes iniciar sesión para programar mantenimiento.");
+        navigate("/login");
       }
 
-
-      // 3. Pre-llenar el estado del formulario de mantenimiento
-      setFormulario(prevFormulario => ({
-          ...prevFormulario, // Mantiene otros campos como tipoMantenimiento, fechaProgramada ("")
-          placa: placaCargada, // Pre-llenar placa (vacía si hubo error/no URL)
-          tecnico: tecnicoInicial, // Pre-llenar técnico
-          fechaProgramada: new Date().toISOString().split('T')[0], // Opcional: Pre-llenar fecha con hoy
+      setFormulario((prevFormulario) => ({
+        ...prevFormulario,
+        placa: placaCargada,
+        tecnico: tecnicoInicial,
+        fechaProgramada: new Date().toISOString().split("T")[0],
       }));
 
-      setCargandoInicial(false); // Desactivar carga inicial
+      setCargandoInicial(false);
     };
 
-    // Ejecutar la inicialización
     inicializarFormulario();
+  }, [placa, navigate, usuarioLogueado]);
 
-  }, [placa, navigate, usuarioLogueado]); // Dependencias del efecto
-
-
-  // --- Manejar el cambio en cualquier campo del formulario ---
   const manejarCambio = (e) => {
     const { name, value } = e.target;
-    setFormulario(prevFormulario => ({
+    setFormulario((prevFormulario) => ({
       ...prevFormulario,
       [name]: value,
     }));
   };
 
-  // --- Manejar el envío del formulario para CREAR MANTENIMIENTO ---
   const manejarEnvio = async (e) => {
     e.preventDefault();
     setError("");
     setCargandoEnvio(true);
 
-    // --- Validaciones ---
-    // Validar que los campos requeridos estén llenos ANTES de enviar
+
     if (!formulario.placa) {
-      setError("Error: Placa del equipo no cargada."); // Este caso no debería pasar si la carga inicial fue exitosa
+      setError("Error: Placa del equipo no cargada."); 
       setCargandoEnvio(false);
       toast.error("Error: Placa del equipo no disponible.");
       return;
@@ -135,45 +120,43 @@ export default function PaginaNuevoMantenimiento() {
       toast.error("La Fecha Programada es requerida.");
       return;
     }
-     if (!formulario.tecnico) {
-       setError("El Técnico es requerido.");
-       setCargandoEnvio(false);
-       toast.error("El Técnico es requerido.");
-       return;
-     }
+    if (!formulario.tecnico) {
+      setError("El Técnico es requerido.");
+      setCargandoEnvio(false);
+      toast.error("El Técnico es requerido.");
+      return;
+    }
 
 
-    // --- Preparar datos para enviar al servicio de Mantenimientos ---
     const datosParaMantenimiento = {
-       // Asumimos que el modelo de mantenimiento tiene estos campos
-       // Puede que necesite un equipmentId o equipmentPlaca para relacionarlo
-       equipoPlaca: formulario.placa, // Relacionar con el equipo por placa
-       tipo: formulario.tipoMantenimiento, // Tipo de mantenimiento
-       fechaProgramada: formulario.fechaProgramada, // Fecha programada (formato YYYY-MM-DD)
-       tecnico: formulario.tecnico, // Técnico asignado
-       fechaRealizacion: null, // Inicialmente no realizado
-       estado: "Programado", // Estado inicial por defecto
-       // Puedes añadir otros campos si tu modelo de mantenimiento los tiene
-       ubicacion: datosEquipoCargado?.ubicacion || formulario.ubicacion || "", // Opcional: guardar la ubicación del equipo en el mantenimiento
-       responsable: datosEquipoCargado?.responsable || "", // Opcional: guardar el responsable del equipo en el mantenimiento
-       // ID será generado por el backend o el mock service
+   
+      equipoPlaca: formulario.placa,
+      tipo: formulario.tipoMantenimiento,
+      fechaProgramada: formulario.fechaProgramada,
+      tecnico: formulario.tecnico,
+      fechaRealizacion: null,
+      estado: "Programado",
+    
+      ubicacion: datosEquipoCargado?.ubicacion || formulario.ubicacion || "", 
+      responsable: datosEquipoCargado?.responsable || "", 
+  
     };
 
     try {
-      // --- LLAMAR AL SERVICIO PARA CREAR EL MANTENIMIENTO ---
-      // Asumimos que tu mockMantenimientosService tiene un método 'create'
+   
       await mantenimientosService.create(datosParaMantenimiento);
 
-      // --- Mostrar mensaje de éxito ---
-      toast.success(`Mantenimiento programado para placa ${formulario.placa} el ${formulario.fechaProgramada}.`);
+   
+      toast.success(
+        `Mantenimiento programado para placa ${formulario.placa} el ${formulario.fechaProgramada}.`
+      );
 
-      // --- Redirigir después de la acción ---
-      navigate("/programados"); // O a la página de gestión de mantenimientos
-
-
+ 
+      navigate("/programados"); 
     } catch (err) {
-      // --- Mostrar mensaje de error ---
-      const errorMessage = err.message || "Error desconocido al programar mantenimiento.";
+  
+      const errorMessage =
+        err.message || "Error desconocido al programar mantenimiento.";
       setError(`Error al programar mantenimiento: ${errorMessage}`);
       console.error("Error programando mantenimiento:", err);
       toast.error(`Error al programar: ${errorMessage}`);
@@ -182,46 +165,48 @@ export default function PaginaNuevoMantenimiento() {
     }
   };
 
-  // --- JSX: Mostrar estado de carga inicial o el formulario ---
-  // Mostramos "Cargando..." solo si estamos cargando *inicialmente*
+
   if (cargandoInicial) {
-      return (
-          <div className="min-h-screen flex items-center justify-center">
-              <p>Cargando datos del equipo {placa ? `con placa ${placa}` : ''}...</p>
-          </div>
-      );
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Cargando datos del equipo {placa ? `con placa ${placa}` : ""}...</p>
+      </div>
+    );
   }
 
-   // Si hubo un error de carga inicial Y no se pudo obtener la placa del equipo cargado
-   // O si no se proporcionó placa en la URL y es requerida
-   // También si no hay datos de equipo cargados (ej: equipo no encontrado)
+
   if (error || !datosEquipoCargado) {
-       return (
-           <div className="min-h-screen flex items-center justify-center text-red-600">
-               <p>{error || `No se encontraron datos para el equipo con placa ${placa}.`}</p>
-               {/* Enlace para volver */}
-               <div className="text-center text-sm text-gray-600 mt-4">
-                 <Link to="/gestionar-equipos" className="text-blue-600 hover:text-blue-800 font-medium">
-                     Volver a la gestión de equipos
-                 </Link>
-              </div>
-           </div>
-       );
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-600">
+        <p>
+          {error ||
+            `No se encontraron datos para el equipo con placa ${placa}.`}
+        </p>
+    
+        <div className="text-center text-sm text-gray-600 mt-4">
+          <Link
+            to="/gestion-equipos"
+            className="text-blue-600 hover:text-blue-800 font-medium"
+          >
+            Volver a la gestión de equipos
+          </Link>
+        </div>
+      </div>
+    );
   }
 
-  // Si el formulario está cargado (tenemos datosEquipoCargado) y no hay error de carga principal
-  // Usamos 'datosEquipoCargado' para renderizar la placa y tipo en el título
+ 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-xl shadow-2xl p-8 sm:p-10">
-
           <Card
-            // --- Título y subtítulo del mantenimiento ---
+          
             title="Nuevo Mantenimiento"
             subTitle={
               <p className="text-gray-600 text-sm">
-                Placa: {datosEquipoCargado.placa} | Tipo: {datosEquipoCargado.tipoEquipo}
+                Placa: {datosEquipoCargado.placa} | Tipo:{" "}
+                {datosEquipoCargado.tipoEquipo}
               </p>
             }
             className="w-full md:w-30rem"
@@ -233,50 +218,55 @@ export default function PaginaNuevoMantenimiento() {
               fontFamily: "'Times New Roman', Times, serif",
             }}
           >
-             {/* Mostrar errores de validación/envío dentro del Card */}
-             {error && ( // Mostrar error si hay alguno después de la carga inicial exitosa
-                <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm">
-                  {error}
-                </div>
-              )}
+
+            {error && ( 
+              <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
 
             <form className="space-y-6" onSubmit={manejarEnvio}>
-
-              {/* Campo Placa (Solo Mostrar, Deshabilitado) */}
-              {/* Puedes mostrarlo como Entrada deshabilitada o simplemente como texto */}
+          
               <div className="campo">
-                 <label className="block text-sm font-medium text-gray-700">Placa:</label>
-                 <p className="mt-1 p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-700">{datosEquipoCargado.placa}</p>
-                 {/* IMPORTANTE: Incluir un campo hidden con la placa si no la incluyes en datosParaMantenimiento directamente */}
-                 {/* Si datosParaMantenimiento.equipoPlaca = formulario.placa; esto ya es suficiente */}
+                <label className="block text-sm font-medium text-gray-700">
+                  Placa:
+                </label>
+                <p className="mt-1 p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-700">
+                  {datosEquipoCargado.placa}
+                </p>
+              
               </div>
 
-              {/* --- Campo Tipo de Mantenimiento (Select) --- */}
+            
               <div className="campo">
-                 <label htmlFor="tipoMantenimiento" className="block text-sm font-medium text-gray-700 mb-1">
-                     Tipo de Mantenimiento:
-                     {!formulario.tipoMantenimiento && <span className="text-red-500"> *</span>} {/* Mostrar * si no seleccionado */}
-                 </label>
-                 <select
-                     id="tipoMantenimiento"
-                     name="tipoMantenimiento"
-                     value={formulario.tipoMantenimiento}
-                     onChange={manejarCambio}
-                     required={true} // Validamos en JS
-                     className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                 >
-                     {/* Mapear las opciones de DatosTipoMantenimiento */}
-                      {/* Asumimos DatosTipoMantenimiento[0] es la opción por defecto { value: "", label: "Seleccionar tipo" } */}
-                     {DatosTipoMantenimiento.map((tipoOpcion) => (
-                       <option key={tipoOpcion.value} value={tipoOpcion.value}>
-                         {tipoOpcion.label}
-                       </option>
-                     ))}
-                 </select>
-                 {/* Puedes añadir un icono al lado del select si lo necesitas */}
+                <label
+                  htmlFor="tipoMantenimiento"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Tipo de Mantenimiento:
+                  {!formulario.tipoMantenimiento && (
+                    <span className="text-red-500"> *</span>
+                  )}{" "}
+               
+                </label>
+                <select
+                  id="tipoMantenimiento"
+                  name="tipoMantenimiento"
+                  value={formulario.tipoMantenimiento}
+                  onChange={manejarCambio}
+                  required={true} 
+                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                >
+                {DatosTipoMantenimiento.map((tipoOpcion) => (
+                    <option key={tipoOpcion.value} value={tipoOpcion.value}>
+                      {tipoOpcion.label}
+                    </option>
+                  ))}
+                </select>
+              
               </div>
 
-              {/* --- Campo Fecha Programada (Date Input) --- */}
+    
               <Entrada
                 placeHolder="Fecha Programada"
                 tipo="date"
@@ -288,29 +278,29 @@ export default function PaginaNuevoMantenimiento() {
                 label="Fecha Programada:"
               />
 
-              {/* Campo Técnico (Pre-llenado y Editable) */}
+            
               <Entrada
                 placeHolder="Técnico Asignado"
                 tipo="text"
                 name="tecnico"
-                valor={formulario.tecnico} // Valor pre-llenado del usuario logueado
-                required={true} // Validamos que sea requerido
-                manejarCambio={manejarCambio} // Permite modificar
+                valor={formulario.tecnico} 
+                required={true}
+                manejarCambio={manejarCambio} 
                 icono={<FiUser className="text-gray-400" />}
                 label="Técnico:"
-                // Opcional: deshabilitar si no quieres que cambien el técnico
+          
                 disabled={true}
               />
 
-              {/* --- Botón para Registrar Mantenimiento --- */}
+           
               <Boton tipo="submit" disabled={cargandoEnvio}>
                 {cargandoEnvio ? "Registrando..." : "Registrar Mantenimiento"}
               </Boton>
 
-              {/* --- Enlace para Cancelar --- */}
+         
               <div className="text-center text-sm text-gray-600">
                 <Link
-                  to={`/gestionar-equipos`} 
+                  to={`/gestionar-equipos`}
                   className="text-blue-600 hover:text-blue-800 font-medium"
                 >
                   Cancelar

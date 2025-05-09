@@ -36,7 +36,7 @@ const MantenimientoMock = [
 export const mockMantenimientoService = {
   getAll: () =>
     new Promise((resolve) => {
-      setTimeout(() => resolve(MantenimientoMock), 500); // Simula delay de red
+      setTimeout(() => resolve(MantenimientoMock), 500); 
     }),
 
   filtrarAvanzado: (filtros) =>
@@ -48,13 +48,13 @@ export const mockMantenimientoService = {
             const date = new Date(dateStr);
 
             if (isNaN(date.getTime())) {
-              return null; // Fecha inválida
+              return null; 
             }
 
             return date.toISOString().split("T")[0];
           } catch (e) {
             console.error("Error parsing date string: ", dateStr, e);
-            return null; // Manejar errores de parseo
+            return null; 
           }
         };
         let cumpleFiltro = true;
@@ -73,11 +73,11 @@ export const mockMantenimientoService = {
           cumpleFiltro = cumpleFiltro && equipo.estado === filtros.estado;
         }
 
-        // Filtro por Fecha Compra
+     
         if (filtros.fecha_compra) {
           const filtroFecha = normalizeDateString(filtros.fecha_compra);
           const equipoFecha = normalizeDateString(equipo.fecha_compra);
-          // Solo comparamos si ambas fechas (filtro y dato) son válidas y coincidentes
+
           cumpleFiltro =
             cumpleFiltro &&
             filtroFecha &&
@@ -130,10 +130,9 @@ export const mockMantenimientoService = {
       setTimeout(() => resolve(resultados), 500);
     }),
   getById: async (placa) => {
-    // Buscar el equipo por placa
+  
     const equipo = MantenimientoMock.find((e) => e.placa === placa);
 
-    // Si no encuentra el equipo, debería manejar este caso
     if (!equipo) {
       throw new Error(`No se encontró equipo con placa ${placa}`);
     }

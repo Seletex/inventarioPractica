@@ -1,11 +1,11 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from "react"; // Añadir useCallback y useMemo
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { mockUsuariosService as usuariosService } from "../../servicios/mockUsuarios.api.js";
-import { TablaEquipos } from "../../autenticacion/contexto/TablaDatos.jsx"; // Reutilizamos TablaDatos
+import { TablaEquipos } from "../../autenticacion/contexto/TablaDatos.jsx";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { InputText } from "primereact/inputtext";
-import { Tag } from "primereact/tag"; // Importar Tag para roles
-import { Card } from "primereact/card"; // Importar Card
+import { Tag } from "primereact/tag";
+import { Card } from "primereact/card";
 import {
   mostrarErrorFn,
   mostrarExitoFn,
@@ -15,8 +15,8 @@ import {
 const normalizarString = (str) => {
   if (typeof str !== "string") return "";
   return str
-    .normalize("NFD") // Descomponer caracteres acentuados
-    .replace(/[\u0300-\u036f]/g, "") // Eliminar diacríticos
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 };
 function useDebounce(value, delay) {
@@ -30,7 +30,6 @@ function useDebounce(value, delay) {
   return debouncedValue;
 }
 
-// Hook para detectar cambios en el tamaño de la pantalla (media query)
 const useMediaQuery = (query) => {
   const [matches, setMatches] = useState(window.matchMedia(query).matches);
   useEffect(() => {
@@ -45,7 +44,7 @@ const getRolSeverity = (rol) => {
   const lowerRol = rol?.toLowerCase();
   if (lowerRol === "administrador") return "danger";
   if (lowerRol === "tecnico") return "warning";
-  return "info"; // Default
+  return "info";
 };
 const EditUserButton = ({ onClick, className, tooltipOptions }) => (
   <Button
@@ -73,15 +72,11 @@ export default function GestionarUsuarios() {
   const [usuarios, setUsuarios] = useState([]);
   const [usuariosFiltrados, setUsuariosFiltrados] = useState([]);
   const [carga, asignarCarga] = useState(true);
-  const [mostrarModal, asignarMostrarModal] = useState(false); // Renombrado para claridad
+  const [mostrarModal, asignarMostrarModal] = useState(false);
   const [usuarioEditando, setUsuarioEditando] = useState(null);
   const [busqueda, setBusqueda] = useState("");
   const toast = useRef(null);
-  // Hook para retrasar la ejecución de una función (debouncing)
 
-  // --- FIN FUNCIONES AUXILIARES ---
-
-  // Funciones para mostrar mensajes (estables con useCallback)
   const mostrarMensajeExito = useCallback((mensaje) => {
     mostrarExitoFn(mensaje, toast);
   }, []);
@@ -93,7 +88,6 @@ export default function GestionarUsuarios() {
   const busquedaDebounced = useDebounce(busqueda, 300);
   const esMovilPequeno = useMediaQuery("(max-width: 575px)");
 
-  // Cargar lista de usuarios
   const cargarUsuarios = useCallback(async () => {
     await cargarEntidadesFn(
       asignarCarga,
@@ -101,53 +95,44 @@ export default function GestionarUsuarios() {
       setUsuarios,
       setUsuariosFiltrados,
       mostrarMensajeError,
-      "usuarios" // Nombre de la entidad
+      "usuarios"
     );
-  }, [mostrarMensajeError]); // Dependencia estable
-
-  // Función para eliminar usuario (estable con useCallback)
-  // Se asume que manejoEliminarEntidadFn ya incluye confirmación o se añade aquí
+  }, [mostrarMensajeError]);
   const manejoEliminarUsuario = useCallback(
     async (id) => {
       // Ejemplo si necesitaras confirmación aquí:
       // confirmarAccionFn(
       //   '¿Está seguro de eliminar este usuario?',
       //   'Confirmar Eliminación',
-      //   async () => { // Función a ejecutar si acepta
+      //   async () => {
       await manejoEliminarEntidadFn(
         id,
         usuariosService,
         mostrarMensajeExito,
-        cargarUsuarios, // Recargar lista
+        cargarUsuarios,
         mostrarMensajeError,
         "usuario",
-        toast // Pasar ref si la función lo necesita
+        toast
       );
-      //   }
-      // );
     },
     [mostrarMensajeExito, cargarUsuarios, mostrarMensajeError]
   );
 
-  // Función para abrir el modal de edición/creación
   const abrirModal = useCallback((usuario = null) => {
     setUsuarioEditando(usuario);
     asignarMostrarModal(true);
   }, []);
 
-  // Función para cerrar el modal
   const cerrarModal = useCallback(() => {
     asignarMostrarModal(false);
-    setUsuarioEditando(null); // Limpiar usuario en edición
+    setUsuarioEditando(null);
   }, []);
 
-  // Manejador para después de guardar en el modal
   const manejarGuardadoExitoso = useCallback(() => {
     cerrarModal();
-    cargarUsuarios(); // Recargar la lista
+    cargarUsuarios();
   }, [cerrarModal, cargarUsuarios]);
 
-  // Columnas para la tabla (optimizadas con useMemo)
   const columnas = useMemo(
     () => [
       { Header: "Nombre Completo", accessor: "nombreCompleto" },
@@ -156,25 +141,20 @@ export default function GestionarUsuarios() {
         Header: "Rol",
         accessor: "rol",
         Cell: ({ value }) => {
-          // Usar Tag de PrimeReact para roles
-
-          const severity = getRolSeverity(value); // Usar helper
+          const severity = getRolSeverity(value);
 
           return <Tag severity={severity} value={value || "N/A"} />;
         },
       },
       {
         Header: "Acciones",
-        id: "acciones", // Usar id en lugar de accessor si no mapea a datos
+        id: "acciones",
         Cell: ({ row }) => (
           <div className="flex flex-row gap-1 flex-nowrap">
             {" "}
-            {/* Mejorado className para flexbox */}
-            <EditUserButton
-              onClick={() => abrirModal(row.original)} // Usar función estable
-            />
+            <EditUserButton onClick={() => abrirModal(row.original)} />
             <DeleteUserButton
-              onClick={() => manejoEliminarUsuario(row.original.id)} // Usar función estable
+              onClick={() => manejoEliminarUsuario(row.original.id)}
             />
           </div>
         ),
@@ -182,14 +162,11 @@ export default function GestionarUsuarios() {
       },
     ],
     [abrirModal, manejoEliminarUsuario]
-  ); // Dependencias estables
-
-  // Cargar usuarios al montar
+  );
   useEffect(() => {
     cargarUsuarios();
-  }, [cargarUsuarios]); // Dependencia estable
+  }, [cargarUsuarios]);
 
-  // Filtrar usuarios (lógica ya corregida para null/undefined)
   useEffect(() => {
     if (!busquedaDebounced) {
       setUsuariosFiltrados(usuarios || []);
@@ -209,9 +186,8 @@ export default function GestionarUsuarios() {
     setUsuariosFiltrados(filtrados);
   }, [busquedaDebounced, usuarios]);
 
-  // Componente para mostrar cada usuario como una Tarjeta en vista móvil
   const TarjetaUsuarioItem = ({ usuario, alEditar, alEliminar }) => {
-    const rolSeverity = getRolSeverity(usuario.rol); // Usar helper
+    const rolSeverity = getRolSeverity(usuario.rol);
 
     return (
       <Card className="mb-3 w-full shadow-1 hover:shadow-3 transition-shadow transition-duration-300">
@@ -251,7 +227,6 @@ export default function GestionarUsuarios() {
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-3">
         <h1 className="text-2xl font-bold m-0">Gestión de Usuarios</h1>
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-          {/* Búsqueda */}
           <span className="p-input-icon-left w-full sm:w-auto">
             <i className="pi pi-search" />
             <InputText
@@ -261,17 +236,16 @@ export default function GestionarUsuarios() {
               className="w-full"
             />
           </span>
-          {/* Botón Nuevo Usuario */}
+
           <Button
             label="Nuevo Usuario"
             icon="pi pi-plus"
             className="p-button-primary"
-            onClick={() => abrirModal(null)} // Usar función estable
+            onClick={() => abrirModal(null)}
           />
         </div>
       </div>
 
-      {/* Tabla */}
       {esMovilPequeno &&
       !busquedaDebounced &&
       usuariosFiltrados.length === usuarios.length ? (
@@ -285,7 +259,6 @@ export default function GestionarUsuarios() {
         </div>
       ) : esMovilPequeno && usuariosFiltrados.length > 0 ? (
         <div className="mt-4">
-          {/* Para depurar, puedes descomentar la siguiente línea para ver los IDs y nombres: */}
           {console.log(
             "Verificando IDs en usuariosFiltrados:",
             usuariosFiltrados.map((u) => ({
@@ -294,8 +267,6 @@ export default function GestionarUsuarios() {
             }))
           )}
           {usuariosFiltrados.map((usuario, index) => {
-            // Es crucial que la key sea única y estable para cada elemento.
-            // Lo ideal es que usuario.id siempre sea único y esté definido.
             const keyParaElemento =
               usuario.id !== undefined && usuario.id !== null
                 ? usuario.id
@@ -309,7 +280,7 @@ export default function GestionarUsuarios() {
             }
             return (
               <TarjetaUsuarioItem
-                key={keyParaElemento} // Usar la key verificada o el fallback
+                key={keyParaElemento}
                 usuario={usuario}
                 alEditar={abrirModal}
                 alEliminar={manejoEliminarUsuario}
@@ -320,8 +291,7 @@ export default function GestionarUsuarios() {
       ) : (
         <div className="tabla-con-bordes overflow-x-auto">
           {" "}
-          {/* Añadido overflow-x-auto para la tabla */}
-          <TablaEquipos // Reutilizamos el componente de tabla
+          <TablaEquipos
             columns={columnas}
             data={usuariosFiltrados}
             loading={carga}
@@ -340,14 +310,14 @@ export default function GestionarUsuarios() {
                 label="Cancelar"
                 icon="pi pi-times"
                 className="p-button-text"
-                onClick={cerrarModal} // Usar función estable
+                onClick={cerrarModal}
               />
               <Button
                 label={usuarioEditando ? "Guardar Cambios" : "Crear Usuario"}
                 icon="pi pi-check"
                 onClick={() => {
                   console.log("Guardando:", usuarioEditando || "Nuevo Usuario");
-                  manejarGuardadoExitoso(); // Llama a la función de guardado
+                  manejarGuardadoExitoso();
                 }}
               />
             </div>

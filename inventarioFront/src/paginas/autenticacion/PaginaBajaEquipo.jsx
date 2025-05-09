@@ -1,16 +1,14 @@
-import { useState, useEffect } from "react"; // *** Importar useContext ***
+import { useState, useEffect } from "react";
 import { useNavigate, Link, useParams } from "react-router-dom";
 import Entrada from "../../componentes/InterfazUsuario/Entrada.jsx";
 import { Card } from "primereact/card";
-import { FiTag, FiUser } from "react-icons/fi"; // Iconos
-import { mockEquiposService as equiposService } from "../../servicios/mockEquipos.api.js"; // Servicio
-import { toast } from "react-toastify"; // Importar toast
-import Boton from "../../componentes/InterfazUsuario/Boton.jsx"; // Importar Boton
-import { DatosUbicacion } from "../../componentes/Datos/DatosUbicaciones.jsx"; // Importar DatosUbicacion } from "../../componentes/Datos/DatosUbicaciones.jsx";
-import "react-toastify/dist/ReactToastify.css"; // Estilos de toast
-import { useUsuarioLogueado } from "../../autenticacion/contexto/UsuarioLogueado.jsx"; // <<< Asegúrate de que la ruta sea correcta
-
-// Dentro de PaginaDarDeBajaEquipo.jsx
+import { FiTag, FiUser } from "react-icons/fi";
+import { mockEquiposService as equiposService } from "../../servicios/mockEquipos.api.js";
+import { toast } from "react-toastify";
+import Boton from "../../componentes/InterfazUsuario/Boton.jsx";
+import { DatosUbicacion } from "../../componentes/Datos/DatosUbicaciones.jsx";
+import "react-toastify/dist/ReactToastify.css";
+import { useUsuarioLogueado } from "../../autenticacion/contexto/UsuarioLogueado.jsx";
 
 export default function PaginaDarDeBajaEquipo() {
   const [formulario, setFormulario] = useState({
@@ -26,23 +24,20 @@ export default function PaginaDarDeBajaEquipo() {
   const { placa } = useParams();
   const navigate = useNavigate();
 
-  // *** Usar el hook corregido ***
   const usuarioLogueado = useUsuarioLogueado();
 
-  // --- Efecto para cargar datos del equipo y pre-llenar PLACA y RESPONSABLE ---
   useEffect(() => {
     const inicializarFormulario = async () => {
       setCargandoInicial(true);
       setError("");
 
-      let placaEnEstado = ""; // Para guardar la placa obtenida
-      let responsableInicial = ""; // Para guardar el responsable inicial
+      let placaEnEstado = "";
+      let responsableInicial = "";
 
-      // 1. Si la placa viene en la URL, intentar cargar el equipo
       if (placa) {
         try {
           const datosEquipo = await equiposService.getById(placa);
-          placaEnEstado = datosEquipo.placa; // Obtener la placa de los datos cargados
+          placaEnEstado = datosEquipo.placa;
         } catch (err) {
           const errorMessage =
             err.message || "Error desconocido al cargar equipo.";
@@ -51,39 +46,34 @@ export default function PaginaDarDeBajaEquipo() {
               errorMessage
           );
           console.error("Error cargando equipo:", err);
-          // Opcional: Redirigir si el equipo no existe
-          // toast.error(`Equipo con placa ${placa} no encontrado.`);
-          // navigate('/gestionar-equipos');
+
+          toast.error(`Equipo con placa ${placa} no encontrado.`);
+          navigate("/gestion-equipo");
         }
       } else {
-        // Si no hay placa en la URL (no debería pasar con la ruta correcta)
         setError("Placa de equipo no proporcionada en la URL.");
         console.warn("Página de baja accedida sin placa en URL.");
       }
 
       if (usuarioLogueado && usuarioLogueado.nombreCompleto) {
-        // Asumiendo que el objeto usuario tiene 'nombreCompleto'
         responsableInicial = usuarioLogueado.nombreCompleto;
       } else {
-        responsableInicial = "Invitado"; // O simplemente "", o dejarlo vacío
+        responsableInicial = "Invitado";
       }
 
-      // 3. Pre-llenar el estado del formulario
       setFormulario((prevFormulario) => ({
         ...prevFormulario,
-        placa: placaEnEstado, // Pre-llenar placa (vacía si hubo error/no URL)
-        ubicacion: "", // Ubicación siempre vacía para que el usuario la seleccione
-        responsable: responsableInicial, // Pre-llenar responsable
+        placa: placaEnEstado,
+        ubicacion: "",
+        responsable: responsableInicial,
       }));
 
-      setCargandoInicial(false); // Desactivar carga inicial
+      setCargandoInicial(false);
     };
 
-    // Ejecutar la inicialización
     inicializarFormulario();
-  }, [placa, navigate, usuarioLogueado]); // *** Dependencia: usuarioLogueado (objeto completo) ***
+  }, [placa, navigate, usuarioLogueado]);
 
-  // --- Manejar el cambio en cualquier campo ---
   const manejarCambio = (e) => {
     const { name, value } = e.target;
     setFormulario((prevFormulario) => ({
@@ -92,13 +82,11 @@ export default function PaginaDarDeBajaEquipo() {
     }));
   };
 
-  // --- Manejar el envío del formulario ---
   const manejarEnvio = async (e) => {
     e.preventDefault();
     setError("");
     setCargandoEnvio(true);
 
-    // --- Validaciones (usando el estado actual del formulario) ---
     if (!formulario.placa) {
       setError("El campo Placa es requerido.");
       setCargandoEnvio(false);
@@ -106,26 +94,23 @@ export default function PaginaDarDeBajaEquipo() {
       return;
     }
     if (!formulario.ubicacion) {
-      // Validar que se seleccionó una ubicación
       setError("La Ubicación es requerida.");
       setCargandoEnvio(false);
       toast.error("La Ubicación es requerida.");
       return;
     }
     if (!formulario.responsable) {
-      // Validar que el responsable no esté vacío (pre-llenado o modificado)
       setError("El Responsable es requerido.");
       setCargandoEnvio(false);
       toast.error("El Responsable es requerido.");
       return;
     }
 
-    // --- Preparar datos para enviar ---
     const datosParaBaja = {
-      placa: formulario.placa, // Usar la placa del formulario
+      placa: formulario.placa,
       estado: "Baja",
-      ubicacion_baja: formulario.ubicacion, // Valor del select de ubicación
-      responsable_baja: formulario.responsable, // Valor del campo responsable (pre-llenado)
+      ubicacion_baja: formulario.ubicacion,
+      responsable_baja: formulario.responsable,
       fecha_baja: new Date().toISOString(),
     };
 
@@ -147,7 +132,6 @@ export default function PaginaDarDeBajaEquipo() {
     }
   };
 
-  // --- JSX: Mostrar estado de carga inicial o el formulario ---
   if (cargandoInicial) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -156,8 +140,6 @@ export default function PaginaDarDeBajaEquipo() {
     );
   }
 
-  // Si hubo un error de carga inicial Y el formulario no tiene placa (no se cargó nada)
-  // Opcional: Si quieres forzar que siempre haya placa de la URL, puedes verificar !placa aquí también
   if (error && formulario?.placa === "") {
     return (
       <div className="min-h-screen flex items-center justify-center text-red-600">
@@ -175,7 +157,6 @@ export default function PaginaDarDeBajaEquipo() {
     );
   }
 
-  // Si el formulario tiene datos (al menos la placa pre-llenada) y no hay error de carga principal
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
@@ -194,7 +175,6 @@ export default function PaginaDarDeBajaEquipo() {
               fontFamily: "'Times New Roman', Times, serif",
             }}
           >
-            {/* Mostrar errores de validación/envío dentro del Card si el formulario está cargado */}
             {error && formulario?.placa !== "" && (
               <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm">
                 {error}
@@ -202,7 +182,6 @@ export default function PaginaDarDeBajaEquipo() {
             )}
 
             <form className="space-y-6" onSubmit={manejarEnvio}>
-              {/* Campo Placa (Pre-llenado y Deshabilitado) */}
               <Entrada
                 placeHolder="Placa del Equipo"
                 tipo="text"
@@ -212,21 +191,18 @@ export default function PaginaDarDeBajaEquipo() {
                 manejarCambio={manejarCambio}
                 icono={<FiTag className="text-gray-400" />}
                 label="Placa:"
-                disabled={true} // Campo deshabilitado
+                disabled={true}
               />
 
-              {/* --- Campo Ubicación (Select) --- */}
               <div className="campo">
                 <select
                   id="ubicacion"
                   name="ubicacion"
                   value={formulario.ubicacion}
                   onChange={manejarCambio}
-                  required={true} // HTML required
+                  required={true}
                   className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                 >
-                  {/* Mapear las opciones de DatosUbicacion */}
-                  {/* Asumimos DatosUbicacion[0] es la opción por defecto { value: "", label: "Seleccionar ubicación" } */}
                   {DatosUbicacion.map((ubicacionOpcion) => (
                     <option
                       key={ubicacionOpcion.value}
@@ -238,26 +214,21 @@ export default function PaginaDarDeBajaEquipo() {
                 </select>
               </div>
 
-              {/* Campo Responsable (Pre-llenado y Editable) */}
               <Entrada
                 placeHolder="Responsable"
                 tipo="text"
                 name="responsable"
-                valor={formulario.responsable} // Valor pre-llenado
-                required={true} // Validamos que sea requerido
-                manejarCambio={manejarCambio} // Permite al usuario modificar si es necesario
+                valor={formulario.responsable}
+                required={true}
+                manejarCambio={manejarCambio}
                 icono={<FiUser className="text-gray-400" />}
                 label="Responsable:"
-                // Opcional: deshabilitar si no quieres que el usuario cambie el responsable
-                // disabled={true}
               />
 
-              {/* --- Botón para Dar de Baja --- */}
               <Boton tipo="submit" disabled={cargandoEnvio}>
                 {cargandoEnvio ? "Procesando..." : "Dar de Baja"}
               </Boton>
 
-              {/* --- Enlace para Cancelar --- */}
               <div className="text-center text-sm text-gray-600">
                 <Link
                   to="/gestionar-equipos"

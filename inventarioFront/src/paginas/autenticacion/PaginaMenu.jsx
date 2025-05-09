@@ -5,20 +5,20 @@ import { Button } from "primereact/button";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
-//import { rolUsuarioArray } from "../../componentes/Datos/RolUsuario";
+
 import { permisosPorRol } from "../../autenticacion/permisos";
-// Configuración de permisos por rol
+
 
 export default function PaginaMenu() {
-  const { usuario, logout } = useState(""); // Asume que tu AuthContext proporciona el usuario actual
+  const { usuario, logout } = useState(""); 
   const [vistaActual, setVistaActual] = useState("menu");
   const [permisosEquipo] = useState({
-    gestionEquipo: true, // Simula los permisos del usuario
+    gestionEquipo: true,
   });
 
-  // Obtener permisos del usuario actual
-  const rolActual = usuario?.rol || "Default"; // Usar 'Default' si el rol no está definido o es invitado
-  const permisos = permisosPorRol[rolActual] || permisosPorRol.Default; // Fallback a permisos por defecto
+ 
+  const rolActual = usuario?.rol || "Default";
+  const permisos = permisosPorRol[rolActual] || permisosPorRol.Default; 
   if (vistaActual === "gestion-equipos") {
     return <GestionEquipos onVolver={() => setVistaActual("menu")} />;
   }
@@ -40,7 +40,7 @@ export default function PaginaMenu() {
           className="w-full flex flex-col gap-3 p-0"
           style={{ width: "100%" }}
         >
-          {/* Sección Gestión Operativa */}
+
           <div>
             <h3 className="">Gestión Operativa</h3>
             <div className="w-full flex flex-col gap-2">
@@ -64,6 +64,7 @@ export default function PaginaMenu() {
                 />
               )}
               <Button
+                onClick={() => setVistaActual("menu-mantenimientos")}
                 label="Gestionar Mantenimientos"
                 icon="pi pi-wrench"
                 className="w-full"
@@ -75,6 +76,7 @@ export default function PaginaMenu() {
                 }
               />
               <Button
+              onClick={() => setVistaActual("gestion-usuarios")}
                 label="Gestionar Usuarios"
                 icon="pi pi-users"
                 className="w-full"
@@ -88,13 +90,14 @@ export default function PaginaMenu() {
             </div>
           </div>
 
-          {/* Sección Operaciones de Consulta */}
+        
           <div>
             <h3 className="w-full text-lg font-semibold mb-3 border-b pb-2">
               Operaciones de Consulta
             </h3>
             <div className="space-y-2">
               <Button
+              onClick={() => setVistaActual("importar-exportar")}
                 label="Importar / Exportar"
                 icon="pi pi-file-import"
                 className="w-full"
@@ -102,21 +105,31 @@ export default function PaginaMenu() {
                 disabled={!permisos.importarExportar}
               />
               <Button
+              onClick={() => setVistaActual("reporte")}
                 label="Reportes"
                 icon="pi pi-file-pdf"
                 className="w-full"
                 disabled={!permisos.reportes}
               />
               <Button
+              
+               onClick={() => setVistaActual("consultas")}
                 label="Consultas"
                 icon="pi pi-search"
                 className="w-full"
                 disabled={!permisos.consultas}
               />
+              <Button
+              
+               onClick={() => setVistaActual("historial-responsable")}
+                label="Historial"
+                icon="pi pi-search"
+                className="w-full"
+                disabled={!permisos.historial}
+              />
             </div>
           </div>
 
-          {/* Botón de Cerrar Sesión */}
           <Button
             label="Cerrar Sesión"
             icon="pi pi-sign-out"

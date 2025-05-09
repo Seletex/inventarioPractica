@@ -2,9 +2,6 @@ import { Calendar } from 'primereact/calendar';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
-import { Divider } from 'primereact/divider';
-
-
 export const FiltrosAvanzados = ({ filtros, setFiltros, onFiltrar, onReset }) => {
   const estados = [
     { label: 'Activo', value: 'activo' },

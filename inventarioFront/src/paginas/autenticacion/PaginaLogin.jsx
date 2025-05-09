@@ -23,13 +23,13 @@ export default function LoginForm() {
 
   const onSubmit = (data) => {
     console.log("Datos enviados:", data);
-    // Aquí iría tu lógica de autenticación
+    // Aquí iría la lógica de autenticación
   };
 
   return (
     <div
       style={{
-        minHeight: "100vh", // Altura mínima para ocupar toda la pantalla
+        minHeight: "100vh",
         fontFamily: "'Times New Roman', Times, serif",
       }}
     >
@@ -37,7 +37,7 @@ export default function LoginForm() {
         title="Login"
         className="w-full md:w-30rem"
         style={{
-          width: "400px", // Ajusta el ancho de la tarjeta según necesites
+          width: "400px", 
           borderRadius: "10px",
           border: "1px solid #e0e0e0",
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",

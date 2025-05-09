@@ -1,2 +1,2 @@
 import { createContext } from "react";
-export const ContextoAutenticacion = createContext(); // <--- ¡Necesitas exportar esto!
+export const ContextoAutenticacion = createContext(); 
